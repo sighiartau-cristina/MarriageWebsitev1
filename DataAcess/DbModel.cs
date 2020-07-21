@@ -101,8 +101,7 @@ namespace DataAccess
             modelBuilder.Entity<USER_PROFILE>()
                 .HasMany(e => e.ADDRESSes)
                 .WithRequired(e => e.USER_PROFILE)
-                .HasForeignKey(e => e.USER_PROFILE_ID)
-                .WillCascadeOnDelete(false);
+                .HasForeignKey(e => e.USER_PROFILE_ID);
 
             modelBuilder.Entity<USER_PROFILE>()
                 .HasMany(e => e.MATCHes)
@@ -127,11 +126,6 @@ namespace DataAccess
             modelBuilder.Entity<USER>()
                 .Property(e => e.USER_PASSWORD)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<USER>()
-                .HasMany(e => e.USER_PROFILE)
-                .WithRequired(e => e.USER)
-                .WillCascadeOnDelete(false);
         }
     }
 }

@@ -13,13 +13,13 @@ namespace BusinessModel.Handlers
     public class AddressHandler: IDataAccess<AddressEntity>
     {
 
-        public void Add(AddressEntity entity)
+        public int Add(AddressEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
 
             if (!CheckExisting(entity))
@@ -27,13 +27,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.ADDRESSes.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.ADDRESS_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)

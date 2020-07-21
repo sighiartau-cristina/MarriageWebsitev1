@@ -13,27 +13,29 @@ namespace BusinessModel.Handlers
     public class UserHandler: IDataAccess<UserEntity>
     {
 
-        public void Add(UserEntity entity)
+        public int Add(UserEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
 
-            if (dbModel.USERS.Find(entity.UserId) == null && !CheckExistingEmail(entity.UserEmail) && !CheckExistingUsername(entity.UserUsername))
+            if (dbModel.USERS.Find(entity.UserId) == null)
             {
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.USERS.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.USER_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)
@@ -87,6 +89,33 @@ namespace BusinessModel.Handlers
         {
             DbModel dbModel = new DbModel();
             var entity = dbModel.USERS.Find(id);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return ConvertToEntity(entity);
+        }
+
+        public UserEntity CheckUsernameAndPassword(string username, string password)
+        {
+            DbModel dbModel = new DbModel();
+            var entity = dbModel.USERS.FirstOrDefault( e=> e.USER_USERNAME==username && e.USER_PASSWORD==password);
+
+            if(entity == null)
+            {
+                return null;
+            }
+
+            return ConvertToEntity(entity);
+
+        }
+
+        public UserEntity GetByUsernameOrEmail(string username, string email)
+        {
+            DbModel dbModel = new DbModel();
+            var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username || e.USER_EMAIL == email);
 
             if (entity == null)
             {

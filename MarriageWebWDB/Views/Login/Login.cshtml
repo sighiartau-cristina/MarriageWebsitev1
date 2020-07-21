@@ -1,0 +1,43 @@
+﻿
+@{
+    @model MarriageWebWDB.Models.LoginModel
+}
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+</head>
+<body>
+    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:300px; width:300px">
+        @using (Html.BeginForm("LoginUser", "Login", FormMethod.Post))
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Username:</td>
+                        <td>@Html.TextBoxFor(m => m.UserName)</td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td>@Html.PasswordFor(m => m.UserPassword)</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Log In" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>@ViewBag.LoginMessage</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>

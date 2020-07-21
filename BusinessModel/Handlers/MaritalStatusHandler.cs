@@ -13,13 +13,13 @@ namespace BusinessModel.Handlers
     public class MaritalStatusHandler : IDataAccess<MaritalStatusEntity>
     {
 
-        public void Add(MaritalStatusEntity entity)
+        public int Add(MaritalStatusEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
 
             if (!CheckExisting(entity.MaritalStatusName))
@@ -27,13 +27,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.MARITAL_STATUS.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.MRTSTS_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)
@@ -81,6 +83,12 @@ namespace BusinessModel.Handlers
             }
 
             return ConvertToEntity(entity);
+        }
+
+        public List<MaritalStatusEntity> GetAll()
+        {
+            DbModel dbModel = new DbModel();
+            return dbModel.MARITAL_STATUS.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
         }
 
         private bool CheckExisting(string name)

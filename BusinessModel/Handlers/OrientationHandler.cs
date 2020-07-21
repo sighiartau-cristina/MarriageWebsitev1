@@ -12,13 +12,13 @@ namespace BusinessModel.Handlers
 {
     public class OrientationHandler: IDataAccess<OrientationEntity>
     {
-        public void Add(OrientationEntity orientationEntity)
+        public int Add(OrientationEntity orientationEntity)
         {
             DbModel dbModel = new DbModel();
 
             if (orientationEntity == null)
             {
-                return;
+                return -1;
             }
 
             if (!CheckExisting(orientationEntity.OrientationName))
@@ -26,13 +26,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(orientationEntity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.ORIENTATIONs.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.ORIENT_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)
@@ -79,6 +81,11 @@ namespace BusinessModel.Handlers
             }
 
             return ConvertToEntity(entity);
+        }
+        public List<OrientationEntity> GetAll()
+        {
+            DbModel dbModel = new DbModel();
+            return dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
         }
 
         private bool CheckExisting(string name)

@@ -1,0 +1,78 @@
+﻿
+@{
+    @model MarriageWebWDB.Models.RegisterModel
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Register</title>
+</head>
+<body>
+    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
+        @using (Html.BeginForm("RegisterUser", "Login", FormMethod.Post))
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Email:</td>
+                        <td>@Html.TextBoxFor(m => m.UserEmail)</td>
+                    </tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td>@Html.TextBoxFor(m => m.UserName)</td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td>@Html.PasswordFor(m => m.UserPassword)</td>
+                    </tr>
+                    <tr>
+                        <td>Confirm password:</td>
+                        <td>@Html.PasswordFor(m => m.UserConfirmPassword)</td>
+                    </tr>
+                    <tr>
+                        <td>Name:</td>
+                        <td>@Html.TextBoxFor(m => m.UserProfileName)</td>
+                    </tr>
+                    <tr>
+                        <td>Surname:</td>
+                        <td>@Html.TextBoxFor(m => m.UserProfileSurname)</td>
+                    </tr>
+                    <tr>
+                        <td>Gender:</td>
+                        <td>@Html.DropDownListFor(m => m.GenderId, Model.Genders)</td>
+                    </tr>
+                    <tr>
+                        <td>Orientation:</td>
+                        <td>@Html.DropDownListFor(m => m.OrientationId, Model.Orientations)</td>
+                    </tr>
+                    <tr>
+                        <td>Religion:</td>
+                        <td>@Html.DropDownListFor(m => m.ReligionId, Model.Religions)</td>
+                    </tr>
+                    <tr>
+                        <td>Marital Status:</td>
+                        <td>@Html.DropDownListFor(m => m.StatusId, Model.Statuses)</td>
+                    </tr>
+                    <tr>
+                        <td>Birthday:</td>
+                        <td><input type="date" name="UserProfileBirthday" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Register" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>@ViewBag.RegisterMessage</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>
+

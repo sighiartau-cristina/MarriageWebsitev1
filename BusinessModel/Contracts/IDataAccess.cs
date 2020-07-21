@@ -8,7 +8,7 @@ namespace BusinessModel.Contracts
 {
     interface IDataAccess<T>
     {
-        void Add(T entity);
+        int Add(T entity);
 
         void Delete(int id);
 

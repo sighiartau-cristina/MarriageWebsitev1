@@ -27,7 +27,6 @@ namespace DataAccess
         [StringLength(25)]
         public string USRPROF_SURNAME { get; set; }
 
-        [Required]
         [StringLength(25)]
         public string USRPROF_PHONE { get; set; }
 

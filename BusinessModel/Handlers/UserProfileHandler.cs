@@ -11,13 +11,13 @@ namespace BusinessModel.Handlers
 {
     public class UserProfileHandler: IDataAccess<UserProfileEntity>
     {
-        public void Add(UserProfileEntity entity)
+        public int Add(UserProfileEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
 
             if (!CheckExisting(entity.UserId))
@@ -25,13 +25,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.USER_PROFILE.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.GENDER_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)

@@ -14,13 +14,13 @@ namespace BusinessModel.Handlers
     public class GenderHandler: IDataAccess<GenderEntity>
     {
 
-        public void Add(GenderEntity entity)
+        public int Add(GenderEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
             
             if (!CheckExisting(entity.GenderName))
@@ -28,13 +28,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.GENDERs.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.GENDER_ID;
             }
             
+            return -1;
         }
 
         public void Delete(int id)
@@ -81,6 +83,12 @@ namespace BusinessModel.Handlers
             }
 
             return ConvertToEntity(entity);
+        }
+
+        public List<GenderEntity> GetAll()
+        {
+            DbModel dbModel = new DbModel();
+            return dbModel.GENDERs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
         }
 
         private bool CheckExisting(string name)

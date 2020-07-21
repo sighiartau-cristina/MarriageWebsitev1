@@ -34,7 +34,7 @@ namespace LinqLessons
             //AddStatus("definitely not married");
             //DeleteStatus(2);
 
-            //AddUser("username", "email", "pass");
+            AddUser("username", "email", "pass");
             //AddUser("username2", "email2", "veryefficientpassword");
             //UpdateUser(2, "blahblah", "email2", "veryefficientpassword");
             //DeleteUser(2);
@@ -56,6 +56,8 @@ namespace LinqLessons
             /*DeleteAddress(1);
             DeleteUserProfile(1);
             DeleteUser(1);*/
+
+
 
         }
 

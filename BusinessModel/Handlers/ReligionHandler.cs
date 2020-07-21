@@ -12,13 +12,13 @@ namespace BusinessModel.Handlers
 {
     public class ReligionHandler: IDataAccess<ReligionEntity>
     {
-        public void Add(ReligionEntity entity)
+        public int Add(ReligionEntity entity)
         {
             DbModel dbModel = new DbModel();
 
             if (entity == null)
             {
-                return;
+                return -1;
             }
 
             if (!CheckExisting(entity.ReligionName))
@@ -26,13 +26,15 @@ namespace BusinessModel.Handlers
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
                 {
-                    return;
+                    return -1;
                 }
 
                 dbModel.RELIGIONs.Add(dataEntity);
                 dbModel.SaveChanges();
+                return dataEntity.RELIGION_ID;
             }
 
+            return -1;
         }
 
         public void Delete(int id)
@@ -79,6 +81,12 @@ namespace BusinessModel.Handlers
             }
 
             return ConvertToEntity(entity);
+        }
+
+        public List<ReligionEntity> GetAll()
+        {
+            DbModel dbModel = new DbModel();
+            return dbModel.RELIGIONs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
         }
 
         private bool CheckExisting(string name)

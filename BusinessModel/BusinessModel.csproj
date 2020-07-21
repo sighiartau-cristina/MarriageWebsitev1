@@ -52,6 +52,7 @@
     <Compile Include="Entities\AddressEntity.cs" />
     <Compile Include="Entities\GenderEntity.cs" />
     <Compile Include="Entities\MaritalStatusEntity.cs" />
+    <Compile Include="Entities\MatchEntity.cs" />
     <Compile Include="Entities\OrientationEntity.cs" />
     <Compile Include="Entities\ReligionEntity.cs" />
     <Compile Include="Entities\UserEntity.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Handlers\AddressHandler.cs" />
     <Compile Include="Handlers\GenderHandler.cs" />
     <Compile Include="Handlers\MaritalStatusHandler.cs" />
+    <Compile Include="Handlers\MatchHandler.cs" />
     <Compile Include="Handlers\OrientationHandler.cs" />
     <Compile Include="Handlers\ReligionHandler.cs" />
     <Compile Include="Handlers\UserHandler.cs" />
