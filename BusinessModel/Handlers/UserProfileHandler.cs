@@ -83,7 +83,7 @@ namespace BusinessModel.Handlers
         public UserProfileEntity Get(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USER_PROFILE.Find(id);
+            var entity = dbModel.USER_PROFILE.Where(e => e.USER_ID == id).FirstOrDefault();
 
             if (entity == null)
             {

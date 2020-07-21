@@ -1,6 +1,6 @@
 ﻿
 @{
-    @model MarriageWebWDB.Models.RegisterModel
+    @model MarriageWebWDB.Models.UserModel
 }
 
 <!DOCTYPE html>
@@ -8,37 +8,42 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Register</title>
+    <title>UserProfile</title>
 </head>
 <body>
+    <h1>Pofile:</h1>
     <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
-        @using (Html.BeginForm("RegisterUser", "Login", FormMethod.Post))
+        @using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post))
         {
             <table>
                 <tbody>
                     <tr>
                         <td>Email:</td>
-                        <td>@Html.TextBoxFor(m => m.UserEmail)</td>
+                        <td>@Html.TextBoxFor(m => m.Email)</td>
                     </tr>
                     <tr>
                         <td>Username:</td>
                         <td>@Html.TextBoxFor(m => m.UserName)</td>
                     </tr>
                     <tr>
-                        <td>Password:</td>
-                        <td>@Html.PasswordFor(m => m.UserPassword)</td>
+                        <td>Phone:</td>
+                        <td>@Html.TextBoxFor(m => m.Phone)</td>
                     </tr>
                     <tr>
-                        <td>Confirm password:</td>
-                        <td>@Html.PasswordFor(m => m.UserConfirmPassword)</td>
+                        <td>Job:</td>
+                        <td>@Html.TextBoxFor(m => m.Job)</td>
+                    </tr>
+                    <tr>
+                        <td>Description:</td>
+                        <td>@Html.TextAreaFor(m => m.Description)</td>
                     </tr>
                     <tr>
                         <td>Name:</td>
-                        <td>@Html.TextBoxFor(m => m.UserProfileName)</td>
+                        <td>@Html.TextBoxFor(m => m.Name)</td>
                     </tr>
                     <tr>
                         <td>Surname:</td>
-                        <td>@Html.TextBoxFor(m => m.UserProfileSurname)</td>
+                        <td>@Html.TextBoxFor(m => m.Surname)</td>
                     </tr>
                     <tr>
                         <td>Gender:</td>
@@ -58,15 +63,15 @@
                     </tr>
                     <tr>
                         <td>Birthday:</td>
-                        <td><input type="date" name="UserProfileBirthday" value="" min="1920-01-01"/></td>
+                        <td><input type="date" name="Birthday" value=@Model.BirthdayString min="1920-01-01" /></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td><input type="submit" value="Register" /></td>
+                        <td><input type="submit" value="Update" /></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td>@ViewBag.RegisterMessage</td>
+                        <td>@ViewBag.UpdateUserMessage</td>
 
                     </tr>
                 </tbody>
@@ -75,4 +80,3 @@
     </div>
 </body>
 </html>
-

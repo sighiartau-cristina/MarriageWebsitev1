@@ -17,6 +17,7 @@ namespace MarriageWebWDB.Constants
 
         //Register messages
         public static string InvalidEmailMessage = "Invalid email address.";
+        public static string InvalidUsernameMessage = "Username cannot be empty.";
         public static string InvalidPasswordMessage = "Passwords must be at least 5 characters long.";
         public static string PasswordMismatchMessage = "Passwords must match.";
         public static string InvalidNameMessage = "Invalid name.";
@@ -26,6 +27,9 @@ namespace MarriageWebWDB.Constants
         public static string ExistingEmailMessage = "This email address has already been registered.";
         public static string InvalidRegisterMessage = "Register operation was unsuccessful.";
         public static string InvalidProfileRegisterMessage = "Information about profile could not be saved.";
+
+        //Update messages
+        public static string InvalidPhoneMessage = "Phone number must be 10 digits long.";
 
     }
 }

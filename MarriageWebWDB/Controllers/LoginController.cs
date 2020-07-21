@@ -26,7 +26,7 @@ namespace MarriageWebWDB.Controllers
             if (loginHelper.CheckLogin(loginModel))
             {
                 Session.Add("userToken", loginModel.UserName);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Account");
             }
 
             ViewBag.LoginMessage = loginHelper.InvalidLoginMessage;
@@ -36,6 +36,15 @@ namespace MarriageWebWDB.Controllers
 
         public ActionResult Register()
         {
+            try
+            {
+                RegisterHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", "Account");
+            }
+
             RegisterHelper registerHelper = new RegisterHelper();
             var registerModel = registerHelper.GetRegisterModel();
             return View(registerModel);
@@ -45,7 +54,7 @@ namespace MarriageWebWDB.Controllers
         {
             RegisterHelper registerHelper = new RegisterHelper();
 
-            if (registerHelper.CheckRegister(registerModel))
+            if (registerHelper.AddUser(registerModel))
             {
                 Session.Add("userToken", registerModel.UserName);
                 return RedirectToAction("Index", "Home");

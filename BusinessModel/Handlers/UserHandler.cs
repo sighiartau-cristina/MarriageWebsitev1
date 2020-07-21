@@ -112,6 +112,19 @@ namespace BusinessModel.Handlers
 
         }
 
+        public UserEntity GetByUsername(string username)
+        {
+            DbModel dbModel = new DbModel();
+            var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username);
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return ConvertToEntity(entity);
+        }
+
         public UserEntity GetByUsernameOrEmail(string username, string email)
         {
             DbModel dbModel = new DbModel();
