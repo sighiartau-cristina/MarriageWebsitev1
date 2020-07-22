@@ -8,4 +8,5 @@ namespace MarriageWebWDB.Validators
     public class LoginValidator
     {
     }
+
 }

@@ -28,8 +28,11 @@ namespace MarriageWebWDB.Constants
         public static string InvalidRegisterMessage = "Register operation was unsuccessful.";
         public static string InvalidProfileRegisterMessage = "Information about profile could not be saved.";
 
-        //Update messages
         public static string InvalidPhoneMessage = "Phone number must be 10 digits long.";
+        public static string IncorrectPasswordMessage = "The password is incorrect.";
+
+        public static string InvalidCityMessage = "The city name is not valid.";
+        public static string InvalidCountryMessage = "The country name is not valid.";
 
     }
 }

@@ -27,11 +27,9 @@ namespace MarriageWebWDB.Helper
                 userModel = new UserModel();
             }
 
-            HttpContext context = HttpContext.Current;
-            string username = context.Session["userToken"].ToString();
-
-            UserEntity user = new UserHandler().GetByUsername(username);
-            UserProfileEntity userProfile = new UserProfileHandler().Get(user.UserId);
+            int id = int.Parse(HttpContext.Current.Session["userId"].ToString());
+            UserEntity user = new UserHandler().Get(id);
+            UserProfileEntity userProfile = new UserProfileHandler().GetByUserId(user.UserId);
             //TODO check user and userProfile
 
             PopulateModel(userModel, user, userProfile);
@@ -58,16 +56,7 @@ namespace MarriageWebWDB.Helper
             userModel.GenderId = userProfile.GenderId;
             userModel.Age = userProfile.UserAge;
             userModel.Birthday = userProfile.UserProfileBirthday;
-            userModel.BirthdayString = getBirthdayString(userProfile.UserProfileBirthday);
-        }
-        
-        private string getBirthdayString(DateTime date)
-        {
-            string result = date.Year + "-";
-            result += date.Month < 10 ? "0" + date.Month.ToString() : date.Month.ToString();
-            result += "-";
-            result += date.Day < 10 ? "0" + date.Day.ToString() : date.Day.ToString();
-            return result;
+            userModel.BirthdayString = DateFormatter.GetDate(userProfile.UserProfileBirthday);
         }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
@@ -80,7 +69,7 @@ namespace MarriageWebWDB.Helper
 
         public bool CheckUpdatedUser(UserModel userModel)
         {
-           
+            userModel.Age = AgeCalculator.GetDifferenceInYears(userModel.Birthday, DateTime.Now);
             UserModelValidator validator = new UserModelValidator();
             ValidationResult result = validator.Validate(userModel);
 

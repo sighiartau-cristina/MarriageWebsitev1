@@ -85,7 +85,7 @@ namespace BusinessModel.Handlers
         public List<OrientationEntity> GetAll()
         {
             DbModel dbModel = new DbModel();
-            return dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
+            return dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
         }
 
         private bool CheckExisting(string name)

@@ -22,7 +22,7 @@ namespace BusinessModel.Handlers
                 return -1;
             }
 
-            if (!CheckExisting(entity))
+            if (!CheckExisting(entity.UserProfileId))
             {
                 var dataEntity = ConvertToDataEntity(entity);
                 if (dataEntity == null)
@@ -88,10 +88,45 @@ namespace BusinessModel.Handlers
             dbModel.SaveChanges();
         }
 
+        public List<AddressEntity> GetAllForUserProfile(int id)
+        {
+            DbModel dbModel = new DbModel();
+            var entityList = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).ToList();
+
+            if(entityList == null)
+            {
+                return null;
+            }
+
+            return entityList.Select(x => ConvertToEntity(x)).ToList();
+
+        }
+
+        public AddressEntity GetForUserProfile(int id)
+        {
+            DbModel dbModel = new DbModel();
+            var entity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).FirstOrDefault();
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return ConvertToEntity(entity);
+
+        }
+
         private bool CheckExisting(AddressEntity entity)
         {
             DbModel dbModel = new DbModel();
             var dataEntity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == entity.UserProfileId && e.ADDRESS_STREET==entity.AddressStreet && e.ADDRESS_STREETNO == entity.AddressStreetNo && e.ADDRESS_CITY == entity.AddressCity && e.ADDRESS_COUNTRY == entity.AddressCountry).FirstOrDefault();
+            return dataEntity != null;
+        }
+
+        private bool CheckExisting(int userProfileId)
+        {
+            DbModel dbModel = new DbModel();
+            var dataEntity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == userProfileId).FirstOrDefault();
             return dataEntity != null;
         }
 

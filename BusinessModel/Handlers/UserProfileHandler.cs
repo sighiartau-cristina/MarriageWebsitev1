@@ -80,10 +80,23 @@ namespace BusinessModel.Handlers
             dbModel.SaveChanges();
         }
 
-        public UserProfileEntity Get(int id)
+        public UserProfileEntity GetByUserId(int id)
         {
             DbModel dbModel = new DbModel();
             var entity = dbModel.USER_PROFILE.Where(e => e.USER_ID == id).FirstOrDefault();
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            return ConvertToEntity(entity);
+        }
+
+        public UserProfileEntity Get(int id)
+        {
+            DbModel dbModel = new DbModel();
+            var entity = dbModel.USER_PROFILE.Find(id);
 
             if (entity == null)
             {

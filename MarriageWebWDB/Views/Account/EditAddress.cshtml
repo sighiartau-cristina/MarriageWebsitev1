@@ -1,0 +1,56 @@
+﻿
+@{
+    Layout = null;
+    @model MarriageWebWDB.Models.AddressModel
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ChangeAddress</title>
+</head>
+<body>
+    <h1>Change Address:</h1>
+    <h1>@ViewBag.addrID</h1>
+    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
+        @using (Html.BeginForm("SaveEditedAddress", "Account", FormMethod.Post))
+        {
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Street name:</td>
+                        <td>@Html.TextBoxFor(m => m.Street)</td>
+                    </tr>
+                    <tr>
+                        <td>Street number:</td>
+                        <td>@Html.TextBoxFor(m => m.StreetNo)</td>
+                    </tr>
+                    <tr>
+                        <td>City:</td>
+                        <td>@Html.TextBoxFor(m => m.City)</td>
+                    </tr>
+                    <tr>
+                        <td>Country:</td>
+                        <td>@Html.TextBoxFor(m => m.Country)</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Save" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>@ViewBag.AddressMessage</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+    <div>
+        @using (Html.BeginForm("DeleteAddress", "Account", FormMethod.Post))
+        {
+            <input type="submit" value="Delete" />
+        }
+    </div>
+</body>
+</html>

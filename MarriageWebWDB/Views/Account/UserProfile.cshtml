@@ -12,6 +12,12 @@
 </head>
 <body>
     <h1>Pofile:</h1>
+    <div>
+        @using (Html.BeginForm("ChangePassword", "Account", FormMethod.Get))
+        {
+            <input type="submit" value="Change Password" />
+        }
+    </div>
     <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
         @using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post))
         {
@@ -78,5 +84,31 @@
             </table>
         }
     </div>
+    <h1>Address:</h1>
+    @if (@ViewBag.hasAddress != null)
+    {
+     if (!@ViewBag.hasAddress)
+    {
+        <div>
+            @using (Html.BeginForm("AddAddress", "Account", FormMethod.Get))
+            {
+                <input type="submit" value="Add Address" />
+            }
+        </div>
+    }
+     else
+    {   <p>@ViewBag.AddressId</p>
+        <p>@ViewBag.AddressStreet</p>
+        <p>@ViewBag.AddressStreetNo</p>
+        <p>@ViewBag.AddressCity</p>
+        <p>@ViewBag.AddressCountry</p>
+        <div>
+            @using (Html.BeginForm("EditAddress", "Account", FormMethod.Get))
+            {
+                <input type="submit" value="Edit" />
+            }
+        </div>
+    }
+    }
 </body>
 </html>

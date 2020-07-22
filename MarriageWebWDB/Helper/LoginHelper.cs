@@ -23,17 +23,17 @@ namespace MarriageWebWDB.Helper
             }
         }
 
-        public bool CheckLogin(LoginModel loginModel)
+        public int CheckLogin(LoginModel loginModel)
         {
             if(loginModel == null)
             {
-                return false;
+                return -1;
             }
 
             if(loginModel.UserName.IsNullOrWhiteSpace() || loginModel.UserPassword.IsNullOrWhiteSpace())
             {
                 InvalidLoginMessage = MessageConstants.MissingFieldsMessage;
-                return false;
+                return -1;
             }
 
             UserHandler userHandler = new UserHandler();
@@ -42,10 +42,10 @@ namespace MarriageWebWDB.Helper
             if(entity == null)
             {
                 InvalidLoginMessage = MessageConstants.InvalidLoginMessage;
-                return false;
+                return -1;
             }
 
-            return true;
+            return entity.UserId;
         }
 
         private UserEntity ToDataEntity(LoginModel model)

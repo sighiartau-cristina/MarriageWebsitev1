@@ -137,17 +137,25 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\AddressHelper.cs" />
     <Compile Include="Helper\LoginHelper.cs" />
+    <Compile Include="Helper\PasswordHelper.cs" />
     <Compile Include="Helper\RegisterHelper.cs" />
     <Compile Include="Helper\UserHelper.cs" />
+    <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\PasswordModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\AgeCalculator.cs" />
+    <Compile Include="Utils\DateFormatter.cs" />
     <Compile Include="Utils\ErrorMessageGenerator.cs" />
     <Compile Include="Utils\SelectListGenerator.cs" />
+    <Compile Include="Validators\AddressValidator.cs" />
+    <Compile Include="Validators\HelperMethods.cs" />
     <Compile Include="Validators\LoginValidator.cs" />
+    <Compile Include="Validators\PasswordValidator.cs" />
     <Compile Include="Validators\RegisterModelValidator.cs" />
     <Compile Include="Validators\UserModelValidator.cs" />
   </ItemGroup>
@@ -190,6 +198,9 @@
     <Content Include="Views\Login\Register.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\AddAddress.cshtml" />
+    <Content Include="Views\Account\EditAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
