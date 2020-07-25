@@ -1,126 +1,260 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class AddressHandler: IDataAccess<AddressEntity>
+    public class AddressHandler : IBusinessAccess<AddressEntity>
     {
-
-        public int Add(AddressEntity entity)
+        public ResponseEntity<AddressEntity> Add(AddressEntity entity)
         {
             DbModel dbModel = new DbModel();
+            ADDRESS dataEntity;
 
             if (entity == null)
             {
-                return -1;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            if (!CheckExisting(entity.UserProfileId))
+            try
             {
-                var dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
+                if (!CheckExisting(entity.UserProfileId))
                 {
-                    return -1;
+                    dataEntity = ConvertToDataEntity(entity);
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<AddressEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
                 }
+                else
+                {
+                    return new ResponseEntity<AddressEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.AddressExisting
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressGetError
+                };
+            }
 
+            try
+            {
                 dbModel.ADDRESSes.Add(dataEntity);
                 dbModel.SaveChanges();
-                return dataEntity.ADDRESS_ID;
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressInsertError
+                };
             }
 
-            return -1;
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
         }
 
-        public void Delete(int id)
+        public ResponseEntity<AddressEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.ADDRESSes.Find(id);
+            ADDRESS entity;
+
+            try
+            {
+                entity = dbModel.ADDRESSes.Find(id);
+
+                if (entity == null)
+                {
+                    return new ResponseEntity<AddressEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.AddressNotFound
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressGetError
+                };
+            }
+
+            try
+            {
+                dbModel.ADDRESSes.Remove(entity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressDeleteError
+                };
+            }
+
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true
+            };
+
+        }
+
+        public ResponseEntity<AddressEntity> Get(int id)
+        {
+            DbModel dbModel = new DbModel();
+            ADDRESS entity;
+
+            try
+            {
+                entity = dbModel.ADDRESSes.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = true
+                };
+            }
+
 
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressNotFound
+                };
             }
 
-            dbModel.ADDRESSes.Remove(entity);
-            dbModel.SaveChanges();
-        }
-
-        public AddressEntity Get(int id)
-        {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.ADDRESSes.Find(id);
-
-            if (entity == null)
+            return new ResponseEntity<AddressEntity>
             {
-                return null;
-            }
-
-            return ConvertToEntity(entity);
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public void Update(AddressEntity entity)
+        public ResponseEntity<AddressEntity> Update(AddressEntity entity)
         {
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.ADDRESSes.Find(entity.AddressId);
+            ADDRESS dataEntity;
 
-            if (dataEntity==null)
+            try
             {
-                return;
+                dataEntity = dbModel.ADDRESSes.Find(entity.AddressId);
+
+                if (dataEntity == null)
+                {
+                    return new ResponseEntity<AddressEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.AddressNotFound
+                    };
+                }
             }
-         
-            dataEntity.ADDRESS_STREET = entity.AddressStreet;
-            dataEntity.ADDRESS_STREETNO = entity.AddressStreetNo;
-            dataEntity.ADDRESS_CITY = entity.AddressCity;
-            dataEntity.ADDRESS_COUNTRY = entity.AddressCountry;
-            
-            dbModel.SaveChanges();
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressGetError
+                };
+            }
+
+            try
+            {
+                dataEntity.ADDRESS_STREET = entity.AddressStreet;
+                dataEntity.ADDRESS_STREETNO = entity.AddressStreetNo;
+                dataEntity.ADDRESS_CITY = entity.AddressCity;
+                dataEntity.ADDRESS_COUNTRY = entity.AddressCountry;
+
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressUpdateError
+                };
+            }
+
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public List<AddressEntity> GetAllForUserProfile(int id)
+        public ResponseEntity<AddressEntity> GetForUserProfile(int id)
         {
             DbModel dbModel = new DbModel();
-            var entityList = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).ToList();
+            ADDRESS entity;
 
-            if(entityList == null)
+            try
             {
-                return null;
+                entity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).FirstOrDefault();
             }
-
-            return entityList.Select(x => ConvertToEntity(x)).ToList();
-
-        }
-
-        public AddressEntity GetForUserProfile(int id)
-        {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).FirstOrDefault();
-
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressGetError
+                };
+            }
             if (entity == null)
             {
-                return null;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressNotFound
+                };
             }
 
-            return ConvertToEntity(entity);
-
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        private bool CheckExisting(AddressEntity entity)
+        public ResponseEntity<ICollection<AddressEntity>> GetAll()
         {
-            DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == entity.UserProfileId && e.ADDRESS_STREET==entity.AddressStreet && e.ADDRESS_STREETNO == entity.AddressStreetNo && e.ADDRESS_CITY == entity.AddressCity && e.ADDRESS_COUNTRY == entity.AddressCountry).FirstOrDefault();
-            return dataEntity != null;
+            throw new NotImplementedException();
         }
 
         private bool CheckExisting(int userProfileId)
@@ -139,7 +273,7 @@ namespace BusinessModel.Handlers
 
             return new ADDRESS
             {
-                USER_PROFILE_ID=addressEntity.UserProfileId,
+                USER_PROFILE_ID = addressEntity.UserProfileId,
                 ADDRESS_STREET = addressEntity.AddressStreet,
                 ADDRESS_STREETNO = addressEntity.AddressStreetNo,
                 ADDRESS_CITY = addressEntity.AddressCity,
@@ -147,7 +281,7 @@ namespace BusinessModel.Handlers
             };
         }
 
-        private AddressEntity ConvertToEntity (ADDRESS address)
+        private AddressEntity ConvertToEntity(ADDRESS address)
         {
             if (address == null)
             {

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessModel.Entities;
-using BusinessModel.Handlers;
-using DataAccess;
+﻿using DataAccess;
 
 namespace LinqLessons
 {
@@ -34,7 +26,7 @@ namespace LinqLessons
             //AddStatus("definitely not married");
             //DeleteStatus(2);
 
-            AddUser("username", "email", "pass");
+            //AddUser("username", "email", "pass");
             //AddUser("username2", "email2", "veryefficientpassword");
             //UpdateUser(2, "blahblah", "email2", "veryefficientpassword");
             //DeleteUser(2);
@@ -61,7 +53,7 @@ namespace LinqLessons
 
         }
 
-        static void AddGender(string name)
+        /*static void AddGender(string name)
         {
             GenderHandler genderHandler = new GenderHandler();
             genderHandler.Add(new GenderEntity { GenderName = name });
@@ -230,6 +222,6 @@ namespace LinqLessons
         {
             UserHandler userHandler = new UserHandler();
             Console.WriteLine(userHandler.Get(id).UserUsername);
-        }
+        }*/
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 
 namespace MarriageWebWDB.Utils
 {
@@ -13,8 +9,10 @@ namespace MarriageWebWDB.Utils
             string errorMessage = "";
             foreach (var failure in result.Errors)
             {
-                errorMessage += failure.ErrorMessage + '\n';
+                errorMessage += failure.ErrorMessage;
             }
+
+            //var ret = errorMessage.Replace("\n", "<br/>");
             return errorMessage;
         }
     }

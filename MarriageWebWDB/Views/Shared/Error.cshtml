@@ -1,13 +1,18 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
-</head>
-<body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>An error occurred while processing your request.</h2>
-    </hgroup>
-</body>
-</html>
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    
+}
+    <div style=" padding: 20px; color:red">
+        <h3>
+            ERROR
+        </h3>
+        <h4>
+            An error occured.
+        </h4>
+        <h4>
+            Cause: @ViewContext.Controller.ViewBag.Error
+        </h4>
+        <h6>@Html.ActionLink("Go Back To Home Page", "Index", "Home")</h6>
+        <br />
+        <br />
+    </div>

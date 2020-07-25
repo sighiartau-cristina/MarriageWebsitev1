@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web;
-using FluentValidation;
+﻿using FluentValidation;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Models;
 
 namespace MarriageWebWDB.Validators
 {
-    public class AddressValidator : AbstractValidator<AddressModel> 
+    public class AddressValidator : AbstractValidator<AddressModel>
     {
         public AddressValidator()
         {

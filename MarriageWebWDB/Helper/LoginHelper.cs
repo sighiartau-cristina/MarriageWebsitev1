@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI.WebControls;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
@@ -13,7 +11,7 @@ namespace MarriageWebWDB.Helper
 {
     public class LoginHelper
     {
-        public string InvalidLoginMessage { get; private set; }
+         public string InvalidLoginMessage { get; private set; }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
         {
@@ -23,38 +21,44 @@ namespace MarriageWebWDB.Helper
             }
         }
 
-        public int CheckLogin(LoginModel loginModel)
+
+        public ResponseEntity<UserEntity> CheckLogin(LoginModel loginModel)
         {
-            if(loginModel == null)
+            if (loginModel == null)
             {
-                return -1;
+                //InvalidLoginMessage = InvalidLoginMessage;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = MessageConstants.InvalidLoginMessage
+                };
             }
 
-            if(loginModel.UserName.IsNullOrWhiteSpace() || loginModel.UserPassword.IsNullOrWhiteSpace())
+            if (loginModel.UserName.IsNullOrWhiteSpace() || loginModel.UserPassword.IsNullOrWhiteSpace())
             {
-                InvalidLoginMessage = MessageConstants.MissingFieldsMessage;
-                return -1;
+                //InvalidLoginMessage = MessageConstants.MissingFieldsMessage;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = MessageConstants.MissingFieldsMessage
+                };
             }
 
             UserHandler userHandler = new UserHandler();
             var entity = userHandler.CheckUsernameAndPassword(loginModel.UserName, loginModel.UserPassword);
-            
-            if(entity == null)
+
+            if (!entity.CompletedRequest)
             {
-                InvalidLoginMessage = MessageConstants.InvalidLoginMessage;
-                return -1;
+                //InvalidLoginMessage = MessageConstants.InvalidLoginMessage;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = entity.ErrorMessage
+                };
             }
 
-            return entity.UserId;
+            return entity;
         }
 
-        private UserEntity ToDataEntity(LoginModel model)
-        {
-            return new UserEntity
-            {
-                UserUsername = model.UserName,
-                UserPassword = model.UserPassword
-            };
-        }
     }
 }

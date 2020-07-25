@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Drawing;
-using System.Linq;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Mvc;
-using System.Web.UI;
-using System.Web.WebPages;
+using BusinessModel.Constants;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
-using FluentValidation.Results;
-using MarriageWebWDB.Constants;
 using MarriageWebWDB.Models;
 using MarriageWebWDB.Utils;
 using MarriageWebWDB.Validators;
-using Microsoft.Ajax.Utilities;
 
 namespace MarriageWebWDB.Helper
 {
@@ -22,7 +14,7 @@ namespace MarriageWebWDB.Helper
     {
         public string InvalidRegisterMessage { get; private set; }
 
-        public RegisterModel GetRegisterModel(RegisterModel registerModel=null)
+        public RegisterModel GetRegisterModel(RegisterModel registerModel = null)
         {
             if (registerModel == null)
             {
@@ -64,49 +56,56 @@ namespace MarriageWebWDB.Helper
             return true;
         }
 
-        public bool AddUser(RegisterModel registerModel)
+        public ResponseEntity<UserEntity> AddUser(RegisterModel registerModel)
         {
-            if(registerModel == null)
-            {
-                //InvalidRegisterMessage += MessageConstants.InvalidRegisterMessage;
-                return false;
-            }
 
             if (!CheckRegister(registerModel))
             {
-                //InvalidRegisterMessage = MessageConstants.InvalidRegisterMessage;
-                return false;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = InvalidRegisterMessage
+                }; 
             }
 
-            UserHandler userHandler = new UserHandler();
             var dataEntity = ToDataEntity(registerModel);
 
             if (dataEntity == null)
             {
-                //InvalidRegisterMessage = MessageConstants.InvalidRegisterMessage;
-                return false;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            int userId = userHandler.Add(dataEntity);
+            ResponseEntity<UserEntity> responseUser = new UserHandler().Add(dataEntity);
 
-            if (userId == -1)
+            if (responseUser.CompletedRequest)
             {
-                //InvalidRegisterMessage = MessageConstants.InvalidRegisterMessage;
-                return false;
+                var userProfile = ToDataEntity(registerModel, responseUser.Entity.UserId);
+                ResponseEntity<UserProfileEntity> responseUserProfile = new UserProfileHandler().Add(userProfile);
+
+                if (!responseUserProfile.CompletedRequest)
+                {
+                    InvalidRegisterMessage = responseUserProfile.ErrorMessage;
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.UserProfileInsertError
+                    };
+                }
             }
-
-            UserProfileHandler userProfileHandler = new UserProfileHandler();
-
-            var userProfile = ToDataEntity(registerModel, userId);
-            int userProfileId = userProfileHandler.Add(userProfile);
-
-            if (userProfileId == -1)
+            else
             {
-                //InvalidRegisterMessage = MessageConstants.InvalidProfileRegisterMessage;
-                return false;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = responseUser.ErrorMessage
+                };
             }
 
-            return true;
+            return responseUser;
         }
 
         private UserEntity ToDataEntity(RegisterModel model)

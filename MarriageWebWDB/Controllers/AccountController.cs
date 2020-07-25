@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Helper;
@@ -38,22 +35,29 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            //int userProfileId = int.Parse(Session["userProfileId"].ToString());
-            var userProfileId = this.Session["userProfileId"] as int?;
-            var address = new AddressHandler().GetForUserProfile((int) userProfileId);
- 
-            if (address == null)
+            var userProfileId = this.Session["userProfileId"];
+            var address = new AddressHandler().GetForUserProfile((int)userProfileId);
+
+            if (address.CompletedRequest)
             {
-                ViewBag.hasAddress = false;
+                if (address.Entity == null)
+                {
+                    ViewBag.hasAddress = false;
+                }
+                else
+                {
+                    ViewBag.hasAddress = true;
+                    ViewBag.AddressStreet = address.Entity.AddressStreet;
+                    ViewBag.AddressStreetNo = address.Entity.AddressStreetNo;
+                    ViewBag.AddressCity = address.Entity.AddressCity;
+                    ViewBag.AddressCountry = address.Entity.AddressCountry;
+                }
+
             }
             else
             {
-                ViewBag.hasAddress = true;
-                ViewBag.AddressStreet = address.AddressStreet;
-                ViewBag.AddressStreetNo = address.AddressStreetNo;
-                ViewBag.AddressCity = address.AddressCity;
-                ViewBag.AddressCountry = address.AddressCountry;
-                ViewBag.AddressId = address.AddressId;
+                TempData["error"] = address.ErrorMessage;
+                return RedirectToAction("Index", "Error");
             }
 
             UserHelper userHelper = new UserHelper();
@@ -73,25 +77,67 @@ namespace MarriageWebWDB.Controllers
             }
 
             UserHelper userHelper = new UserHelper();
-     
-            if (!userHelper.CheckUpdatedUser(userModel))
+            var userProfileId = this.Session["userProfileId"];
+            var userProfile = new UserProfileHandler().Get((int)userProfileId);
+
+            if (userProfile.CompletedRequest)
             {
-                ViewBag.UpdateUserMessage = userHelper.InvalidInfoMessage;
-                var newUserModel = userHelper.GetUserModel(userModel);
-                return View("UserProfile", newUserModel);
+                if (!userHelper.CheckUpdatedUser(userModel))
+                {
+                    ViewBag.UpdateUserMessage = userHelper.InvalidInfoMessage;
+                    var newUserModel = userHelper.GetUserModel(userModel);
+                    var address = new AddressHandler().GetForUserProfile(userProfile.Entity.UserProfileId);
+
+                    if (address.CompletedRequest)
+                    {
+                        if (address.Entity == null)
+                        {
+                            ViewBag.hasAddress = false;
+                        }
+                        else
+                        {
+                            ViewBag.hasAddress = true;
+                            ViewBag.AddressStreet = address.Entity.AddressStreet;
+                            ViewBag.AddressStreetNo = address.Entity.AddressStreetNo;
+                            ViewBag.AddressCity = address.Entity.AddressCity;
+                            ViewBag.AddressCountry = address.Entity.AddressCountry;
+                        }
+
+                    }
+                    else
+                    {
+                        TempData["error"] = address.ErrorMessage;
+                        return RedirectToAction("Index", "Error");
+                    }
+
+                    return View("UserProfile", newUserModel);
+                }
+            }
+            else
+            {
+                return RedirectToAction("Index", "Error", userProfile.ErrorMessage);
             }
 
-          // HttpContext context = 
-            //string username = HttpContext.Session["userToken"].ToString();
-
-            UserEntity user = new UserHandler().Get(int.Parse(Session["userId"].ToString()));
-            UserProfileEntity userProfile = new UserProfileHandler().Get(int.Parse(Session["userProfileId"].ToString()));
+            var user = new UserHandler().Get((int)(Session["userId"]));
 
             UserHandler userHandler = new UserHandler();
             UserProfileHandler userProfileHandler = new UserProfileHandler();
 
-            userProfileHandler.Update(userHelper.ToDataEntity(userModel, userProfile));
-            userHandler.Update(userHelper.ToDataEntity(userModel, user));
+            ResponseEntity<UserProfileEntity> resposeUserProfile =  userProfileHandler.Update(userHelper.ToDataEntity(userModel, userProfile.Entity));
+            
+            if (!resposeUserProfile.CompletedRequest)
+            {
+                TempData["error"] = resposeUserProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            ResponseEntity<UserEntity> resposeUser = userHandler.Update(userHelper.ToDataEntity(userModel, user.Entity));
+
+            if (!resposeUser.CompletedRequest)
+            {
+                TempData["error"] = resposeUser.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
 
             Session["userToken"] = userModel.UserName;
 
@@ -122,13 +168,21 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            //string username = HttpContext.Session["userToken"].ToString();
-
             PasswordHelper passwordHelper = new PasswordHelper();
-            if(!passwordHelper.UpdatePassword(int.Parse(Session["userId"].ToString()), passwordModel))
+            ResponseEntity<UserEntity> response = passwordHelper.UpdatePassword((int)Session["userId"], passwordModel);
+
+            if (!response.CompletedRequest)
             {
-                ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
-                return View("ChangePassword");
+                if (!string.IsNullOrEmpty(passwordHelper.UpdatePasswordMessage))
+                {
+                    ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
+                    return View("ChangePassword");
+                }
+                else
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
             }
 
             return RedirectToAction("Index", "Account");
@@ -148,6 +202,7 @@ namespace MarriageWebWDB.Controllers
             return View();
         }
 
+        [HandleError]
         public ActionResult SaveAddress(AddressModel addressModel)
         {
             try
@@ -164,15 +219,22 @@ namespace MarriageWebWDB.Controllers
             if (!addressHelper.CheckAddress(addressModel))
             {
                 ViewBag.AddressMessage = addressHelper.AddressMessage;
-                //var newAddressModel = addressHelper.GetAddressModel(id);
                 return View("AddAddress");
             }
 
-            
-            if(!addressHelper.AddAddress((int)Session["userProfileId"], addressModel))
+            var response = addressHelper.AddAddress((int)Session["userProfileId"], addressModel);
+            if (!response.CompletedRequest)
             {
-                ViewBag.AddressMessage = addressHelper.AddressMessage;
-                return View("AddAddress");
+                if (!string.IsNullOrEmpty(addressHelper.AddressMessage))
+                {
+                    ViewBag.AddressMessage = addressHelper.AddressMessage;
+                    return View("AddAddress");
+                }
+                else
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
             }
 
             return RedirectToAction("Index", "Account");
@@ -190,10 +252,20 @@ namespace MarriageWebWDB.Controllers
             }
 
             AddressHelper addressHelper = new AddressHelper();
-            TempData["addressId"] = new AddressHandler().GetForUserProfile((int)Session["userProfileId"]).AddressId;
-            var model = addressHelper.GetAddressModel((int)TempData["addressId"]);
+            AddressModel model;
+
+            var response = new AddressHandler().GetForUserProfile((int)Session["userProfileId"]);
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            TempData["addressId"] = response.Entity.AddressId;
+            model = addressHelper.GetAddressModel(response.Entity.AddressId);
             TempData.Keep();
             return View("EditAddress", model);
+
         }
 
         public ActionResult SaveEditedAddress(AddressModel addressModel)
@@ -208,7 +280,7 @@ namespace MarriageWebWDB.Controllers
             }
 
             AddressHelper addressHelper = new AddressHelper();
-            int id = (int) TempData["addressId"];
+            int id = (int)TempData["addressId"];
             TempData.Keep();
 
             if (!addressHelper.CheckAddress(addressModel))
@@ -219,8 +291,16 @@ namespace MarriageWebWDB.Controllers
             }
 
             AddressHandler addressHandler = new AddressHandler();
-            var entity = addressHelper.ToDataEntity(id, int.Parse(Session["userProfileId"].ToString()), addressModel);
-            addressHandler.Update(entity);
+            var entity = addressHelper.ToDataEntity(id, (int)Session["userProfileId"], addressModel);
+
+            ResponseEntity<AddressEntity> response = addressHandler.Update(entity);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
             return RedirectToAction("Index", "Account");
         }
 
@@ -236,8 +316,17 @@ namespace MarriageWebWDB.Controllers
             }
 
             AddressHandler addressHandler = new AddressHandler();
-            int id = (int) TempData["addressId"];
-            addressHandler.Delete(id);
+            int id = (int)TempData["addressId"];
+
+            ResponseEntity<AddressEntity> response = addressHandler.Delete(id);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+
             TempData.Keep();
             return RedirectToAction("Index", "Account");
         }

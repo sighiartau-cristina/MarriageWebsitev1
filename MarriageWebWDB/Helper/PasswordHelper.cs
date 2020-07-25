@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
@@ -10,39 +7,57 @@ using MarriageWebWDB.Utils;
 using MarriageWebWDB.Validators;
 
 namespace MarriageWebWDB.Helper
-{ 
+{
     public class PasswordHelper
     {
         public string UpdatePasswordMessage { get; private set; }
-        public bool UpdatePassword(int userId, PasswordModel passwordModel)
+
+        public ResponseEntity<UserEntity> UpdatePassword(int userId, PasswordModel passwordModel)
         {
             PasswordValidator validator = new PasswordValidator();
             var result = validator.Validate(passwordModel);
 
             if (!result.IsValid)
             {
-                UpdatePasswordMessage = ErrorMessageGenerator.ComposeErrorMessage(result);
-                return false;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorMessageGenerator.ComposeErrorMessage(result)
+                };
             }
 
             UserHandler userHandler = new UserHandler();
-            UserEntity user = userHandler.Get(userId);
 
-            if (user == null)
+            ResponseEntity<UserEntity> responseUser = userHandler.Get(userId);
+
+            if (!responseUser.CompletedRequest)
             {
-                return false;
+                return responseUser;
             }
 
-            if (!passwordModel.OldPassword.Equals(user.UserPassword))
+            if (!passwordModel.OldPassword.Equals(responseUser.Entity.UserPassword))
             {
                 UpdatePasswordMessage = MessageConstants.IncorrectPasswordMessage;
-                return false;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = MessageConstants.IncorrectPasswordMessage
+                };
             }
 
-            user.UserPassword = passwordModel.NewPassword;
-            userHandler.Update(user);
+            responseUser.Entity.UserPassword = passwordModel.NewPassword;
+            responseUser = userHandler.Update(responseUser.Entity);
 
-            return true;
+            if (!responseUser.CompletedRequest)
+            {
+                return responseUser;
+            }
+
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = responseUser.Entity
+            };
         }
 
 

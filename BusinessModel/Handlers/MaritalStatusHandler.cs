@@ -1,96 +1,243 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess;
-using BusinessModel.Entities;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
-using System.Data.Entity.Migrations;
+using BusinessModel.Entities;
+using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class MaritalStatusHandler : IDataAccess<MaritalStatusEntity>
+    public class MaritalStatusHandler : IBusinessAccess<MaritalStatusEntity>
     {
 
-        public int Add(MaritalStatusEntity entity)
+
+        public ResponseEntity<MaritalStatusEntity> Add(MaritalStatusEntity entity)
         {
             DbModel dbModel = new DbModel();
+            MARITAL_STATUS dataEntity;
 
             if (entity == null)
             {
-                return -1;
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            if (!CheckExisting(entity.MaritalStatusName))
+            try
             {
-                var dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
+                if (!CheckExisting(entity.MaritalStatusName))
                 {
-                    return -1;
+                    dataEntity = ConvertToDataEntity(entity);
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<MaritalStatusEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
                 }
+                else
+                {
+                    return new ResponseEntity<MaritalStatusEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.MaritalStatusExisting
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusGetError
+                };
+            }
 
+            try
+            {
                 dbModel.MARITAL_STATUS.Add(dataEntity);
                 dbModel.SaveChanges();
-                return dataEntity.MRTSTS_ID;
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusInsertError
+                };
             }
 
-            return -1;
+            return new ResponseEntity<MaritalStatusEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
         }
 
-        public void Delete(int id)
+        public ResponseEntity<MaritalStatusEntity> Delete(int id)
         {
-
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.MARITAL_STATUS.Find(id);
+            MARITAL_STATUS dataEntity;
+            try
+            {
+                dataEntity = dbModel.MARITAL_STATUS.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusGetError
+                };
+            }
 
             if (dataEntity == null)
             {
-                return;
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusNotFound
+                };
             }
 
-            dbModel.MARITAL_STATUS.Remove(dataEntity);
-            dbModel.SaveChanges();
+            try
+            {
+                dbModel.MARITAL_STATUS.Remove(dataEntity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusDeleteError
+                };
+            }
+
+            return new ResponseEntity<MaritalStatusEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public void Update(MaritalStatusEntity entity)
+        public ResponseEntity<MaritalStatusEntity> Update(MaritalStatusEntity entity)
         {
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.MARITAL_STATUS.Find(entity.MaritalStatusId);
+            MARITAL_STATUS dataEntity;
+
+            try
+            {
+                dataEntity = dbModel.MARITAL_STATUS.Find(entity.MaritalStatusId);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusGetError
+                };
+            }
 
             if (dataEntity == null)
             {
-                return;
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusNotFound
+                };
             }
 
-            dataEntity.MRTSTS_NAME = entity.MaritalStatusName;
-            dbModel.SaveChanges();
+            try
+            {
+                dataEntity.MRTSTS_NAME = entity.MaritalStatusName;
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusUpdateError
+                };
+            }
+
+            return new ResponseEntity<MaritalStatusEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public MaritalStatusEntity Get(int id)
+        public ResponseEntity<MaritalStatusEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.MARITAL_STATUS.Find(id);
+            MARITAL_STATUS entity;
+            try
+            {
+                entity = dbModel.MARITAL_STATUS.Find(id);
 
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusGetError
+                };
+            }
             if (entity == null)
             {
-                return null;
+                return new ResponseEntity<MaritalStatusEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusNotFound
+                };
             }
 
-            return ConvertToEntity(entity);
+            return new ResponseEntity<MaritalStatusEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public List<MaritalStatusEntity> GetAll()
+        public ResponseEntity<ICollection<MaritalStatusEntity>> GetAll()
         {
             DbModel dbModel = new DbModel();
-            return dbModel.MARITAL_STATUS.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
-        }
+            ICollection<MaritalStatusEntity> list;
 
+            try
+            {
+                list = dbModel.MARITAL_STATUS.ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<MaritalStatusEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MaritalStatusGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<MaritalStatusEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
+        }
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();

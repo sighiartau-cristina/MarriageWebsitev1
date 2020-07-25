@@ -1,94 +1,241 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class GenderHandler: IDataAccess<GenderEntity>
+    public class GenderHandler : IBusinessAccess<GenderEntity>
     {
 
-        public int Add(GenderEntity entity)
+        public ResponseEntity<GenderEntity> Add(GenderEntity entity)
         {
             DbModel dbModel = new DbModel();
+            GENDER dataEntity;
 
             if (entity == null)
             {
-                return -1;
-            }
-            
-            if (!CheckExisting(entity.GenderName))
-            {
-                var dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
+                return new ResponseEntity<GenderEntity>
                 {
-                    return -1;
-                }
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
+            }
 
+            try
+            {
+                if (!CheckExisting(entity.GenderName))
+                {
+                    dataEntity = ConvertToDataEntity(entity);
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<GenderEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseEntity<GenderEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.GenderExisting
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderGetError
+                };
+            }
+
+            try
+            {
                 dbModel.GENDERs.Add(dataEntity);
                 dbModel.SaveChanges();
-                return dataEntity.GENDER_ID;
             }
-            
-            return -1;
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderInsertError
+                };
+            }
+
+            return new ResponseEntity<GenderEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
         }
 
-        public void Delete(int id)
+        public ResponseEntity<GenderEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.GENDERs.Find(id);
+            GENDER dataEntity;
+            try
+            {
+                dataEntity = dbModel.GENDERs.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderGetError
+                };
+            }
 
             if (dataEntity == null)
             {
-                return;
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderNotFound
+                };
             }
 
-            dbModel.GENDERs.Remove(dataEntity);
-            dbModel.SaveChanges();
+            try
+            {
+                dbModel.GENDERs.Remove(dataEntity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderDeleteError
+                };
+            }
+
+            return new ResponseEntity<GenderEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public void Update(GenderEntity entity)
+        public ResponseEntity<GenderEntity> Update(GenderEntity entity)
         {
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.GENDERs.Find(entity.GenderId);
+            GENDER dataEntity;
 
-            if (dataEntity==null)
+            try
             {
-                return;
+                dataEntity = dbModel.GENDERs.Find(entity.GenderId);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderGetError
+                };
             }
 
-            dataEntity.GENDER_NAME = entity.GenderName;
-            dbModel.SaveChanges();
+            if (dataEntity == null)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderNotFound
+                };
+            }
+
+            try
+            {
+                dataEntity.GENDER_NAME = entity.GenderName;
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderUpdateError
+                };
+            }
+
+            return new ResponseEntity<GenderEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public GenderEntity Get(int id)
+        public ResponseEntity<GenderEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.GENDERs.Find(id);
+            GENDER entity;
+            try
+            {
+                entity = dbModel.GENDERs.Find(id);
 
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderGetError
+                };
+            }
             if (entity == null)
             {
-                return null;
+                return new ResponseEntity<GenderEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderNotFound
+                };
             }
 
-            return ConvertToEntity(entity);
+            return new ResponseEntity<GenderEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public List<GenderEntity> GetAll()
+        public ResponseEntity<ICollection<GenderEntity>> GetAll()
         {
             DbModel dbModel = new DbModel();
-            return dbModel.GENDERs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
+            ICollection<GenderEntity> list;
+
+            try
+            {
+                list = dbModel.GENDERs.ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<GenderEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.GenderGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<GenderEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
         }
 
         private bool CheckExisting(string name)

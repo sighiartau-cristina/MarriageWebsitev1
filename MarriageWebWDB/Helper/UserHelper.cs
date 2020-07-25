@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Helpers;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using FluentValidation.Results;
-using MarriageWebWDB.Constants;
 using MarriageWebWDB.Models;
 using MarriageWebWDB.Utils;
 using MarriageWebWDB.Validators;
-using Microsoft.Ajax.Utilities;
 
 namespace MarriageWebWDB.Helper
 {
@@ -28,11 +22,18 @@ namespace MarriageWebWDB.Helper
             }
 
             int id = int.Parse(HttpContext.Current.Session["userId"].ToString());
-            UserEntity user = new UserHandler().Get(id);
-            UserProfileEntity userProfile = new UserProfileHandler().GetByUserId(user.UserId);
-            //TODO check user and userProfile
+            ResponseEntity<UserEntity> responseUserEntity = new UserHandler().Get(id);
 
-            PopulateModel(userModel, user, userProfile);
+            if (responseUserEntity.CompletedRequest)
+            {
+                UserEntity user = responseUserEntity.Entity;
+                ResponseEntity<UserProfileEntity> responseUserProfileEntity = new UserProfileHandler().GetByUserId(user.UserId);
+                if (responseUserProfileEntity.CompletedRequest)
+                {
+                    UserProfileEntity userProfile = responseUserProfileEntity.Entity;
+                    PopulateModel(userModel, user, userProfile);
+                }
+            }
 
             return userModel;
         }
@@ -78,25 +79,6 @@ namespace MarriageWebWDB.Helper
                 InvalidInfoMessage = ErrorMessageGenerator.ComposeErrorMessage(result);
                 return false;
             }
-
-            UserHandler userHandler = new UserHandler();
-
-            var entity = userHandler.GetByUsernameOrEmail(userModel.UserName, userModel.Email);
-
-            /*if (entity != null)
-            {
-                if (!entity.UserEmail.Equals(userModel.Email))
-                {
-                    InvalidInfoMessage = MessageConstants.ExistingEmailMessage;
-                    return false;
-                }
-
-                if(!entity.UserUsername.Equals(userModel.UserName))
-                {
-                    InvalidInfoMessage = MessageConstants.ExistingUsernameMessage;
-                    return false;
-                }
-            }*/
 
             return true;
         }

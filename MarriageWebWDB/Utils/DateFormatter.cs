@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace MarriageWebWDB.Utils
 {
@@ -9,7 +6,7 @@ namespace MarriageWebWDB.Utils
     {
         public static string GetDate(DateTime date)
         {
-     
+
             string result = date.Year + "-";
             result += date.Month < 10 ? "0" + date.Month.ToString() : date.Month.ToString();
             result += "-";

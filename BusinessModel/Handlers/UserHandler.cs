@@ -1,151 +1,324 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessModel.Entities;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
+using BusinessModel.Entities;
 using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class UserHandler: IDataAccess<UserEntity>
+    public class UserHandler : IBusinessAccess<UserEntity>
     {
 
-        public int Add(UserEntity entity)
+        public ResponseEntity<UserEntity> Add(UserEntity entity)
         {
             DbModel dbModel = new DbModel();
+            USER dataEntity = null;
 
             if (entity == null)
             {
-                return -1;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            if (dbModel.USERS.Find(entity.UserId) == null)
+            try
             {
-                var dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
+                if (dbModel.USERS.Find(entity.UserId) == null)
                 {
-                    return -1;
-                }
+                    dataEntity = ConvertToDataEntity(entity);
 
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<UserEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
+            }
+
+            try
+            {
                 dbModel.USERS.Add(dataEntity);
                 dbModel.SaveChanges();
-                return dataEntity.USER_ID;
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserInsertError
+                };
             }
 
-            return -1;
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
         }
 
-        public void Delete(int id)
+        public ResponseEntity<UserEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.Find(id);
+            USER entity = null;
+
+            try
+            {
+                entity = dbModel.USERS.Find(id);
+                if (entity == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.NullEntityError
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
+            }
+
+            try
+            {
+                dbModel.USERS.Remove(entity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserDeleteError
+                };
+            }
+
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true
+            };
+        }
+
+        public ResponseEntity<UserEntity> Update(UserEntity entity)
+        {
 
             if (entity == null)
             {
-                return;
-            }
-
-            dbModel.USERS.Remove(entity);
-            dbModel.SaveChanges();
-        }
-
-        public void Update(UserEntity entity)
-        {
-
-            if (entity == null)
-            {
-                return;
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.USERS.Find(entity.UserId);
+            USER dataEntity = null;
 
-            if (dataEntity == null)
+            try
             {
-                return;
+                dataEntity = dbModel.USERS.Find(entity.UserId);
+                if (dataEntity == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.UserNotFound
+                    };
+                }
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
             }
 
-            if (!dataEntity.USER_EMAIL.Equals(entity.UserEmail) && CheckExistingEmail(entity.UserEmail))
+            try
             {
-                return;
+                if (!dataEntity.USER_EMAIL.Equals(entity.UserEmail) && CheckExistingEmail(entity.UserEmail))
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.ExistingEmailError
+                    };
+                }
+
+                if (!dataEntity.USER_USERNAME.Equals(entity.UserUsername) && CheckExistingUsername(entity.UserUsername))
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.ExistingUsernameError
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
             }
 
-            if (!dataEntity.USER_USERNAME.Equals(entity.UserUsername) && CheckExistingUsername(entity.UserUsername))
+            try
             {
-                return;
+                dataEntity.USER_USERNAME = entity.UserUsername;
+                dataEntity.USER_EMAIL = entity.UserEmail;
+                dataEntity.USER_PASSWORD = entity.UserPassword;
+
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserUpdateError
+                };
             }
 
-            dataEntity.USER_USERNAME = entity.UserUsername;
-            dataEntity.USER_EMAIL = entity.UserEmail;
-            dataEntity.USER_PASSWORD = entity.UserPassword;
-
-            dbModel.SaveChanges();
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public UserEntity Get(int id)
+        public ResponseEntity<UserEntity> GetByUsername(string username)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.Find(id);
+            USER entity = null;
 
-            if (entity == null)
+            try
             {
-                return null;
+                entity = dbModel.USERS.Where(u => u.USER_USERNAME == username).FirstOrDefault();
+
+                if (entity == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = true
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
             }
 
-            return ConvertToEntity(entity);
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public UserEntity CheckUsernameAndPassword(string username, string password)
+        public ResponseEntity<UserEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.FirstOrDefault( e=> e.USER_USERNAME==username && e.USER_PASSWORD==password);
+            USER entity = null;
 
-            if(entity == null)
+            try
             {
-                return null;
+                entity = dbModel.USERS.Find(id);
+
+                if (entity == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = true
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
             }
 
-            return ConvertToEntity(entity);
-
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public UserEntity GetByUsername(string username)
+        public ResponseEntity<UserEntity> CheckUsernameAndPassword(string username, string password)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username);
+            USER entity = null;
 
-            if (entity == null)
+            try
             {
-                return null;
+                entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username && e.USER_PASSWORD == password);
+
+                if (entity == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.InvalidCredentials
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserGetError
+                };
             }
 
-            return ConvertToEntity(entity);
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public UserEntity GetByUsernameOrEmail(string username, string email)
+        public ResponseEntity<ICollection<UserEntity>> GetAll()
         {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username || e.USER_EMAIL == email);
-
-            if (entity == null)
-            {
-                return null;
-            }
-
-            return ConvertToEntity(entity);
+            throw new NotImplementedException();
         }
 
-        private bool CheckExistingUsername(string username)
+        public bool CheckExistingUsername(string username)
         {
             DbModel dbModel = new DbModel();
             var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username);
             return entity != null;
         }
 
-        private bool CheckExistingEmail(string email)
+        public bool CheckExistingEmail(string email)
         {
             DbModel dbModel = new DbModel();
             var entity = dbModel.USERS.Where(e => e.USER_EMAIL == email).FirstOrDefault();
@@ -170,7 +343,7 @@ namespace BusinessModel.Handlers
 
         private UserEntity ConvertToEntity(USER user)
         {
-            if(user == null)
+            if (user == null)
             {
                 return null;
             }

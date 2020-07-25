@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using FluentValidation;
+using MarriageWebWDB.Constants;
+using MarriageWebWDB.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace MarriageWebWDB.Validators
 {
-    public class LoginValidator
+    public class LoginValidator: AbstractValidator<LoginModel>
     {
+        public LoginValidator()
+    {
+    }
     }
 
 }

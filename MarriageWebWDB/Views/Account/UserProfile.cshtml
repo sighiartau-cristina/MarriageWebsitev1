@@ -11,7 +11,7 @@
     <title>UserProfile</title>
 </head>
 <body>
-    <h1>Pofile:</h1>
+    <h1>Profile:</h1>
     <div>
         @using (Html.BeginForm("ChangePassword", "Account", FormMethod.Get))
         {
@@ -83,25 +83,22 @@
                 </tbody>
             </table>
         }
-    </div>
-    <h1>Address:</h1>
-    @if (@ViewBag.hasAddress != null)
-    {
-     if (!@ViewBag.hasAddress)
-    {
-        <div>
-            @using (Html.BeginForm("AddAddress", "Account", FormMethod.Get))
-            {
-                <input type="submit" value="Add Address" />
-            }
-        </div>
-    }
-     else
-    {   <p>@ViewBag.AddressId</p>
-        <p>@ViewBag.AddressStreet</p>
-        <p>@ViewBag.AddressStreetNo</p>
-        <p>@ViewBag.AddressCity</p>
-        <p>@ViewBag.AddressCountry</p>
+        <h1>Address:</h1>
+        @if (!@ViewBag.hasAddress)
+        {
+            <div>
+                @using (Html.BeginForm("AddAddress", "Account", FormMethod.Get))
+                {
+                    <input type="submit" value="Add Address" />
+                }
+            </div>
+        }
+        else
+        { 
+        <p>Street name: @ViewBag.AddressStreet</p>
+        <p>Street number: @ViewBag.AddressStreetNo</p>
+        <p>City: @ViewBag.AddressCity</p>
+        <p>Country: @ViewBag.AddressCountry</p>
         <div>
             @using (Html.BeginForm("EditAddress", "Account", FormMethod.Get))
             {
@@ -109,6 +106,7 @@
             }
         </div>
     }
-    }
+    </div>
+    
 </body>
 </html>

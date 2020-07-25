@@ -1,93 +1,242 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess;
-using BusinessModel.Entities;
-using System.Data.Entity.Migrations;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
+using BusinessModel.Entities;
+using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class OrientationHandler: IDataAccess<OrientationEntity>
+    public class OrientationHandler : IBusinessAccess<OrientationEntity>
     {
-        public int Add(OrientationEntity orientationEntity)
+
+        public ResponseEntity<OrientationEntity> Add(OrientationEntity entity)
         {
             DbModel dbModel = new DbModel();
+            ORIENTATION dataEntity;
 
-            if (orientationEntity == null)
-            {
-                return -1;
-            }
-
-            if (!CheckExisting(orientationEntity.OrientationName))
-            {
-                var dataEntity = ConvertToDataEntity(orientationEntity);
-                if (dataEntity == null)
-                {
-                    return -1;
-                }
-
-                dbModel.ORIENTATIONs.Add(dataEntity);
-                dbModel.SaveChanges();
-                return dataEntity.ORIENT_ID;
-            }
-
-            return -1;
-        }
-
-        public void Delete(int id)
-        {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.ORIENTATIONs.Find(id);
-
-            if(entity == null)
-            {
-                return;
-            }
-
-            dbModel.ORIENTATIONs.Remove(entity);
-            dbModel.SaveChanges();
-        }
-
-        public void Update(OrientationEntity entity)
-        {
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
+            try
+            {
+                if (!CheckExisting(entity.OrientationName))
+                {
+                    dataEntity = ConvertToDataEntity(entity);
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<OrientationEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseEntity<OrientationEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.OrientationExisting
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationGetError
+                };
+            }
+
+            try
+            {
+                dbModel.ORIENTATIONs.Add(dataEntity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationInsertError
+                };
+            }
+
+            return new ResponseEntity<OrientationEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
+        }
+
+        public ResponseEntity<OrientationEntity> Delete(int id)
+        {
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.ORIENTATIONs.Find(entity.OrientationId);
+            ORIENTATION dataEntity;
+            try
+            {
+                dataEntity = dbModel.ORIENTATIONs.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationGetError
+                };
+            }
 
             if (dataEntity == null)
             {
-                return;
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationNotFound
+                };
             }
 
-            dataEntity.ORIENT_NAME = entity.OrientationName;
-            dbModel.SaveChanges();
+            try
+            {
+                dbModel.ORIENTATIONs.Remove(dataEntity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationDeleteError
+                };
+            }
+
+            return new ResponseEntity<OrientationEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public OrientationEntity Get(int id)
+        public ResponseEntity<OrientationEntity> Update(OrientationEntity entity)
         {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.ORIENTATIONs.Find(id);
-
             if (entity == null)
             {
-                return null;
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            return ConvertToEntity(entity);
-        }
-        public List<OrientationEntity> GetAll()
-        {
             DbModel dbModel = new DbModel();
-            return dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
+            ORIENTATION dataEntity;
+
+            try
+            {
+                dataEntity = dbModel.ORIENTATIONs.Find(entity.OrientationId);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationGetError
+                };
+            }
+
+            if (dataEntity == null)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationNotFound
+                };
+            }
+
+            try
+            {
+                dataEntity.ORIENT_NAME = entity.OrientationName;
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationUpdateError
+                };
+            }
+
+            return new ResponseEntity<OrientationEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
+        public ResponseEntity<OrientationEntity> Get(int id)
+        {
+            DbModel dbModel = new DbModel();
+            ORIENTATION entity;
+            try
+            {
+                entity = dbModel.ORIENTATIONs.Find(id);
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationGetError
+                };
+            }
+            if (entity == null)
+            {
+                return new ResponseEntity<OrientationEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationNotFound
+                };
+            }
+
+            return new ResponseEntity<OrientationEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
+        }
+
+        public ResponseEntity<ICollection<OrientationEntity>> GetAll()
+        {
+            DbModel dbModel = new DbModel();
+            ICollection<OrientationEntity> list;
+
+            try
+            {
+                list = dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<OrientationEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.OrientationGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<OrientationEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
+        }
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();

@@ -1,92 +1,241 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataAccess;
-using BusinessModel.Entities;
-using System.Data.Entity.Migrations;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
+using BusinessModel.Entities;
+using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class ReligionHandler: IDataAccess<ReligionEntity>
+    public class ReligionHandler : IBusinessAccess<ReligionEntity>
     {
-        public int Add(ReligionEntity entity)
+
+        public ResponseEntity<ReligionEntity> Add(ReligionEntity entity)
         {
             DbModel dbModel = new DbModel();
+            RELIGION dataEntity;
 
             if (entity == null)
             {
-                return -1;
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            if (!CheckExisting(entity.ReligionName))
+            try
             {
-                var dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
+                if (!CheckExisting(entity.ReligionName))
                 {
-                    return -1;
+                    dataEntity = ConvertToDataEntity(entity);
+                    if (dataEntity == null)
+                    {
+                        return new ResponseEntity<ReligionEntity>
+                        {
+                            CompletedRequest = false,
+                            ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        };
+                    }
                 }
+                else
+                {
+                    return new ResponseEntity<ReligionEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.ReligionExisting
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionGetError
+                };
+            }
 
+            try
+            {
                 dbModel.RELIGIONs.Add(dataEntity);
                 dbModel.SaveChanges();
-                return dataEntity.RELIGION_ID;
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionInsertError
+                };
             }
 
-            return -1;
+            return new ResponseEntity<ReligionEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(dataEntity)
+            };
         }
 
-        public void Delete(int id)
+        public ResponseEntity<ReligionEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.RELIGIONs.Find(id);
+            RELIGION dataEntity;
+            try
+            {
+                dataEntity = dbModel.RELIGIONs.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionGetError
+                };
+            }
 
+            if (dataEntity == null)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionNotFound
+                };
+            }
+
+            try
+            {
+                dbModel.RELIGIONs.Remove(dataEntity);
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionDeleteError
+                };
+            }
+
+            return new ResponseEntity<ReligionEntity>
+            {
+                CompletedRequest = true
+            };
+        }
+
+        public ResponseEntity<ReligionEntity> Update(ReligionEntity entity)
+        {
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            dbModel.RELIGIONs.Remove(entity);
-            dbModel.SaveChanges();
+            DbModel dbModel = new DbModel();
+            RELIGION dataEntity;
+
+            try
+            {
+                dataEntity = dbModel.RELIGIONs.Find(entity.ReligionId);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionGetError
+                };
+            }
+
+            if (dataEntity == null)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionNotFound
+                };
+            }
+
+            try
+            {
+                dataEntity.RELIGION_NAME = entity.ReligionName;
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionUpdateError
+                };
+            }
+
+            return new ResponseEntity<ReligionEntity>
+            {
+                CompletedRequest = true
+            };
         }
 
-        public void Update(ReligionEntity entity)
+        public ResponseEntity<ReligionEntity> Get(int id)
         {
+            DbModel dbModel = new DbModel();
+            RELIGION entity;
+            try
+            {
+                entity = dbModel.RELIGIONs.Find(id);
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionGetError
+                };
+            }
             if (entity == null)
             {
-                return;
+                return new ResponseEntity<ReligionEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionNotFound
+                };
             }
 
-            DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.RELIGIONs.Find(entity.ReligionId);
-
-            if (dataEntity==null)
+            return new ResponseEntity<ReligionEntity>
             {
-                return;
-            }
-
-            dataEntity.RELIGION_NAME = entity.ReligionName;
-            dbModel.SaveChanges();
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
         }
 
-        public ReligionEntity Get(int id)
+        public ResponseEntity<ICollection<ReligionEntity>> GetAll()
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.RELIGIONs.Find(id);
+            ICollection<ReligionEntity> list;
 
-            if (entity == null)
+            try
             {
-                return null;
+                list = dbModel.RELIGIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<ReligionEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.ReligionGetError
+                };
             }
 
-            return ConvertToEntity(entity);
-        }
-
-        public List<ReligionEntity> GetAll()
-        {
-            DbModel dbModel = new DbModel();
-            return dbModel.RELIGIONs.ToList().Select(x => ConvertToEntity(x)).ToList(); ;
+            return new ResponseEntity<ICollection<ReligionEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
         }
 
         private bool CheckExisting(string name)

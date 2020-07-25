@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using BusinessModel.Constants;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Models;
@@ -28,33 +26,35 @@ namespace MarriageWebWDB.Helper
             return true;
         }
 
-        public bool AddAddress(int userProfile, AddressModel addressModel)
+        public ResponseEntity<AddressEntity> AddAddress(int userProfile, AddressModel addressModel)
         {
-
-            //UserEntity user = new UserHandler().GetByUsername(username);
-
-           /* if(user == null)
-            {
-                return false;
-            }*/
-
             AddressEntity address = ToDataEntity(userProfile, addressModel);
 
             if (address == null)
             {
-                return false;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
             }
 
-            AddressHandler addressHandler = new AddressHandler();
-            if (addressHandler.Add(address) == -1)
+            var response = new AddressHandler().Add(address);
+
+            if (!response.CompletedRequest)
             {
-                return false;
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = response.ErrorMessage
+                };
             }
 
-            return true;
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true
+            };
         }
-
-        // public bool DeleteAddress()
 
         public AddressModel GetAddressModel(int id, AddressModel addressModel = null)
         {
@@ -62,21 +62,16 @@ namespace MarriageWebWDB.Helper
             {
                 addressModel = new AddressModel();
             }
-            
-            AddressHandler addressHandler = new AddressHandler();
-            AddressEntity address = addressHandler.Get(id);
 
-            if (address != null)
+            var address = new AddressHandler().Get(id);
+
+            if (address.CompletedRequest && address.Entity != null)
             {
-                addressModel.Street = address.AddressStreet;
-                addressModel.StreetNo = address.AddressStreetNo;
-                addressModel.City = address.AddressCity;
-                addressModel.Country = address.AddressCountry;
+                addressModel.Street = address.Entity.AddressStreet;
+                addressModel.StreetNo = address.Entity.AddressStreetNo;
+                addressModel.City = address.Entity.AddressCity;
+                addressModel.Country = address.Entity.AddressCountry;
             }
-            //TODO check user and userProfile
-
-            //PopulateModel(addressModel, user, userProfile);
-
             return addressModel;
         }
 
@@ -91,7 +86,8 @@ namespace MarriageWebWDB.Helper
                 UserProfileId = userProfileId
             };
         }
-        public AddressEntity ToDataEntity (int addressId, int userProfileId, AddressModel addressModel)
+
+        public AddressEntity ToDataEntity(int addressId, int userProfileId, AddressModel addressModel)
         {
             return new AddressEntity
             {

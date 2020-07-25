@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.UI.WebControls;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Helper;
@@ -17,29 +14,44 @@ namespace MarriageWebWDB.Controllers
         // GET: Login
         public ActionResult Login()
         {
-            return View();
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return View();
+            }
+
+            return RedirectToAction("Index", "Account");
+            
         }
 
+        [HandleError]
         public ActionResult LoginUser(LoginModel loginModel)
         {
             LoginHelper loginHelper = new LoginHelper();
-            int id = loginHelper.CheckLogin(loginModel);
+            var response = loginHelper.CheckLogin(loginModel);
 
-            if (id>=0)
+            if (response.CompletedRequest)
             {
-                //Session.Add("userToken", loginModel.UserName);
                 //temporary solution
+                var responseProfile = new UserProfileHandler().GetByUserId(response.Entity.UserId);
+                if (!responseProfile.CompletedRequest)
+                {
+                    TempData["error"] = responseProfile.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
                 Session.Add("userToken", loginModel.UserName);
-                Session.Add("userId", id);
-                Session.Add("userProfileId", new UserProfileHandler().GetByUserId(id).UserProfileId);
-                Session["userId"] = id;
-                Session["userProfileId"] = new UserProfileHandler().GetByUserId(id).UserProfileId;
+                Session.Add("userId", response.Entity.UserId);
+                Session.Add("userProfileId", responseProfile.Entity.UserProfileId);
+                Session["userId"] = response.Entity.UserId;
+                Session["userProfileId"] = responseProfile.Entity.UserProfileId;
                 return RedirectToAction("Index", "Account");
             }
 
-            ViewBag.LoginMessage = loginHelper.InvalidLoginMessage;
+            ViewBag.LoginMessage = response.ErrorMessage;
             return View("Login");
-                     
         }
 
         public ActionResult Register()
@@ -62,16 +74,28 @@ namespace MarriageWebWDB.Controllers
         public ActionResult RegisterUser(RegisterModel registerModel)
         {
             RegisterHelper registerHelper = new RegisterHelper();
+            ResponseEntity<UserEntity> response = registerHelper.AddUser(registerModel);
 
-            if (registerHelper.AddUser(registerModel))
+            if (response.CompletedRequest)
             {
-                Session.Add("userToken", registerModel.UserName);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Login");
             }
-            
-            ViewBag.RegisterMessage = registerHelper.InvalidRegisterMessage;
-            var newRegisterModel = registerHelper.GetRegisterModel(registerModel);
-            return View("Register", newRegisterModel);
+            else
+            {
+                //If the error is caused by incorrect fields
+                if (!string.IsNullOrEmpty(registerHelper.InvalidRegisterMessage))
+                {
+                    ViewBag.RegisterMessage = response.ErrorMessage;
+                    ViewBag.Date = DateFormatter.GetDate(DateTime.Now);
+
+                    return View("Register", registerHelper.GetRegisterModel(registerModel));
+                }
+                else
+                {
+                    ViewBag.Error = response.ErrorMessage;
+                    return RedirectToAction("Error", "Index");
+                }
+            }
         }
     }
 }

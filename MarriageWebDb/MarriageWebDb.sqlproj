@@ -73,5 +73,6 @@
     <Build Include="dbo\Tables\ADDRESS.sql" />
     <Build Include="dbo\Stored Procedures\getGenders.sql" />
     <Build Include="dbo\Stored Procedures\getGendersByName.sql" />
+    <Build Include="dbo\Stored Procedures\getSuggestions.sql" />
   </ItemGroup>
 </Project>

@@ -1,11 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Web;
-
-namespace MarriageWebWDB.Constants
+﻿namespace MarriageWebWDB.Constants
 {
     public class MessageConstants
     {

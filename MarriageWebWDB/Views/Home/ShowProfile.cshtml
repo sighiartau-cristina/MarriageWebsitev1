@@ -1,0 +1,75 @@
+﻿
+@{
+    @model MarriageWebWDB.Models.ProfileModel
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ViewProfile</title>
+</head>
+<body>
+    <h1>Profile of : @Model.UserName</h1>
+    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Name:</td>
+                    <td>@Model.FullName</td>
+                </tr>
+                <tr>
+                    <td>Description:</td>
+                    <td>
+                        @Model.Description
+                    </td>
+                </tr>
+                <tr>
+                    <td>Gender:</td>
+                    <td> @Model.Gender</td>
+                </tr>
+                <tr>
+                    <td>Orientation:</td>
+                    <td> @Model.Orientation</td>
+                </tr>
+                <tr>
+                    <td>Religion:</td>
+                    <td> @Model.Religion</td>
+                </tr>
+                <tr>
+                    <td>Marital Status:</td>
+                    <td> @Model.Status</td>
+                </tr>
+                <tr>
+                    <td>Job:</td>
+                    <td>
+                        @Model.Job
+                    </td>
+                </tr>
+                <tr>
+                    <td>Age:</td>
+                    <td>@Model.Age</td>
+                </tr>
+                <tr>
+                    <td>Birthday:</td>
+                    <td>@Model.Birthday</td>
+                </tr>
+                <tr>
+                    <td>Address:</td>
+                    <td>@Model.Address</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div>
+            @using (Html.BeginForm("Index", "Error", FormMethod.Get))
+            {
+                <input type="submit" value="Match" />
+            }
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contracts\IDataAccess.cs" />
+    <Compile Include="Constants\ErrorConstants.cs" />
+    <Compile Include="Contracts\IBusinessAccess.cs" />
+    <Compile Include="Contracts\ResponseEntity.cs" />
     <Compile Include="Entities\AddressEntity.cs" />
     <Compile Include="Entities\GenderEntity.cs" />
     <Compile Include="Entities\MaritalStatusEntity.cs" />
