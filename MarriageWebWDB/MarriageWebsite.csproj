@@ -159,6 +159,7 @@
     <Compile Include="Validators\HelperMethods.cs" />
     <Compile Include="Validators\PasswordValidator.cs" />
     <Compile Include="Validators\RegisterModelValidator.cs" />
+    <Compile Include="Validators\UpdatedUserValidator.cs" />
     <Compile Include="Validators\UserModelValidator.cs" />
   </ItemGroup>
   <ItemGroup>

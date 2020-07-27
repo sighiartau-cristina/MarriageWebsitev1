@@ -27,5 +27,7 @@
         public static string InvalidCityMessage = "The city name is not valid.";
         public static string InvalidCountryMessage = "The country name is not valid.";
 
+        public static string NoChangesMade = "No changes have been made.";
+
     }
 }

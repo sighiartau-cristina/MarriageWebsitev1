@@ -240,8 +240,7 @@ namespace BusinessModel.Handlers
             {
                 return new ResponseEntity<AddressEntity>
                 {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.AddressNotFound
+                    CompletedRequest = true
                 };
             }
 

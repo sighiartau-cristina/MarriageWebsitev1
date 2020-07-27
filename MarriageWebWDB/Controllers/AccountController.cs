@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
@@ -82,7 +83,7 @@ namespace MarriageWebWDB.Controllers
 
             if (userProfile.CompletedRequest)
             {
-                if (!userHelper.CheckUpdatedUser(userModel))
+                if (!userHelper.CheckUpdatedUser(userModel, userProfile.Entity))
                 {
                     ViewBag.UpdateUserMessage = userHelper.InvalidInfoMessage;
                     var newUserModel = userHelper.GetUserModel(userModel);
@@ -123,8 +124,8 @@ namespace MarriageWebWDB.Controllers
             UserHandler userHandler = new UserHandler();
             UserProfileHandler userProfileHandler = new UserProfileHandler();
 
-            ResponseEntity<UserProfileEntity> resposeUserProfile =  userProfileHandler.Update(userHelper.ToDataEntity(userModel, userProfile.Entity));
-            
+            ResponseEntity<UserProfileEntity> resposeUserProfile = userProfileHandler.Update(userHelper.ToDataEntity(userModel, userProfile.Entity));
+
             if (!resposeUserProfile.CompletedRequest)
             {
                 TempData["error"] = resposeUserProfile.ErrorMessage;
@@ -169,20 +170,29 @@ namespace MarriageWebWDB.Controllers
             }
 
             PasswordHelper passwordHelper = new PasswordHelper();
-            ResponseEntity<UserEntity> response = passwordHelper.UpdatePassword((int)Session["userId"], passwordModel);
 
-            if (!response.CompletedRequest)
+            if (!passwordHelper.CheckPassword((int)Session["userId"], passwordModel))
             {
-                if (!string.IsNullOrEmpty(passwordHelper.UpdatePasswordMessage))
-                {
-                    ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
-                    return View("ChangePassword");
-                }
-                else
-                {
-                    TempData["error"] = response.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
-                }
+                ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
+                return View("ChangePassword");
+            }
+
+            var userHandler = new UserHandler();
+            var user = userHandler.Get((int)Session["userId"]);
+
+            if (!user.CompletedRequest)
+            {
+                TempData["error"] = user.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            user.Entity.UserPassword = passwordModel.NewPassword;
+            user = userHandler.Update(user.Entity);
+
+            if (!user.CompletedRequest)
+            {
+                TempData["error"] = user.ErrorMessage;
+                return RedirectToAction("Index", "Error");
             }
 
             return RedirectToAction("Index", "Account");

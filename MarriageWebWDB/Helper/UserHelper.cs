@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.Web;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using FluentValidation.Results;
+using MarriageWebWDB.Constants;
 using MarriageWebWDB.Models;
 using MarriageWebWDB.Utils;
 using MarriageWebWDB.Validators;
@@ -68,15 +70,107 @@ namespace MarriageWebWDB.Helper
             }
         }
 
-        public bool CheckUpdatedUser(UserModel userModel)
+        public bool CheckUpdatedUser(UserModel userModel, UserProfileEntity userProfileEntity)
         {
             userModel.Age = AgeCalculator.GetDifferenceInYears(userModel.Birthday, DateTime.Now);
-            UserModelValidator validator = new UserModelValidator();
+
+            var userHandler = new UserHandler();
+            var userEntity = userHandler.Get(userProfileEntity.UserId);
+
+            if (!userEntity.CompletedRequest || userEntity.Entity == null)
+            {
+                return false;
+            }
+
+            if (NoChanges(userModel, userProfileEntity, userEntity.Entity))
+            {
+                InvalidInfoMessage = MessageConstants.NoChangesMade;
+                return false;
+            }
+
+            var validator = new UpdatedUserValidator();
             ValidationResult result = validator.Validate(userModel);
 
             if (!result.IsValid)
             {
                 InvalidInfoMessage = ErrorMessageGenerator.ComposeErrorMessage(result);
+                return false;
+            }
+
+            if (userModel.Email != userEntity.Entity.UserEmail && userHandler.CheckExistingEmail(userModel.Email))
+            {
+                InvalidInfoMessage = MessageConstants.ExistingEmailMessage;
+                return false;
+            }
+
+            if (userModel.UserName != userEntity.Entity.UserUsername && userHandler.CheckExistingUsername(userModel.UserName))
+            {
+                InvalidInfoMessage = MessageConstants.ExistingUsernameMessage;
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool NoChanges(UserModel userModel, UserProfileEntity userProfileEntity, UserEntity userEntity)
+        {
+            if (userModel.Email != userEntity.UserEmail)
+            {
+                return false;
+            }
+
+            if (userModel.UserName != userEntity.UserUsername)
+            {
+                return false;
+            }
+
+            if (userModel.Description != userProfileEntity.UserProfileDescription)
+            {
+                return false;
+            }
+
+            if (userModel.Phone != userProfileEntity.UserProfilePhone)
+            {
+                return false;
+            }
+
+            if (userModel.Name != userProfileEntity.UserProfileName)
+            {
+                return false;
+            }
+
+            if (userModel.Surname != userProfileEntity.UserProfileSurname)
+            {
+                return false;
+            }
+
+            if (userModel.Job != userProfileEntity.UserProfileJob)
+            {
+                return false;
+            }
+
+            if (userModel.OrientationId != userProfileEntity.OrientationId)
+            {
+                return false;
+            }
+
+            if (userModel.ReligionId != userProfileEntity.ReligionId)
+            {
+                return false;
+            }
+
+            if (userModel.StatusId != userProfileEntity.StatusId)
+            {
+                return false;
+            }
+
+            if (userModel.GenderId != userProfileEntity.GenderId)
+            {
+                return false;
+            }
+
+            if (userModel.Birthday != userProfileEntity.UserProfileBirthday)
+            {
                 return false;
             }
 
