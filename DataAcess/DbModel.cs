@@ -1,6 +1,9 @@
 namespace DataAccess
 {
+    using System;
     using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
 
     public partial class DbModel : DbContext
     {
@@ -10,6 +13,7 @@ namespace DataAccess
         }
 
         public virtual DbSet<ADDRESS> ADDRESSes { get; set; }
+        public virtual DbSet<FILE> FILEs { get; set; }
         public virtual DbSet<GENDER> GENDERs { get; set; }
         public virtual DbSet<MARITAL_STATUS> MARITAL_STATUS { get; set; }
         public virtual DbSet<MATCH> MATCHes { get; set; }
@@ -35,6 +39,18 @@ namespace DataAccess
 
             modelBuilder.Entity<ADDRESS>()
                 .Property(e => e.ADDRESS_COUNTRY)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FILE>()
+                .Property(e => e.FileName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FILE>()
+                .Property(e => e.ContentType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<FILE>()
+                .Property(e => e.FileType)
                 .IsUnicode(false);
 
             modelBuilder.Entity<GENDER>()
@@ -97,6 +113,11 @@ namespace DataAccess
 
             modelBuilder.Entity<USER_PROFILE>()
                 .HasMany(e => e.ADDRESSes)
+                .WithRequired(e => e.USER_PROFILE)
+                .HasForeignKey(e => e.USER_PROFILE_ID);
+
+            modelBuilder.Entity<USER_PROFILE>()
+                .HasMany(e => e.FILEs)
                 .WithRequired(e => e.USER_PROFILE)
                 .HasForeignKey(e => e.USER_PROFILE_ID);
 

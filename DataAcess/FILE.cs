@@ -6,27 +6,25 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("ADDRESS")]
-    public partial class ADDRESS
+    [Table("FILE")]
+    public partial class FILE
     {
-        [Key]
-        public int ADDRESS_ID { get; set; }
+        public int FileId { get; set; }
 
         [Required]
-        [StringLength(25)]
-        public string ADDRESS_STREET { get; set; }
+        [StringLength(255)]
+        public string FileName { get; set; }
 
         [Required]
-        [StringLength(25)]
-        public string ADDRESS_STREETNO { get; set; }
+        [StringLength(100)]
+        public string ContentType { get; set; }
 
         [Required]
-        [StringLength(25)]
-        public string ADDRESS_CITY { get; set; }
+        public byte[] Content { get; set; }
 
         [Required]
-        [StringLength(25)]
-        public string ADDRESS_COUNTRY { get; set; }
+        [StringLength(100)]
+        public string FileType { get; set; }
 
         public int USER_PROFILE_ID { get; set; }
 

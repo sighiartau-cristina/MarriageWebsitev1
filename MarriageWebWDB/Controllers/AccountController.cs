@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using BusinessModel.Contracts;
@@ -170,7 +171,7 @@ namespace MarriageWebWDB.Controllers
             }
 
             PasswordHelper passwordHelper = new PasswordHelper();
-
+            //TODO password update error
             if (!passwordHelper.CheckPassword((int)Session["userId"], passwordModel))
             {
                 ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
@@ -338,6 +339,43 @@ namespace MarriageWebWDB.Controllers
 
 
             TempData.Keep();
+            return RedirectToAction("Index", "Account");
+        }
+
+        public ActionResult AddProfilePicture()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddProfilePicture(HttpPostedFileBase upload)
+        {
+            if (upload != null && upload.ContentLength > 0)
+            {
+                var avatar = new FileEntity
+                {
+                    FileName = System.IO.Path.GetFileName(upload.FileName),
+                    FileType = FileType.Avatar,
+                    ContentType = upload.ContentType,
+                    UserProfileId = (int)Session["userProfileId"]
+                    
+                };
+                using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                {
+                    avatar.Content = reader.ReadBytes(upload.ContentLength);
+                }
+
+                new FileEntityHandler().Add(avatar);
+            }
             return RedirectToAction("Index", "Account");
         }
     }

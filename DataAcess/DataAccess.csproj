@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ADDRESS.cs" />
     <Compile Include="DbModel.cs" />
+    <Compile Include="FILE.cs" />
     <Compile Include="GENDER.cs" />
     <Compile Include="MARITAL_STATUS.cs" />
     <Compile Include="MATCH.cs" />

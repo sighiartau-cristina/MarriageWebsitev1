@@ -107,6 +107,9 @@ namespace MarriageWebWDB.Controllers
             profileModel.Religion = religion.Entity.ReligionName;
             profileModel.Status = status.Entity.MaritalStatusName;
 
+            profileModel.File = new FileEntityHandler().GetByUserId(profile.Entity.UserProfileId);
+
+
             return View("ShowProfile", profileModel);
         }
     }

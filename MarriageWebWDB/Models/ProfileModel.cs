@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BusinessModel.Contracts;
+using BusinessModel.Entities;
 
 namespace MarriageWebWDB.Models
 {
@@ -28,5 +30,7 @@ namespace MarriageWebWDB.Models
         public string Age { get; set; }
 
         public string Address { get; set; }
+
+        public FileEntity File { get; set; }
     }
 }

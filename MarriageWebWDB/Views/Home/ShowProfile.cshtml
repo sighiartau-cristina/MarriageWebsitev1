@@ -11,10 +11,21 @@
     <title>ViewProfile</title>
 </head>
 <body>
-    <h1>Profile of : @Model.UserName</h1>
+    <h1>Profile of @Model.UserName</h1>
     <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
         <table>
             <tbody>
+                <tr>
+                    @if (Model.File != null)
+                    {
+                            <td>
+                            </td>
+                            <td>
+                                <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" style="width:200px;height:200px;" />
+                            </td>
+                    }
+                    </tr>
+                <tr></tr>
                 <tr>
                     <td>Name:</td>
                     <td>@Model.FullName</td>
@@ -38,7 +49,7 @@
                     <td> @Model.Religion</td>
                 </tr>
                 <tr>
-                    <td>Marital Status:</td>
+                    <td>Status:</td>
                     <td> @Model.Status</td>
                 </tr>
                 <tr>

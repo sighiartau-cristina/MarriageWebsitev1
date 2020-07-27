@@ -4,6 +4,7 @@ namespace DataAccess
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
 
     public partial class USER_PROFILE
     {
@@ -11,6 +12,7 @@ namespace DataAccess
         public USER_PROFILE()
         {
             ADDRESSes = new HashSet<ADDRESS>();
+            FILEs = new HashSet<FILE>();
             MATCHes = new HashSet<MATCH>();
             MATCHes1 = new HashSet<MATCH>();
         }
@@ -53,6 +55,9 @@ namespace DataAccess
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ADDRESS> ADDRESSes { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FILE> FILEs { get; set; }
+
         public virtual GENDER GENDER { get; set; }
 
         public virtual MARITAL_STATUS MARITAL_STATUS { get; set; }
@@ -64,6 +69,8 @@ namespace DataAccess
         public virtual ICollection<MATCH> MATCHes1 { get; set; }
 
         public virtual ORIENTATION ORIENTATION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
 
         public virtual RELIGION RELIGION { get; set; }
 
