@@ -6,23 +6,22 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("RELIGION")]
-    public partial class RELIGION
+    [Table("Religion")]
+    public partial class Religion
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public RELIGION()
+        public Religion()
         {
-            USER_PROFILE = new HashSet<USER_PROFILE>();
+            UserProfiles = new HashSet<UserProfile>();
         }
 
-        [Key]
-        public int RELIGION_ID { get; set; }
+        public int ReligionId { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string RELIGION_NAME { get; set; }
+        public string ReligionName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<USER_PROFILE> USER_PROFILE { get; set; }
+        public virtual ICollection<UserProfile> UserProfiles { get; set; }
     }
 }

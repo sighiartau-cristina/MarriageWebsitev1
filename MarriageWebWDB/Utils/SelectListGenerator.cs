@@ -157,9 +157,9 @@ namespace MarriageWebWDB.Utils
                 var list = statuses.Entity.Select(x =>
                                 new SelectListItem
                                 {
-                                    Selected = (x.MaritalStatusId == profile.StatusId),
-                                    Value = x.MaritalStatusId.ToString(),
-                                    Text = x.MaritalStatusName
+                                    Selected = (x.StatusId == profile.StatusId),
+                                    Value = x.StatusId.ToString(),
+                                    Text = x.StatusName
                                 });
 
                 return new SelectList(list, "Value", "Text");
@@ -180,8 +180,8 @@ namespace MarriageWebWDB.Utils
                 var list = statuses.Entity.Select(x =>
                                 new SelectListItem
                                 {
-                                    Value = x.MaritalStatusId.ToString(),
-                                    Text = x.MaritalStatusName
+                                    Value = x.StatusId.ToString(),
+                                    Text = x.StatusName
                                 });
 
                 return new SelectList(list, "Value", "Text");

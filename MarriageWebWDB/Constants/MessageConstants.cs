@@ -28,6 +28,7 @@
         public static string InvalidCountryMessage = "The country name is not valid.";
 
         public static string NoChangesMade = "No changes have been made.";
+        public static string NoFileSelected = "You must choose a file first.";
 
     }
 }

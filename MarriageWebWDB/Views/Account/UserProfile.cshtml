@@ -18,6 +18,16 @@
             <input type="submit" value="Change Password" />
         }
     </div>
+    <br />
+    <div>
+        @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))
+        {
+            <input type="submit" value="Change Profile Picture" />
+        }
+    </div>
+    <div>
+        @Html.ActionLink("Delete Profile Picture", "DeleteProfilePicture", "Account", new { @class = "btn btn-primary" })
+    </div>
     <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
         @using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post))
         {
@@ -94,19 +104,19 @@
             </div>
         }
         else
-        { 
-        <p>Street name: @ViewBag.AddressStreet</p>
-        <p>Street number: @ViewBag.AddressStreetNo</p>
-        <p>City: @ViewBag.AddressCity</p>
-        <p>Country: @ViewBag.AddressCountry</p>
-        <div>
-            @using (Html.BeginForm("EditAddress", "Account", FormMethod.Get))
-            {
-                <input type="submit" value="Edit" />
-            }
-        </div>
-    }
+        {
+            <p>Street name: @ViewBag.AddressStreet</p>
+            <p>Street number: @ViewBag.AddressStreetNo</p>
+            <p>City: @ViewBag.AddressCity</p>
+            <p>Country: @ViewBag.AddressCountry</p>
+            <div>
+                @using (Html.BeginForm("EditAddress", "Account", FormMethod.Get))
+                {
+                    <input type="submit" value="Edit" />
+                }
+            </div>
+        }
     </div>
-    
+
 </body>
 </html>

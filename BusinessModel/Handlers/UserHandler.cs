@@ -14,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> Add(UserEntity entity)
         {
             DbModel dbModel = new DbModel();
-            USER dataEntity = null;
+            User dataEntity = null;
 
             if (entity == null)
             {
@@ -27,7 +27,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                if (dbModel.USERS.Find(entity.UserId) == null)
+                if (dbModel.Users.Find(entity.UserId) == null)
                 {
                     dataEntity = ConvertToDataEntity(entity);
 
@@ -52,7 +52,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.USERS.Add(dataEntity);
+                dbModel.Users.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -74,11 +74,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            USER entity = null;
+            User entity;
 
             try
             {
-                entity = dbModel.USERS.Find(id);
+                entity = dbModel.Users.Find(id);
                 if (entity == null)
                 {
                     return new ResponseEntity<UserEntity>
@@ -99,7 +99,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.USERS.Remove(entity);
+                dbModel.Users.Remove(entity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -130,11 +130,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            USER dataEntity = null;
+            User dataEntity;
 
             try
             {
-                dataEntity = dbModel.USERS.Find(entity.UserId);
+                dataEntity = dbModel.Users.Find(entity.UserId);
                 if (dataEntity == null)
                 {
                     return new ResponseEntity<UserEntity>
@@ -156,7 +156,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                if (!dataEntity.USER_EMAIL.Equals(entity.UserEmail) && CheckExistingEmail(entity.UserEmail))
+                if (!dataEntity.Email.Equals(entity.UserEmail) && CheckExistingEmail(entity.UserEmail))
                 {
                     return new ResponseEntity<UserEntity>
                     {
@@ -165,7 +165,7 @@ namespace BusinessModel.Handlers
                     };
                 }
 
-                if (!dataEntity.USER_USERNAME.Equals(entity.UserUsername) && CheckExistingUsername(entity.UserUsername))
+                if (!dataEntity.Username.Equals(entity.UserUsername) && CheckExistingUsername(entity.UserUsername))
                 {
                     return new ResponseEntity<UserEntity>
                     {
@@ -185,9 +185,9 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.USER_USERNAME = entity.UserUsername;
-                dataEntity.USER_EMAIL = entity.UserEmail;
-                dataEntity.USER_PASSWORD = entity.UserPassword;
+                dataEntity.Username = entity.UserUsername;
+                dataEntity.Email = entity.UserEmail;
+                dataEntity.Password = entity.UserPassword;
 
                 dbModel.SaveChanges();
             }
@@ -209,11 +209,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> GetByUsername(string username)
         {
             DbModel dbModel = new DbModel();
-            USER entity = null;
+            User entity = null;
 
             try
             {
-                entity = dbModel.USERS.Where(u => u.USER_USERNAME == username).FirstOrDefault();
+                entity = dbModel.Users.Where(u => u.Username == username).FirstOrDefault();
 
                 if (entity == null)
                 {
@@ -242,11 +242,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            USER entity = null;
+            User entity;
 
             try
             {
-                entity = dbModel.USERS.Find(id);
+                entity = dbModel.Users.Find(id);
 
                 if (entity == null)
                 {
@@ -275,11 +275,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> CheckUsernameAndPassword(string username, string password)
         {
             DbModel dbModel = new DbModel();
-            USER entity = null;
+            User entity = null;
 
             try
             {
-                entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username && e.USER_PASSWORD == password);
+                entity = dbModel.Users.FirstOrDefault(e => e.Username == username && e.Password == password);
 
                 if (entity == null)
                 {
@@ -314,34 +314,34 @@ namespace BusinessModel.Handlers
         public bool CheckExistingUsername(string username)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.FirstOrDefault(e => e.USER_USERNAME == username);
+            var entity = dbModel.Users.FirstOrDefault(e => e.Username == username);
             return entity != null;
         }
 
         public bool CheckExistingEmail(string email)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USERS.Where(e => e.USER_EMAIL == email).FirstOrDefault();
+            var entity = dbModel.Users.Where(e => e.Email == email).FirstOrDefault();
             return entity != null;
         }
 
-        private USER ConvertToDataEntity(UserEntity userEntity)
+        private User ConvertToDataEntity(UserEntity userEntity)
         {
             if (userEntity == null)
             {
                 return null;
             }
 
-            return new USER
+            return new User
             {
-                USER_USERNAME = userEntity.UserUsername,
-                USER_EMAIL = userEntity.UserEmail,
-                USER_PASSWORD = userEntity.UserPassword,
-                USER_CREATED_AT = userEntity.CreatedAt
+                Username = userEntity.UserUsername,
+                Email = userEntity.UserEmail,
+                Password = userEntity.UserPassword,
+                CreatedAt = userEntity.CreatedAt
             };
         }
 
-        private UserEntity ConvertToEntity(USER user)
+        private UserEntity ConvertToEntity(User user)
         {
             if (user == null)
             {
@@ -350,13 +350,14 @@ namespace BusinessModel.Handlers
 
             return new UserEntity
             {
-                UserId = user.USER_ID,
-                UserEmail = user.USER_EMAIL,
-                UserPassword = user.USER_PASSWORD,
-                UserUsername = user.USER_USERNAME,
-                CreatedAt = user.USER_CREATED_AT
+                UserId = user.UserId,
+                UserEmail = user.Email,
+                UserPassword = user.Password,
+                UserUsername = user.Username,
+                CreatedAt = user.CreatedAt
             };
         }
+       
 
     }
 }

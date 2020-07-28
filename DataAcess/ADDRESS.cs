@@ -6,30 +6,29 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("ADDRESS")]
-    public partial class ADDRESS
+    [Table("Address")]
+    public partial class Address
     {
-        [Key]
-        public int ADDRESS_ID { get; set; }
+        public int AddressId { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string ADDRESS_STREET { get; set; }
+        public string AddressStreet { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string ADDRESS_STREETNO { get; set; }
+        public string AddressStreetNo { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string ADDRESS_CITY { get; set; }
+        public string AddressCity { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string ADDRESS_COUNTRY { get; set; }
+        public string AddressCountry { get; set; }
 
-        public int USER_PROFILE_ID { get; set; }
+        public int UserProfileId { get; set; }
 
-        public virtual USER_PROFILE USER_PROFILE { get; set; }
+        public virtual UserProfile UserProfile { get; set; }
     }
 }

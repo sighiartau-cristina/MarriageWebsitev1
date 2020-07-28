@@ -5,8 +5,10 @@ using System.Web.Mvc;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
+using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
+using Microsoft.AspNet.SignalR.Messaging;
 
 namespace MarriageWebWDB.Controllers
 {
@@ -159,7 +161,8 @@ namespace MarriageWebWDB.Controllers
             return View();
         }
 
-        public ActionResult SavePassword(PasswordModel passwordModel)
+        [HttpPost]
+        public ActionResult ChangePassword(PasswordModel passwordModel)
         {
             try
             {
@@ -171,7 +174,7 @@ namespace MarriageWebWDB.Controllers
             }
 
             PasswordHelper passwordHelper = new PasswordHelper();
-            //TODO password update error
+
             if (!passwordHelper.CheckPassword((int)Session["userId"], passwordModel))
             {
                 ViewBag.UpdatePasswordMessage = passwordHelper.UpdatePasswordMessage;
@@ -214,7 +217,8 @@ namespace MarriageWebWDB.Controllers
         }
 
         [HandleError]
-        public ActionResult SaveAddress(AddressModel addressModel)
+        [HttpPost]
+        public ActionResult AddAddress(AddressModel addressModel)
         {
             try
             {
@@ -279,7 +283,8 @@ namespace MarriageWebWDB.Controllers
 
         }
 
-        public ActionResult SaveEditedAddress(AddressModel addressModel)
+        [HttpPost]
+        public ActionResult EditAddress(AddressModel addressModel)
         {
             try
             {
@@ -342,7 +347,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
-        public ActionResult AddProfilePicture()
+        public ActionResult ChangeProfilePicture()
         {
             try
             {
@@ -357,7 +362,7 @@ namespace MarriageWebWDB.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddProfilePicture(HttpPostedFileBase upload)
+        public ActionResult ChangeProfilePicture(HttpPostedFileBase upload)
         {
             if (upload != null && upload.ContentLength > 0)
             {
@@ -367,15 +372,83 @@ namespace MarriageWebWDB.Controllers
                     FileType = FileType.Avatar,
                     ContentType = upload.ContentType,
                     UserProfileId = (int)Session["userProfileId"]
-                    
+
                 };
                 using (var reader = new System.IO.BinaryReader(upload.InputStream))
                 {
                     avatar.Content = reader.ReadBytes(upload.ContentLength);
                 }
 
-                new FileEntityHandler().Add(avatar);
+                var fileHandler = new FileHandler();
+                var response = fileHandler.GetByUserId((int)Session["userProfileId"]);
+
+                if (!response.CompletedRequest)
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+
+                if (response.Entity == null)
+                {
+                    response = fileHandler.Add(avatar);
+                    if (!response.CompletedRequest)
+                    {
+                        TempData["error"] = response.ErrorMessage;
+                        return RedirectToAction("Index", "Error");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Account");
+                    }
+
+                }
+
+                avatar.FileId = response.Entity.FileId;
+                response = fileHandler.Update(avatar);
+
+                if (!response.CompletedRequest)
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+
+                return RedirectToAction("Index", "Account");
             }
+
+            ViewBag.FileMessage = MessageConstants.NoFileSelected;
+            return View("ChangeProfilePicture");
+        }
+
+        public ActionResult DeleteProfilePicture()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var fileHandler = new FileHandler();
+            var response = fileHandler.GetByUserId((int)Session["userProfileId"]);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            if (response.Entity != null)
+            {
+                response = fileHandler.Delete(response.Entity.FileId);
+                if (!response.CompletedRequest)
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+            }
+            
             return RedirectToAction("Index", "Account");
         }
     }

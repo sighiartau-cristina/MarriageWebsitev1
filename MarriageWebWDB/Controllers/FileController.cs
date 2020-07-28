@@ -13,8 +13,15 @@ namespace MarriageWebWDB.Controllers
 
         public ActionResult Index(string id)
         {
-            var fileToRetrieve = new FileEntityHandler().Get(int.Parse(id));
-            return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
+            var fileToRetrieve = new FileHandler().Get(int.Parse(id));
+
+            if (fileToRetrieve.CompletedRequest)
+            {
+                return File(fileToRetrieve.Entity.Content, fileToRetrieve.Entity.ContentType);
+            }
+
+            TempData["Error"] = fileToRetrieve.ErrorMessage;
+            return RedirectToAction("Index", "Error");
         }
         
     }

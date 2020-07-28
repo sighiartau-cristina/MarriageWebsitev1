@@ -6,8 +6,7 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("FILE")]
-    public partial class FILE
+    public partial class File
     {
         public int FileId { get; set; }
 
@@ -26,8 +25,8 @@ namespace DataAccess
         [StringLength(100)]
         public string FileType { get; set; }
 
-        public int USER_PROFILE_ID { get; set; }
+        public int UserProfileId { get; set; }
 
-        public virtual USER_PROFILE USER_PROFILE { get; set; }
+        public virtual UserProfile UserProfile { get; set; }
     }
 }

@@ -1,6 +1,6 @@
-﻿CREATE TABLE [dbo].[GENDER] (
-    [GENDER_ID]   INT          IDENTITY (1, 1) NOT NULL,
-    [GENDER_NAME] VARCHAR (25) NOT NULL,
-    PRIMARY KEY CLUSTERED ([GENDER_ID] ASC)
+﻿CREATE TABLE [dbo].[Gender] (
+    [GenderId]   INT          IDENTITY (1, 1) NOT NULL,
+    [GenderName] VARCHAR (25) NOT NULL,
+    PRIMARY KEY CLUSTERED ([GenderId] ASC)
 );
 

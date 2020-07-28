@@ -12,138 +12,147 @@ namespace DataAccess
         {
         }
 
-        public virtual DbSet<ADDRESS> ADDRESSes { get; set; }
-        public virtual DbSet<FILE> FILEs { get; set; }
-        public virtual DbSet<GENDER> GENDERs { get; set; }
-        public virtual DbSet<MARITAL_STATUS> MARITAL_STATUS { get; set; }
-        public virtual DbSet<MATCH> MATCHes { get; set; }
-        public virtual DbSet<ORIENTATION> ORIENTATIONs { get; set; }
-        public virtual DbSet<RELIGION> RELIGIONs { get; set; }
+        public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<File> Files { get; set; }
+        public virtual DbSet<Gender> Genders { get; set; }
+        public virtual DbSet<Match> Matches { get; set; }
+        public virtual DbSet<Message> Messages { get; set; }
+        public virtual DbSet<Orientation> Orientations { get; set; }
+        public virtual DbSet<Religion> Religions { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
-        public virtual DbSet<USER_PROFILE> USER_PROFILE { get; set; }
-        public virtual DbSet<USER> USERS { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserProfile> UserProfiles { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ADDRESS>()
-                .Property(e => e.ADDRESS_STREET)
+            modelBuilder.Entity<Address>()
+                .Property(e => e.AddressStreet)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ADDRESS>()
-                .Property(e => e.ADDRESS_STREETNO)
+            modelBuilder.Entity<Address>()
+                .Property(e => e.AddressStreetNo)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ADDRESS>()
-                .Property(e => e.ADDRESS_CITY)
+            modelBuilder.Entity<Address>()
+                .Property(e => e.AddressCity)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ADDRESS>()
-                .Property(e => e.ADDRESS_COUNTRY)
+            modelBuilder.Entity<Address>()
+                .Property(e => e.AddressCountry)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<FILE>()
+            modelBuilder.Entity<File>()
                 .Property(e => e.FileName)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<FILE>()
+            modelBuilder.Entity<File>()
                 .Property(e => e.ContentType)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<FILE>()
+            modelBuilder.Entity<File>()
                 .Property(e => e.FileType)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<GENDER>()
-                .Property(e => e.GENDER_NAME)
+            modelBuilder.Entity<Gender>()
+                .Property(e => e.GenderName)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<GENDER>()
-                .HasMany(e => e.USER_PROFILE)
-                .WithRequired(e => e.GENDER)
+            modelBuilder.Entity<Gender>()
+                .HasMany(e => e.UserProfiles)
+                .WithRequired(e => e.Gender)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<MARITAL_STATUS>()
-                .Property(e => e.MRTSTS_NAME)
+            modelBuilder.Entity<Message>()
+                .Property(e => e.MessageText)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<MARITAL_STATUS>()
-                .HasMany(e => e.USER_PROFILE)
-                .WithRequired(e => e.MARITAL_STATUS)
-                .HasForeignKey(e => e.STATUS_ID)
+            modelBuilder.Entity<Message>()
+                .Property(e => e.Status)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Orientation>()
+                .Property(e => e.OrientationName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Orientation>()
+                .HasMany(e => e.UserProfiles)
+                .WithRequired(e => e.Orientation)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<ORIENTATION>()
-                .Property(e => e.ORIENT_NAME)
+            modelBuilder.Entity<Religion>()
+                .Property(e => e.ReligionName)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<ORIENTATION>()
-                .HasMany(e => e.USER_PROFILE)
-                .WithRequired(e => e.ORIENTATION)
-                .HasForeignKey(e => e.ORIENTATION_ID)
+            modelBuilder.Entity<Religion>()
+                .HasMany(e => e.UserProfiles)
+                .WithRequired(e => e.Religion)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<RELIGION>()
-                .Property(e => e.RELIGION_NAME)
+            modelBuilder.Entity<Status>()
+                .Property(e => e.StatusName)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<RELIGION>()
-                .HasMany(e => e.USER_PROFILE)
-                .WithRequired(e => e.RELIGION)
+            modelBuilder.Entity<Status>()
+                .HasMany(e => e.UserProfiles)
+                .WithRequired(e => e.Status)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .Property(e => e.USRPROF_NAME)
+            modelBuilder.Entity<User>()
+                .Property(e => e.Username)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .Property(e => e.USRPROF_SURNAME)
+            modelBuilder.Entity<User>()
+                .Property(e => e.Email)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .Property(e => e.USRPROF_PHONE)
+            modelBuilder.Entity<User>()
+                .Property(e => e.Password)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .Property(e => e.USRPROF_DESCRIPTION)
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Name)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .Property(e => e.USRPROF_JOB)
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Surname)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .HasMany(e => e.ADDRESSes)
-                .WithRequired(e => e.USER_PROFILE)
-                .HasForeignKey(e => e.USER_PROFILE_ID);
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Phone)
+                .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .HasMany(e => e.FILEs)
-                .WithRequired(e => e.USER_PROFILE)
-                .HasForeignKey(e => e.USER_PROFILE_ID);
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .HasMany(e => e.MATCHes)
-                .WithRequired(e => e.USER_PROFILE)
-                .HasForeignKey(e => e.MATCH_USER_PROFILE_ID)
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Job)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(e => e.Matches)
+                .WithRequired(e => e.UserProfile)
+                .HasForeignKey(e => e.MatchUserProfileId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<USER_PROFILE>()
-                .HasMany(e => e.MATCHes1)
-                .WithRequired(e => e.USER_PROFILE1)
-                .HasForeignKey(e => e.USER_PROFILE_ID)
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(e => e.Matches1)
+                .WithRequired(e => e.UserProfile1)
+                .HasForeignKey(e => e.UserProfileId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<USER>()
-                .Property(e => e.USER_USERNAME)
-                .IsUnicode(false);
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(e => e.Messages)
+                .WithRequired(e => e.UserProfile)
+                .HasForeignKey(e => e.ReceiverId)
+                .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<USER>()
-                .Property(e => e.USER_EMAIL)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<USER>()
-                .Property(e => e.USER_PASSWORD)
-                .IsUnicode(false);
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(e => e.Messages1)
+                .WithRequired(e => e.UserProfile1)
+                .HasForeignKey(e => e.SenderId)
+                .WillCascadeOnDelete(false);
         }
     }
 }

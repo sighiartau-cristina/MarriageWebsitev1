@@ -14,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<OrientationEntity> Add(OrientationEntity entity)
         {
             DbModel dbModel = new DbModel();
-            ORIENTATION dataEntity;
+            Orientation dataEntity;
 
             if (entity == null)
             {
@@ -59,7 +59,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.ORIENTATIONs.Add(dataEntity);
+                dbModel.Orientations.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -81,10 +81,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<OrientationEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            ORIENTATION dataEntity;
+            Orientation dataEntity;
             try
             {
-                dataEntity = dbModel.ORIENTATIONs.Find(id);
+                dataEntity = dbModel.Orientations.Find(id);
             }
             catch (Exception)
             {
@@ -106,7 +106,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.ORIENTATIONs.Remove(dataEntity);
+                dbModel.Orientations.Remove(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -136,11 +136,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            ORIENTATION dataEntity;
+            Orientation dataEntity;
 
             try
             {
-                dataEntity = dbModel.ORIENTATIONs.Find(entity.OrientationId);
+                dataEntity = dbModel.Orientations.Find(entity.OrientationId);
             }
             catch (Exception)
             {
@@ -162,7 +162,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.ORIENT_NAME = entity.OrientationName;
+                dataEntity.OrientationName = entity.OrientationName;
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -183,10 +183,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<OrientationEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            ORIENTATION entity;
+            Orientation entity;
             try
             {
-                entity = dbModel.ORIENTATIONs.Find(id);
+                entity = dbModel.Orientations.Find(id);
 
             }
             catch (Exception)
@@ -220,7 +220,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.ORIENTATIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Orientations.ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -240,24 +240,24 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.ORIENTATIONs.Where(e => e.ORIENT_NAME == name).FirstOrDefault();
+            var entity = dbModel.Orientations.Where(e => e.OrientationName == name).FirstOrDefault();
             return entity != null;
         }
 
-        private ORIENTATION ConvertToDataEntity(OrientationEntity orientationEntity)
+        private Orientation ConvertToDataEntity(OrientationEntity orientationEntity)
         {
             if (orientationEntity == null)
             {
                 return null;
             }
 
-            return new ORIENTATION
+            return new Orientation
             {
-                ORIENT_NAME = orientationEntity.OrientationName
+                OrientationName = orientationEntity.OrientationName
             };
         }
 
-        private OrientationEntity ConvertToEntity(ORIENTATION orientation)
+        private OrientationEntity ConvertToEntity(Orientation orientation)
         {
             if (orientation == null)
             {
@@ -266,8 +266,8 @@ namespace BusinessModel.Handlers
 
             return new OrientationEntity
             {
-                OrientationId = orientation.ORIENT_ID,
-                OrientationName = orientation.ORIENT_NAME
+                OrientationId = orientation.OrientationId,
+                OrientationName = orientation.OrientationName
             };
         }
     }

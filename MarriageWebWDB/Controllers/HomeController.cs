@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Data.Entity.Core.Objects.DataClasses;
+using System.Linq;
 using System.Web.Mvc;
 using BusinessModel.Constants;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
+using MarriageWebWDB.SignalRChat;
 using MarriageWebWDB.Utils;
 
 namespace MarriageWebWDB.Controllers
@@ -23,7 +25,10 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            return View();
+            var list = new UserProfileHandler().GetSuggestions((int)Session["userProfileId"]);
+            var models = new UserHelper().Users(list.Entity);
+
+            return View(models);
         }
 
         public ActionResult About()
@@ -32,7 +37,12 @@ namespace MarriageWebWDB.Controllers
 
             return View();
         }
+        public ActionResult Chat()
+        {
+            var start = new Startup(); 
 
+            return View();
+        }
         public ActionResult ShowProfile(string id)
         {
             try
@@ -86,8 +96,9 @@ namespace MarriageWebWDB.Controllers
             var status = new MaritalStatusHandler().Get(profile.Entity.StatusId);
             var religion = new ReligionHandler().Get(profile.Entity.ReligionId);
             var orientation = new OrientationHandler().Get(profile.Entity.OrientationId);
+            var file = new FileHandler().GetByUserId(profile.Entity.UserProfileId);
 
-            if(!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest)
+            if(!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !file.CompletedRequest)
             {
                 TempData["error"] = gender.ErrorMessage + status.ErrorMessage + religion.ErrorMessage + orientation.ErrorMessage;
                 return RedirectToAction("Index", "Error");
@@ -99,16 +110,14 @@ namespace MarriageWebWDB.Controllers
             profileModel.Job = string.IsNullOrEmpty(profile.Entity.UserProfileJob) ? "This user has not provided information about their job." : profile.Entity.UserProfileJob;
             profileModel.Description = string.IsNullOrEmpty(profile.Entity.UserProfileDescription) ? "This user has not provided a description." : profile.Entity.UserProfileDescription;
             profileModel.FullName = profile.Entity.UserProfileName + " " + profile.Entity.UserProfileSurname;
-            profileModel.Address = (address == null) ? "This user has not provided information about their address." : address.Entity.AddressStreet + ", " + address.Entity.AddressStreetNo + ", " + address.Entity.AddressCity + ", " + address.Entity.AddressCountry;
+            profileModel.Address = (address.Entity == null) ? "This user has not provided information about their address." : address.Entity.AddressStreet + ", " + address.Entity.AddressStreetNo + ", " + address.Entity.AddressCity + ", " + address.Entity.AddressCountry;
             profileModel.Birthday = DateFormatter.GetDate(profile.Entity.UserProfileBirthday);
             profileModel.Age = AgeCalculator.GetDifferenceInYears(profile.Entity.UserProfileBirthday, DateTime.Now).ToString();
             profileModel.Gender = gender.Entity.GenderName;
             profileModel.Orientation = orientation.Entity.OrientationName;
             profileModel.Religion = religion.Entity.ReligionName;
-            profileModel.Status = status.Entity.MaritalStatusName;
-
-            profileModel.File = new FileEntityHandler().GetByUserId(profile.Entity.UserProfileId);
-
+            profileModel.Status = status.Entity.StatusName;
+            profileModel.File = file.Entity;
 
             return View("ShowProfile", profileModel);
         }

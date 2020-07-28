@@ -6,22 +6,21 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class MARITAL_STATUS
+    public partial class Status
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public MARITAL_STATUS()
+        public Status()
         {
-            USER_PROFILE = new HashSet<USER_PROFILE>();
+            UserProfiles = new HashSet<UserProfile>();
         }
 
-        [Key]
-        public int MRTSTS_ID { get; set; }
+        public int StatusId { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string MRTSTS_NAME { get; set; }
+        public string StatusName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<USER_PROFILE> USER_PROFILE { get; set; }
+        public virtual ICollection<UserProfile> UserProfiles { get; set; }
     }
 }

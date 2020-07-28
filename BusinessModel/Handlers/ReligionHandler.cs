@@ -14,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<ReligionEntity> Add(ReligionEntity entity)
         {
             DbModel dbModel = new DbModel();
-            RELIGION dataEntity;
+            Religion dataEntity;
 
             if (entity == null)
             {
@@ -59,7 +59,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.RELIGIONs.Add(dataEntity);
+                dbModel.Religions.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -81,10 +81,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<ReligionEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            RELIGION dataEntity;
+            Religion dataEntity;
             try
             {
-                dataEntity = dbModel.RELIGIONs.Find(id);
+                dataEntity = dbModel.Religions.Find(id);
             }
             catch (Exception)
             {
@@ -106,7 +106,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.RELIGIONs.Remove(dataEntity);
+                dbModel.Religions.Remove(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -136,11 +136,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            RELIGION dataEntity;
+            Religion dataEntity;
 
             try
             {
-                dataEntity = dbModel.RELIGIONs.Find(entity.ReligionId);
+                dataEntity = dbModel.Religions.Find(entity.ReligionId);
             }
             catch (Exception)
             {
@@ -162,7 +162,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.RELIGION_NAME = entity.ReligionName;
+                dataEntity.ReligionName = entity.ReligionName;
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -183,10 +183,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<ReligionEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            RELIGION entity;
+            Religion entity;
             try
             {
-                entity = dbModel.RELIGIONs.Find(id);
+                entity = dbModel.Religions.Find(id);
 
             }
             catch (Exception)
@@ -220,7 +220,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.RELIGIONs.ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Religions.ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -241,24 +241,24 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.RELIGIONs.Where(e => e.RELIGION_NAME == name).FirstOrDefault();
+            var entity = dbModel.Religions.Where(e => e.ReligionName == name).FirstOrDefault();
             return entity != null;
         }
 
-        private RELIGION ConvertToDataEntity(ReligionEntity religionEntity)
+        private Religion ConvertToDataEntity(ReligionEntity religionEntity)
         {
             if (religionEntity == null)
             {
                 return null;
             }
 
-            return new RELIGION
+            return new Religion
             {
-                RELIGION_NAME = religionEntity.ReligionName
+                ReligionName = religionEntity.ReligionName
             };
         }
 
-        private ReligionEntity ConvertToEntity(RELIGION religion)
+        private ReligionEntity ConvertToEntity(Religion religion)
         {
             if (religion == null)
             {
@@ -267,8 +267,8 @@ namespace BusinessModel.Handlers
 
             return new ReligionEntity
             {
-                ReligionId = religion.RELIGION_ID,
-                ReligionName = religion.RELIGION_NAME
+                ReligionId = religion.ReligionId,
+                ReligionName = religion.ReligionName
             };
         }
     }

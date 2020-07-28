@@ -6,33 +6,32 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("USERS")]
-    public partial class USER
+    [Table("User")]
+    public partial class User
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public USER()
+        public User()
         {
-            USER_PROFILE = new HashSet<USER_PROFILE>();
+            UserProfiles = new HashSet<UserProfile>();
         }
 
-        [Key]
-        public int USER_ID { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string USER_USERNAME { get; set; }
+        public string Username { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string USER_EMAIL { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [StringLength(25)]
-        public string USER_PASSWORD { get; set; }
+        public string Password { get; set; }
 
-        public DateTime USER_CREATED_AT { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<USER_PROFILE> USER_PROFILE { get; set; }
+        public virtual ICollection<UserProfile> UserProfiles { get; set; }
     }
 }

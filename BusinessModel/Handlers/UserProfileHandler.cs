@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using BusinessModel.Constants;
 using BusinessModel.Contracts;
@@ -13,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Add(UserProfileEntity entity)
         {
             DbModel dbModel = new DbModel();
-            USER_PROFILE dataEntity = null;
+            UserProfile dataEntity = null;
 
             if (entity == null)
             {
@@ -59,7 +60,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.USER_PROFILE.Add(dataEntity);
+                dbModel.UserProfiles.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -81,11 +82,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            USER_PROFILE entity = null;
+            UserProfile entity = null;
 
             try
             {
-                entity = dbModel.USER_PROFILE.Find(id);
+                entity = dbModel.UserProfiles.Find(id);
 
                 if (entity == null)
                 {
@@ -108,7 +109,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.USER_PROFILE.Remove(entity);
+                dbModel.UserProfiles.Remove(entity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -138,11 +139,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            USER_PROFILE dataEntity = null;
+            UserProfile dataEntity = null;
 
             try
             {
-                dbModel.USER_PROFILE.Find(entity.UserProfileId);
+                dbModel.UserProfiles.Find(entity.UserProfileId);
 
                 if (dataEntity == null)
                 {
@@ -163,17 +164,17 @@ namespace BusinessModel.Handlers
                 };
             }
 
-            dataEntity.USRPROF_JOB = entity.UserProfileJob;
-            dataEntity.USRPROF_NAME = entity.UserProfileName;
-            dataEntity.USRPROF_SURNAME = entity.UserProfileSurname;
-            dataEntity.USRPROF_DESCRIPTION = entity.UserProfileDescription;
-            dataEntity.USRPROF_PHONE = entity.UserProfilePhone;
-            dataEntity.USRPROF_BIRTHDAY = entity.UserProfileBirthday;
-            dataEntity.STATUS_ID = entity.StatusId;
-            dataEntity.GENDER_ID = entity.GenderId;
-            dataEntity.ORIENTATION_ID = entity.OrientationId;
-            dataEntity.RELIGION_ID = entity.ReligionId;
-            dataEntity.USER_AGE = entity.UserAge;
+            dataEntity.Job = entity.UserProfileJob;
+            dataEntity.Name = entity.UserProfileName;
+            dataEntity.Surname = entity.UserProfileSurname;
+            dataEntity.Description = entity.UserProfileDescription;
+            dataEntity.Phone = entity.UserProfilePhone;
+            dataEntity.Birthday = entity.UserProfileBirthday;
+            dataEntity.StatusId = entity.StatusId;
+            dataEntity.GenderId = entity.GenderId;
+            dataEntity.OrientationId = entity.OrientationId;
+            dataEntity.ReligionId = entity.ReligionId;
+            dataEntity.Age = entity.UserAge;
 
             try
             {
@@ -202,11 +203,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> GetByUserId(int id)
         {
             DbModel dbModel = new DbModel();
-            USER_PROFILE entity;
+            UserProfile entity;
 
             try
             {
-                entity = dbModel.USER_PROFILE.Where(e => e.USER_ID == id).FirstOrDefault();
+                entity = dbModel.UserProfiles.Where(e => e.UserId == id).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -236,11 +237,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            USER_PROFILE entity = null;
+            UserProfile entity = null;
 
             try
             {
-                entity = dbModel.USER_PROFILE.Find(id);
+                entity = dbModel.UserProfiles.Find(id);
             }
             catch (Exception)
             {
@@ -270,35 +271,35 @@ namespace BusinessModel.Handlers
         private bool CheckExistingProfileForUser(int userId)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.USER_PROFILE.Where(e => e.USER_ID == userId).FirstOrDefault();
+            var entity = dbModel.UserProfiles.Where(e => e.UserId == userId).FirstOrDefault();
             return entity != null;
         }
 
-        private USER_PROFILE ConvertToDataEntity(UserProfileEntity entity)
+        private UserProfile ConvertToDataEntity(UserProfileEntity entity)
         {
             if (entity == null)
             {
                 return null;
             }
 
-            return new USER_PROFILE
+            return new UserProfile
             {
-                USRPROF_JOB = entity.UserProfileJob,
-                USRPROF_NAME = entity.UserProfileName,
-                USRPROF_SURNAME = entity.UserProfileSurname,
-                USRPROF_DESCRIPTION = entity.UserProfileDescription,
-                USRPROF_PHONE = entity.UserProfilePhone,
-                USRPROF_BIRTHDAY = entity.UserProfileBirthday,
-                USER_ID = entity.UserId,
-                ORIENTATION_ID = entity.OrientationId,
-                GENDER_ID = entity.GenderId,
-                RELIGION_ID = entity.ReligionId,
-                STATUS_ID = entity.StatusId,
-                USER_AGE = entity.UserAge
+                Job = entity.UserProfileJob,
+                Name = entity.UserProfileName,
+                Surname = entity.UserProfileSurname,
+                Description = entity.UserProfileDescription,
+                Phone = entity.UserProfilePhone,
+                Birthday = entity.UserProfileBirthday,
+                UserId = entity.UserId,
+                OrientationId = entity.OrientationId,
+                GenderId = entity.GenderId,
+                ReligionId = entity.ReligionId,
+                StatusId = entity.StatusId,
+                Age = entity.UserAge
             };
         }
 
-        private UserProfileEntity ConvertToEntity(USER_PROFILE dataEntity)
+        private UserProfileEntity ConvertToEntity(UserProfile dataEntity)
         {
             if (dataEntity == null)
             {
@@ -307,20 +308,47 @@ namespace BusinessModel.Handlers
 
             return new UserProfileEntity
             {
-                UserProfileId = dataEntity.USRPROF_ID,
+                UserProfileId = dataEntity.UserProfileId,
 
-                UserProfileJob = dataEntity.USRPROF_JOB,
-                UserProfileName = dataEntity.USRPROF_NAME,
-                UserProfileSurname = dataEntity.USRPROF_SURNAME,
-                UserProfileDescription = dataEntity.USRPROF_DESCRIPTION,
-                UserProfilePhone = dataEntity.USRPROF_PHONE,
-                UserProfileBirthday = dataEntity.USRPROF_BIRTHDAY,
-                UserId = dataEntity.USER_ID,
-                OrientationId = dataEntity.ORIENTATION_ID,
-                GenderId = dataEntity.GENDER_ID,
-                ReligionId = dataEntity.RELIGION_ID,
-                StatusId = dataEntity.STATUS_ID,
-                UserAge = dataEntity.USER_AGE
+                UserProfileJob = dataEntity.Job,
+                UserProfileName = dataEntity.Name,
+                UserProfileSurname = dataEntity.Surname,
+                UserProfileDescription = dataEntity.Description,
+                UserProfilePhone = dataEntity.Phone,
+                UserProfileBirthday = dataEntity.Birthday,
+                UserId = dataEntity.UserId,
+                OrientationId = dataEntity.OrientationId,
+                GenderId = dataEntity.GenderId,
+                ReligionId = dataEntity.ReligionId,
+                StatusId = dataEntity.StatusId,
+                UserAge = dataEntity.Age
+            };
+        }
+
+        public ResponseEntity<ICollection<int>> GetSuggestions(int userProfileId)
+        {
+            DbModel dbModel = new DbModel();
+            //ICollection<int> list;
+            List<int> list;
+
+            try
+            {
+                list = dbModel.Database.SqlQuery<int>("getSuggestions @user_profile", new SqlParameter("user_profile", userProfileId)).ToList();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<int>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserProfileGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<int>>
+            {
+                CompletedRequest = true,
+                Entity = list
             };
         }
 

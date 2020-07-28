@@ -13,7 +13,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<MatchEntity> Add(MatchEntity entity)
         {
             DbModel dbModel = new DbModel();
-            MATCH dataEntity;
+            Match dataEntity;
 
             if (entity == null)
             {
@@ -58,7 +58,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.MATCHes.Add(dataEntity);
+                dbModel.Matches.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -80,10 +80,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<MatchEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            MATCH dataEntity;
+            Match dataEntity;
             try
             {
-                dataEntity = dbModel.MATCHes.Find(id);
+                dataEntity = dbModel.Matches.Find(id);
             }
             catch (Exception)
             {
@@ -105,7 +105,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.MATCHes.Remove(dataEntity);
+                dbModel.Matches.Remove(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -135,11 +135,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            MATCH dataEntity;
+            Match dataEntity;
 
             try
             {
-                dataEntity = dbModel.MATCHes.Find(entity.MatchId);
+                dataEntity = dbModel.Matches.Find(entity.MatchId);
             }
             catch (Exception)
             {
@@ -161,8 +161,8 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.MATCH_ID = entity.MatchId;
-                dataEntity.MATCH_USER_PROFILE_ID = entity.MatchUserProfileId;
+                dataEntity.MatchId = entity.MatchId;
+                dataEntity.MatchUserProfileId = entity.MatchUserProfileId;
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -183,10 +183,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<MatchEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            MATCH entity;
+            Match entity;
             try
             {
-                entity = dbModel.MATCHes.Find(id);
+                entity = dbModel.Matches.Find(id);
 
             }
             catch (Exception)
@@ -226,7 +226,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.MATCHes.Where(e => e.USER_PROFILE_ID == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Matches.Where(e => e.UserProfileId == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -251,7 +251,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.MATCHes.Where(e => e.MATCH_USER_PROFILE_ID == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Matches.Where(e => e.MatchUserProfileId == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -272,26 +272,26 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(MatchEntity entity)
         {
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.MATCHes.Where(e => e.MATCH_ID == entity.MatchId && e.USER_PROFILE_ID == entity.UserProfileId && e.MATCH_USER_PROFILE_ID == entity.MatchUserProfileId).FirstOrDefault();
+            var dataEntity = dbModel.Matches.Where(e => e.MatchId == entity.MatchId && e.UserProfileId == entity.UserProfileId && e.MatchUserProfileId == entity.MatchUserProfileId).FirstOrDefault();
             return dataEntity != null;
         }
 
-        private MATCH ConvertToDataEntity(MatchEntity matchEntity)
+        private Match ConvertToDataEntity(MatchEntity matchEntity)
         {
             if (matchEntity == null)
             {
                 return null;
             }
 
-            return new MATCH
+            return new Match
             {
-                USER_PROFILE_ID = matchEntity.UserProfileId,
-                MATCH_USER_PROFILE_ID = matchEntity.MatchUserProfileId,
-                MATCH_DATE = matchEntity.MatchDate
+                UserProfileId = matchEntity.UserProfileId,
+                MatchUserProfileId = matchEntity.MatchUserProfileId,
+                MatchDate = matchEntity.MatchDate
             };
         }
 
-        private MatchEntity ConvertToEntity(MATCH match)
+        private MatchEntity ConvertToEntity(Match match)
         {
             if (match == null)
             {
@@ -300,10 +300,10 @@ namespace BusinessModel.Handlers
 
             return new MatchEntity
             {
-                MatchDate = match.MATCH_DATE,
-                MatchId = match.MATCH_ID,
-                MatchUserProfileId = match.MATCH_USER_PROFILE_ID,
-                UserProfileId = match.USER_PROFILE_ID
+                MatchDate = match.MatchDate,
+                MatchId = match.MatchId,
+                MatchUserProfileId = match.MatchUserProfileId,
+                UserProfileId = match.UserProfileId
             };
         }
 

@@ -50,18 +50,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ADDRESS.cs" />
+    <Compile Include="Address.cs" />
     <Compile Include="DbModel.cs" />
-    <Compile Include="FILE.cs" />
-    <Compile Include="GENDER.cs" />
-    <Compile Include="MARITAL_STATUS.cs" />
-    <Compile Include="MATCH.cs" />
-    <Compile Include="ORIENTATION.cs" />
+    <Compile Include="File.cs" />
+    <Compile Include="Gender.cs" />
+    <Compile Include="Match.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="Orientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RELIGION.cs" />
+    <Compile Include="Religion.cs" />
+    <Compile Include="Status.cs" />
     <Compile Include="sysdiagram.cs" />
-    <Compile Include="USER.cs" />
-    <Compile Include="USER_PROFILE.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserProfile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

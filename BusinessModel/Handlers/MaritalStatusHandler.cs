@@ -8,18 +8,18 @@ using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    public class MaritalStatusHandler : IBusinessAccess<MaritalStatusEntity>
+    public class MaritalStatusHandler : IBusinessAccess<StatusEntity>
     {
 
 
-        public ResponseEntity<MaritalStatusEntity> Add(MaritalStatusEntity entity)
+        public ResponseEntity<StatusEntity> Add(StatusEntity entity)
         {
             DbModel dbModel = new DbModel();
-            MARITAL_STATUS dataEntity;
+            Status dataEntity;
 
             if (entity == null)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.NullEntityError
@@ -28,12 +28,12 @@ namespace BusinessModel.Handlers
 
             try
             {
-                if (!CheckExisting(entity.MaritalStatusName))
+                if (!CheckExisting(entity.StatusName))
                 {
                     dataEntity = ConvertToDataEntity(entity);
                     if (dataEntity == null)
                     {
-                        return new ResponseEntity<MaritalStatusEntity>
+                        return new ResponseEntity<StatusEntity>
                         {
                             CompletedRequest = false,
                             ErrorMessage = ErrorConstants.NullConvertedEntityError
@@ -42,7 +42,7 @@ namespace BusinessModel.Handlers
                 }
                 else
                 {
-                    return new ResponseEntity<MaritalStatusEntity>
+                    return new ResponseEntity<StatusEntity>
                     {
                         CompletedRequest = false,
                         ErrorMessage = ErrorConstants.MaritalStatusExisting
@@ -51,7 +51,7 @@ namespace BusinessModel.Handlers
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusGetError
@@ -60,36 +60,36 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.MARITAL_STATUS.Add(dataEntity);
+                dbModel.Status.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusInsertError
                 };
             }
 
-            return new ResponseEntity<MaritalStatusEntity>
+            return new ResponseEntity<StatusEntity>
             {
                 CompletedRequest = true,
                 Entity = ConvertToEntity(dataEntity)
             };
         }
 
-        public ResponseEntity<MaritalStatusEntity> Delete(int id)
+        public ResponseEntity<StatusEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            MARITAL_STATUS dataEntity;
+            Status dataEntity;
             try
             {
-                dataEntity = dbModel.MARITAL_STATUS.Find(id);
+                dataEntity = dbModel.Status.Find(id);
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusGetError
@@ -98,7 +98,7 @@ namespace BusinessModel.Handlers
 
             if (dataEntity == null)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusNotFound
@@ -107,29 +107,29 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.MARITAL_STATUS.Remove(dataEntity);
+                dbModel.Status.Remove(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusDeleteError
                 };
             }
 
-            return new ResponseEntity<MaritalStatusEntity>
+            return new ResponseEntity<StatusEntity>
             {
                 CompletedRequest = true
             };
         }
 
-        public ResponseEntity<MaritalStatusEntity> Update(MaritalStatusEntity entity)
+        public ResponseEntity<StatusEntity> Update(StatusEntity entity)
         {
             if (entity == null)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.NullEntityError
@@ -137,15 +137,15 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            MARITAL_STATUS dataEntity;
+            Status dataEntity;
 
             try
             {
-                dataEntity = dbModel.MARITAL_STATUS.Find(entity.MaritalStatusId);
+                dataEntity = dbModel.Status.Find(entity.StatusId);
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusGetError
@@ -154,7 +154,7 @@ namespace BusinessModel.Handlers
 
             if (dataEntity == null)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusNotFound
@@ -163,36 +163,36 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.MRTSTS_NAME = entity.MaritalStatusName;
+                dataEntity.StatusName = entity.StatusName;
                 dbModel.SaveChanges();
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusUpdateError
                 };
             }
 
-            return new ResponseEntity<MaritalStatusEntity>
+            return new ResponseEntity<StatusEntity>
             {
                 CompletedRequest = true
             };
         }
 
-        public ResponseEntity<MaritalStatusEntity> Get(int id)
+        public ResponseEntity<StatusEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            MARITAL_STATUS entity;
+            Status entity;
             try
             {
-                entity = dbModel.MARITAL_STATUS.Find(id);
+                entity = dbModel.Status.Find(id);
 
             }
             catch (Exception)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusGetError
@@ -200,39 +200,39 @@ namespace BusinessModel.Handlers
             }
             if (entity == null)
             {
-                return new ResponseEntity<MaritalStatusEntity>
+                return new ResponseEntity<StatusEntity>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusNotFound
                 };
             }
 
-            return new ResponseEntity<MaritalStatusEntity>
+            return new ResponseEntity<StatusEntity>
             {
                 CompletedRequest = true,
                 Entity = ConvertToEntity(entity)
             };
         }
 
-        public ResponseEntity<ICollection<MaritalStatusEntity>> GetAll()
+        public ResponseEntity<ICollection<StatusEntity>> GetAll()
         {
             DbModel dbModel = new DbModel();
-            ICollection<MaritalStatusEntity> list;
+            ICollection<StatusEntity> list;
 
             try
             {
-                list = dbModel.MARITAL_STATUS.ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Status.ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
-                return new ResponseEntity<ICollection<MaritalStatusEntity>>
+                return new ResponseEntity<ICollection<StatusEntity>>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MaritalStatusGetError
                 };
             }
 
-            return new ResponseEntity<ICollection<MaritalStatusEntity>>
+            return new ResponseEntity<ICollection<StatusEntity>>
             {
                 CompletedRequest = true,
                 Entity = list
@@ -241,34 +241,34 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.MARITAL_STATUS.Where(e => e.MRTSTS_NAME == name).FirstOrDefault();
+            var entity = dbModel.Status.Where(e => e.StatusName == name).FirstOrDefault();
             return entity != null;
         }
 
-        private MARITAL_STATUS ConvertToDataEntity(MaritalStatusEntity maritalStatusEntity)
+        private Status ConvertToDataEntity(StatusEntity maritalStatusEntity)
         {
             if (maritalStatusEntity == null)
             {
                 return null;
             }
 
-            return new MARITAL_STATUS
+            return new Status
             {
-                MRTSTS_NAME = maritalStatusEntity.MaritalStatusName
+                StatusName = maritalStatusEntity.StatusName
             };
         }
 
-        private MaritalStatusEntity ConvertToEntity(MARITAL_STATUS maritalStatus)
+        private StatusEntity ConvertToEntity(Status maritalStatus)
         {
             if (maritalStatus == null)
             {
                 return null;
             }
 
-            return new MaritalStatusEntity
+            return new StatusEntity
             {
-                MaritalStatusId = maritalStatus.MRTSTS_ID,
-                MaritalStatusName = maritalStatus.MRTSTS_NAME
+                StatusId = maritalStatus.StatusId,
+                StatusName = maritalStatus.StatusName
             };
         }
     }

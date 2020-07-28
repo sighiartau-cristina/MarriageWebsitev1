@@ -14,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<GenderEntity> Add(GenderEntity entity)
         {
             DbModel dbModel = new DbModel();
-            GENDER dataEntity;
+            Gender dataEntity;
 
             if (entity == null)
             {
@@ -59,7 +59,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.GENDERs.Add(dataEntity);
+                dbModel.Genders.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -81,10 +81,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<GenderEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            GENDER dataEntity;
+            Gender dataEntity;
             try
             {
-                dataEntity = dbModel.GENDERs.Find(id);
+                dataEntity = dbModel.Genders.Find(id);
             }
             catch (Exception)
             {
@@ -106,7 +106,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.GENDERs.Remove(dataEntity);
+                dbModel.Genders.Remove(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -136,11 +136,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            GENDER dataEntity;
+            Gender dataEntity;
 
             try
             {
-                dataEntity = dbModel.GENDERs.Find(entity.GenderId);
+                dataEntity = dbModel.Genders.Find(entity.GenderId);
             }
             catch (Exception)
             {
@@ -162,7 +162,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.GENDER_NAME = entity.GenderName;
+                dataEntity.GenderName = entity.GenderName;
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -183,10 +183,10 @@ namespace BusinessModel.Handlers
         public ResponseEntity<GenderEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            GENDER entity;
+            Gender entity;
             try
             {
-                entity = dbModel.GENDERs.Find(id);
+                entity = dbModel.Genders.Find(id);
 
             }
             catch (Exception)
@@ -220,7 +220,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.GENDERs.ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Genders.ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -241,24 +241,24 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();
-            var entity = dbModel.GENDERs.Where(e => e.GENDER_NAME == name).FirstOrDefault();
+            var entity = dbModel.Genders.Where(e => e.GenderName == name).FirstOrDefault();
             return entity != null;
         }
 
-        private GENDER ConvertToDataEntity(GenderEntity genderEntity)
+        private Gender ConvertToDataEntity(GenderEntity genderEntity)
         {
             if (genderEntity == null)
             {
                 return null;
             }
 
-            return new GENDER
+            return new Gender
             {
-                GENDER_NAME = genderEntity.GenderName
+                GenderName = genderEntity.GenderName
             };
         }
 
-        private GenderEntity ConvertToEntity(GENDER gender)
+        private GenderEntity ConvertToEntity(Gender gender)
         {
             if (gender == null)
             {
@@ -267,8 +267,8 @@ namespace BusinessModel.Handlers
 
             return new GenderEntity
             {
-                GenderId = gender.GENDER_ID,
-                GenderName = gender.GENDER_NAME
+                GenderId = gender.GenderId,
+                GenderName = gender.GenderName
             };
         }
 

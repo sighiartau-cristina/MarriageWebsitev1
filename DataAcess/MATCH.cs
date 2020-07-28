@@ -6,20 +6,19 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("MATCH")]
-    public partial class MATCH
+    [Table("Match")]
+    public partial class Match
     {
-        [Key]
-        public int MATCH_ID { get; set; }
+        public int MatchId { get; set; }
 
-        public int USER_PROFILE_ID { get; set; }
+        public int UserProfileId { get; set; }
 
-        public int MATCH_USER_PROFILE_ID { get; set; }
+        public int MatchUserProfileId { get; set; }
 
-        public DateTime MATCH_DATE { get; set; }
+        public DateTime MatchDate { get; set; }
 
-        public virtual USER_PROFILE USER_PROFILE { get; set; }
+        public virtual UserProfile UserProfile { get; set; }
 
-        public virtual USER_PROFILE USER_PROFILE1 { get; set; }
+        public virtual UserProfile UserProfile1 { get; set; }
     }
 }

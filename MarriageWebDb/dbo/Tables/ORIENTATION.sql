@@ -1,6 +1,6 @@
-﻿CREATE TABLE [dbo].[ORIENTATION] (
-    [ORIENT_ID]   INT          IDENTITY (1, 1) NOT NULL,
-    [ORIENT_NAME] VARCHAR (25) NOT NULL,
-    PRIMARY KEY CLUSTERED ([ORIENT_ID] ASC)
+﻿CREATE TABLE [dbo].[Orientation] (
+    [OrientationId]   INT          IDENTITY (1, 1) NOT NULL,
+    [OrientationName] VARCHAR (25) NOT NULL,
+    PRIMARY KEY CLUSTERED ([OrientationId] ASC)
 );
 

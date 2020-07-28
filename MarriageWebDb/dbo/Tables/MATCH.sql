@@ -1,9 +1,9 @@
-﻿CREATE TABLE [dbo].[MATCH] (
-    [MATCH_ID] INT  NOT NULL PRIMARY KEY identity(1, 1),
-    [USER_PROFILE_ID] INT NOT NULL,
-    [MATCH_USER_PROFILE_ID]    INT NOT NULL,
-    [MATCH_DATE] DATETIME NOT NULL, 
-    FOREIGN KEY ([USER_PROFILE_ID]) REFERENCES [dbo].[USER_PROFILE] ([USRPROF_ID]),
-    FOREIGN KEY ([MATCH_USER_PROFILE_ID]) REFERENCES [dbo].[USER_PROFILE] ([USRPROF_ID]) 
+﻿CREATE TABLE [dbo].[Match] (
+    [MatchId] INT  NOT NULL PRIMARY KEY identity(1, 1),
+    [UserProfileId] INT NOT NULL,
+    [MatchUserProfileId]    INT NOT NULL,
+    [MatchDate] DATETIME NOT NULL, 
+    FOREIGN KEY ([UserProfileId]) REFERENCES [dbo].[UserProfile] ([UserProfileId]),
+    FOREIGN KEY ([MatchUserProfileId]) REFERENCES [dbo].[UserProfile] ([UserProfileId]) 
 );
 

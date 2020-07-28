@@ -13,7 +13,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<AddressEntity> Add(AddressEntity entity)
         {
             DbModel dbModel = new DbModel();
-            ADDRESS dataEntity;
+            Address dataEntity;
 
             if (entity == null)
             {
@@ -58,7 +58,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.ADDRESSes.Add(dataEntity);
+                dbModel.Addresses.Add(dataEntity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -80,11 +80,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<AddressEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            ADDRESS entity;
+            Address entity;
 
             try
             {
-                entity = dbModel.ADDRESSes.Find(id);
+                entity = dbModel.Addresses.Find(id);
 
                 if (entity == null)
                 {
@@ -106,7 +106,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.ADDRESSes.Remove(entity);
+                dbModel.Addresses.Remove(entity);
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -128,11 +128,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<AddressEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            ADDRESS entity;
+            Address entity;
 
             try
             {
-                entity = dbModel.ADDRESSes.Find(id);
+                entity = dbModel.Addresses.Find(id);
             }
             catch (Exception)
             {
@@ -171,11 +171,11 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            ADDRESS dataEntity;
+            Address dataEntity;
 
             try
             {
-                dataEntity = dbModel.ADDRESSes.Find(entity.AddressId);
+                dataEntity = dbModel.Addresses.Find(entity.AddressId);
 
                 if (dataEntity == null)
                 {
@@ -197,10 +197,10 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dataEntity.ADDRESS_STREET = entity.AddressStreet;
-                dataEntity.ADDRESS_STREETNO = entity.AddressStreetNo;
-                dataEntity.ADDRESS_CITY = entity.AddressCity;
-                dataEntity.ADDRESS_COUNTRY = entity.AddressCountry;
+                dataEntity.AddressStreet = entity.AddressStreet;
+                dataEntity.AddressStreetNo = entity.AddressStreetNo;
+                dataEntity.AddressCity = entity.AddressCity;
+                dataEntity.AddressCountry = entity.AddressCountry;
 
                 dbModel.SaveChanges();
             }
@@ -222,11 +222,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<AddressEntity> GetForUserProfile(int id)
         {
             DbModel dbModel = new DbModel();
-            ADDRESS entity;
+            Address entity;
 
             try
             {
-                entity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == id).FirstOrDefault();
+                entity = dbModel.Addresses.Where(e => e.UserProfileId == id).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -259,28 +259,28 @@ namespace BusinessModel.Handlers
         private bool CheckExisting(int userProfileId)
         {
             DbModel dbModel = new DbModel();
-            var dataEntity = dbModel.ADDRESSes.Where(e => e.USER_PROFILE_ID == userProfileId).FirstOrDefault();
+            var dataEntity = dbModel.Addresses.Where(e => e.UserProfileId == userProfileId).FirstOrDefault();
             return dataEntity != null;
         }
 
-        private ADDRESS ConvertToDataEntity(AddressEntity addressEntity)
+        private Address ConvertToDataEntity(AddressEntity addressEntity)
         {
             if (addressEntity == null)
             {
                 return null;
             }
 
-            return new ADDRESS
+            return new Address
             {
-                USER_PROFILE_ID = addressEntity.UserProfileId,
-                ADDRESS_STREET = addressEntity.AddressStreet,
-                ADDRESS_STREETNO = addressEntity.AddressStreetNo,
-                ADDRESS_CITY = addressEntity.AddressCity,
-                ADDRESS_COUNTRY = addressEntity.AddressCountry
+                UserProfileId = addressEntity.UserProfileId,
+                AddressStreet = addressEntity.AddressStreet,
+                AddressStreetNo = addressEntity.AddressStreetNo,
+                AddressCity = addressEntity.AddressCity,
+                AddressCountry = addressEntity.AddressCountry
             };
         }
 
-        private AddressEntity ConvertToEntity(ADDRESS address)
+        private AddressEntity ConvertToEntity(Address address)
         {
             if (address == null)
             {
@@ -289,12 +289,12 @@ namespace BusinessModel.Handlers
 
             return new AddressEntity
             {
-                AddressId = address.ADDRESS_ID,
-                AddressStreet = address.ADDRESS_STREET,
-                AddressStreetNo = address.ADDRESS_STREETNO,
-                AddressCity = address.ADDRESS_CITY,
-                AddressCountry = address.ADDRESS_COUNTRY,
-                UserProfileId = address.USER_PROFILE_ID
+                AddressId = address.AddressId,
+                AddressStreet = address.AddressStreet,
+                AddressStreetNo = address.AddressStreetNo,
+                AddressCity = address.AddressCity,
+                AddressCountry = address.AddressCountry,
+                UserProfileId = address.UserProfileId
             };
         }
 

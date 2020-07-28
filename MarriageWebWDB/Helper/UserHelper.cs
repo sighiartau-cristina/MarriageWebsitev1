@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Web;
 using BusinessModel.Contracts;
@@ -207,6 +208,20 @@ namespace MarriageWebWDB.Helper
                 ReligionId = model.ReligionId,
                 UserId = userProfile.UserId
             };
+        }
+
+        public List<UserModel> Users(ICollection<int> ids)
+        {
+            List<UserModel> models = new List<UserModel>();
+            foreach(int id in ids)
+            {
+                UserModel userm = new UserModel();
+                var profile = new UserProfileHandler().Get(id);
+                var user = new UserHandler().Get(profile.Entity.UserId);
+                PopulateModel(userm, user.Entity, profile.Entity);
+                models.Add(userm);
+            }
+            return models;
         }
     }
 }
