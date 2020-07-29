@@ -143,14 +143,14 @@ namespace BusinessModel.Handlers
 
             try
             {
-                dbModel.UserProfiles.Find(entity.UserProfileId);
+                dataEntity = dbModel.UserProfiles.Find(entity.UserProfileId);
 
                 if (dataEntity == null)
                 {
                     return new ResponseEntity<UserProfileEntity>
                     {
                         CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.NullConvertedEntityError
+                        ErrorMessage = ErrorConstants.UserProfileNotFound
                     };
                 }
 

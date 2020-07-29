@@ -17,6 +17,8 @@ namespace DataAccess
 
         public DateTime MatchDate { get; set; }
 
+        public bool? Accepted { get; set; }
+
         public virtual UserProfile UserProfile { get; set; }
 
         public virtual UserProfile UserProfile1 { get; set; }

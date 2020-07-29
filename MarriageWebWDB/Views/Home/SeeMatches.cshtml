@@ -52,17 +52,16 @@
 
                     <p>Orientation: @Html.DisplayFor(modelItem => item.Orientation)</p>
 
-                    <p>@Html.ActionLink("See Profile", "ShowProfile", new { id = item.UserName })</p> 
-            </td>
+                    <p>@Html.ActionLink("See Profile", "ShowProfile", new { id = item.UserName })</p>
+                </td>
 
                 <td>
-                    @Html.ActionLink("Match", "MakeMatch", new { id = item.UserName })
-                    <br />
-                    @Html.ActionLink("Reject", "RejectMatch", new { id = item.UserName })
+                    @Html.ActionLink("Start chatting", "Chat", new { id = item.UserName })
                 </td>
-        </tr>
-    }
+            </tr>
+        }
 
     </table>
 </body>
 </html>
+

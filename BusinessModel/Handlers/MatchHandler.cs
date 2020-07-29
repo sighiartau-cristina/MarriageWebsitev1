@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using BusinessModel.Constants;
 using BusinessModel.Contracts;
@@ -8,7 +9,7 @@ using DataAccess;
 
 namespace BusinessModel.Handlers
 {
-    class MatchHandler : IBusinessAccess<MatchEntity>
+    public class MatchHandler : IBusinessAccess<MatchEntity>
     {
         public ResponseEntity<MatchEntity> Add(MatchEntity entity)
         {
@@ -163,6 +164,7 @@ namespace BusinessModel.Handlers
             {
                 dataEntity.MatchId = entity.MatchId;
                 dataEntity.MatchUserProfileId = entity.MatchUserProfileId;
+                dataEntity.Accepted = entity.Accepted;
                 dbModel.SaveChanges();
             }
             catch (Exception)
@@ -217,6 +219,32 @@ namespace BusinessModel.Handlers
         public ResponseEntity<ICollection<MatchEntity>> GetAll()
         {
             throw new NotImplementedException();
+        }
+
+        public ResponseEntity<ICollection<int>> GetAllForUserProfile(int id)
+        {
+            DbModel dbModel = new DbModel();
+            List<int> list;
+
+            try
+            {
+                list = dbModel.Database.SqlQuery<int>("getAcceptedMatches @user_profile", new SqlParameter("user_profile", id)).ToList();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<int>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MatchGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<int>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
         }
 
         public ResponseEntity<ICollection<MatchEntity>> GetAllForUser(int userId)
@@ -287,7 +315,8 @@ namespace BusinessModel.Handlers
             {
                 UserProfileId = matchEntity.UserProfileId,
                 MatchUserProfileId = matchEntity.MatchUserProfileId,
-                MatchDate = matchEntity.MatchDate
+                MatchDate = matchEntity.MatchDate,
+                Accepted = matchEntity.Accepted
             };
         }
 
@@ -303,7 +332,8 @@ namespace BusinessModel.Handlers
                 MatchDate = match.MatchDate,
                 MatchId = match.MatchId,
                 MatchUserProfileId = match.MatchUserProfileId,
-                UserProfileId = match.UserProfileId
+                UserProfileId = match.UserProfileId,
+                Accepted = (bool) match.Accepted
             };
         }
 

@@ -30,18 +30,22 @@ namespace MarriageWebWDB.Helper
             if (responseUserEntity.CompletedRequest)
             {
                 UserEntity user = responseUserEntity.Entity;
-                ResponseEntity<UserProfileEntity> responseUserProfileEntity = new UserProfileHandler().GetByUserId(user.UserId);
+                var responseUserProfileEntity = new UserProfileHandler().GetByUserId(user.UserId);
                 if (responseUserProfileEntity.CompletedRequest)
                 {
-                    UserProfileEntity userProfile = responseUserProfileEntity.Entity;
-                    PopulateModel(userModel, user, userProfile);
+                    var responseFile = new FileHandler().GetByUserId(responseUserProfileEntity.Entity.UserProfileId);
+                    if (responseFile.CompletedRequest)
+                    {
+                        UserProfileEntity userProfile = responseUserProfileEntity.Entity;
+                        PopulateModel(userModel, user, userProfile, responseFile.Entity);
+                    }
                 }
             }
 
             return userModel;
         }
 
-        private void PopulateModel(UserModel userModel, UserEntity user, UserProfileEntity userProfile)
+        private void PopulateModel(UserModel userModel, UserEntity user, UserProfileEntity userProfile, FileEntity file)
         {
             userModel.Religions = SelectListGenerator.GetSelectedReligions(userProfile);
             userModel.Statuses = SelectListGenerator.GetSelectedStatuses(userProfile);
@@ -61,6 +65,7 @@ namespace MarriageWebWDB.Helper
             userModel.Age = userProfile.UserAge;
             userModel.Birthday = userProfile.UserProfileBirthday;
             userModel.BirthdayString = DateFormatter.GetDate(userProfile.UserProfileBirthday);
+            userModel.File = file;
         }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
@@ -208,20 +213,6 @@ namespace MarriageWebWDB.Helper
                 ReligionId = model.ReligionId,
                 UserId = userProfile.UserId
             };
-        }
-
-        public List<UserModel> Users(ICollection<int> ids)
-        {
-            List<UserModel> models = new List<UserModel>();
-            foreach(int id in ids)
-            {
-                UserModel userm = new UserModel();
-                var profile = new UserProfileHandler().Get(id);
-                var user = new UserHandler().Get(profile.Entity.UserId);
-                PopulateModel(userm, user.Entity, profile.Entity);
-                models.Add(userm);
-            }
-            return models;
         }
     }
 }

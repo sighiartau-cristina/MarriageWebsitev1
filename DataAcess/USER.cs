@@ -15,7 +15,7 @@ namespace DataAccess
             UserProfiles = new HashSet<UserProfile>();
         }
 
-        public int UserId { get; set; }
+        public int UserID { get; set; }
 
         [Required]
         [StringLength(25)]

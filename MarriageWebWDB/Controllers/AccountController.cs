@@ -8,6 +8,7 @@ using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.SignalR.Messaging;
 
 namespace MarriageWebWDB.Controllers
@@ -28,6 +29,7 @@ namespace MarriageWebWDB.Controllers
             return View();
         }
 
+        [HttpGet]
         public ActionResult UserProfile()
         {
             try
@@ -69,6 +71,7 @@ namespace MarriageWebWDB.Controllers
             return View(userModel);
         }
 
+        [HttpPost]
         public ActionResult UpdateUser(UserModel userModel)
         {
             try
@@ -148,6 +151,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public ActionResult ChangePassword()
         {
             try
@@ -202,6 +206,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public ActionResult AddAddress()
         {
             try
@@ -255,6 +260,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public ActionResult EditAddress()
         {
             try
@@ -320,6 +326,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpPost]
         public ActionResult DeleteAddress()
         {
             try
@@ -347,6 +354,7 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("Index", "Account");
         }
 
+        [HttpGet]
         public ActionResult ChangeProfilePicture()
         {
             try
@@ -451,5 +459,6 @@ namespace MarriageWebWDB.Controllers
             
             return RedirectToAction("Index", "Account");
         }
+
     }
 }

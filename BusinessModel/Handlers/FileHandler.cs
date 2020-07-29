@@ -78,6 +78,7 @@ namespace BusinessModel.Handlers
             try
             {
                 dbModel.Files.Remove(file);
+                dbModel.SaveChanges();
             }
             catch (Exception)
             {

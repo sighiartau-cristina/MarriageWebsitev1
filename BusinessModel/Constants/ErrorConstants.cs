@@ -74,5 +74,11 @@
         public static string FileUpdateError = "An error occured while updating the image file.";
         public static string FileDeleteError = "An error occured while deleting the image file.";
         public static string FileNotFound = "No file has been found.";
+
+        public static string MessageInsertError = "An error occured while registering message.";
+        public static string MessageGetError = "An error occured while fetching message.";
+        public static string MessageUpdateError = "An error occured while updating the message.";
+        public static string MessageDeleteError = "An error occured while deleting the message.";
+        public static string MessageNotFound = "No message has been found.";
     }
 }

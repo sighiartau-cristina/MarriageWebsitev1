@@ -20,13 +20,28 @@
     </div>
     <br />
     <div>
+        @if (Model.File != null)
+        {
+
+            <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" style="width:200px;height:200px;" />
+
+        }
+        else
+        {
+            <img src="~/Images/untitled.jpg" alt="avatar" style="width:200px;height:200px;" />
+        }
+    </div>
+    <div>
         @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))
         {
             <input type="submit" value="Change Profile Picture" />
         }
     </div>
     <div>
-        @Html.ActionLink("Delete Profile Picture", "DeleteProfilePicture", "Account", new { @class = "btn btn-primary" })
+        @using (Html.BeginForm("DeleteProfilePicture", "Account", FormMethod.Post))
+        {
+            <input type="submit" value="Delete Profile Picture" />
+        }
     </div>
     <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
         @using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post))

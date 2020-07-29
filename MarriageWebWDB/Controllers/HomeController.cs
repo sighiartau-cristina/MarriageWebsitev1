@@ -3,6 +3,7 @@ using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
 using System.Web.Mvc;
 using BusinessModel.Constants;
+using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
@@ -26,17 +27,11 @@ namespace MarriageWebWDB.Controllers
             }
 
             var list = new UserProfileHandler().GetSuggestions((int)Session["userProfileId"]);
-            var models = new UserHelper().Users(list.Entity);
+            var models = new SuggestionsHelper().GetSuggestions(list.Entity);
 
             return View(models);
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
         public ActionResult Chat()
         {
             var start = new Startup(); 
@@ -90,7 +85,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            //aici nu pare prea bine
+            //o sa le mut de aici
             //TODO
             var gender = new GenderHandler().Get(profile.Entity.GenderId);
             var status = new MaritalStatusHandler().Get(profile.Entity.StatusId);
@@ -120,6 +115,135 @@ namespace MarriageWebWDB.Controllers
             profileModel.File = file.Entity;
 
             return View("ShowProfile", profileModel);
+        }
+
+        public ActionResult MakeMatch(string id)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            //TODO mai bine adaug o proprietate de UserProfileId?
+            var userProfileHandler = new UserProfileHandler();
+            var userProfile = userProfileHandler.Get((int)Session["userProfileId"]);
+
+            if (!userProfile.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userToMatch = new UserHandler().GetByUsername(id);
+
+            if (!userToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
+
+            if (!userProfileToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var match = new MatchEntity
+            {
+                MatchDate = DateTime.Now,
+                MatchUserProfileId = userProfileToMatch.Entity.UserProfileId,
+                UserProfileId = userProfile.Entity.UserProfileId,
+                Accepted = true
+            };
+
+            var matchResponse = new MatchHandler().Add(match);
+
+            if (!matchResponse.CompletedRequest)
+            {
+                TempData["error"] = matchResponse.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult RejectMatch(string id)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            //TODO mai bine adaug o proprietate de UserProfileId?
+            var userProfileHandler = new UserProfileHandler();
+            var userProfile = userProfileHandler.Get((int)Session["userProfileId"]);
+
+            if (!userProfile.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userToMatch = new UserHandler().GetByUsername(id);
+
+            if (!userToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
+
+            if (!userProfileToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var match = new MatchEntity
+            {
+                MatchDate = DateTime.Now,
+                MatchUserProfileId = userProfileToMatch.Entity.UserProfileId,
+                UserProfileId = userProfile.Entity.UserProfileId,
+                Accepted = false
+            };
+
+            var matchResponse = new MatchHandler().Add(match);
+
+            if (!matchResponse.CompletedRequest)
+            {
+                TempData["error"] = matchResponse.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult SeeMatches()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var list = new MatchHandler().GetAllForUserProfile((int)Session["userProfileId"]);
+            var models = new SuggestionsHelper().GetSuggestions(list.Entity);
+
+            return View(models);
         }
     }
 }

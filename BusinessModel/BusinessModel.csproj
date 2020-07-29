@@ -49,12 +49,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\ErrorConstants.cs" />
+    <Compile Include="Contracts\MessageStatus.cs" />
     <Compile Include="Contracts\FileType.cs" />
     <Compile Include="Contracts\IBusinessAccess.cs" />
     <Compile Include="Contracts\ResponseEntity.cs" />
     <Compile Include="Entities\AddressEntity.cs" />
     <Compile Include="Entities\FileEntity.cs" />
     <Compile Include="Entities\GenderEntity.cs" />
+    <Compile Include="Entities\MessageEntity.cs" />
     <Compile Include="Entities\StatusEntity.cs" />
     <Compile Include="Entities\MatchEntity.cs" />
     <Compile Include="Entities\OrientationEntity.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="Handlers\GenderHandler.cs" />
     <Compile Include="Handlers\MaritalStatusHandler.cs" />
     <Compile Include="Handlers\MatchHandler.cs" />
+    <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Handlers\OrientationHandler.cs" />
     <Compile Include="Handlers\ReligionHandler.cs" />
     <Compile Include="Handlers\UserHandler.cs" />

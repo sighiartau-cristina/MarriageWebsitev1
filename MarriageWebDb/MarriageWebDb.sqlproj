@@ -74,5 +74,6 @@
     <Build Include="dbo\Stored Procedures\getSuggestions.sql" />
     <Build Include="dbo\Tables\Files.sql" />
     <Build Include="dbo\Tables\Messages.sql" />
+    <Build Include="dbo\Stored Procedures\getAcceptedMatches.sql" />
   </ItemGroup>
 </Project>

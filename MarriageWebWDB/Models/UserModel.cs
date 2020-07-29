@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BusinessModel.Entities;
 
 namespace MarriageWebWDB.Models
 {
@@ -41,5 +42,6 @@ namespace MarriageWebWDB.Models
 
         public string BirthdayString { get; set; }
 
+        public FileEntity File { get; set; }
     }
 }

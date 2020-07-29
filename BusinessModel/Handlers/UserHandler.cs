@@ -350,7 +350,7 @@ namespace BusinessModel.Handlers
 
             return new UserEntity
             {
-                UserId = user.UserId,
+                UserId = user.UserID,
                 UserEmail = user.Email,
                 UserPassword = user.Password,
                 UserUsername = user.Username,

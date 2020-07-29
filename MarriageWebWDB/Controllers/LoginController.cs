@@ -97,5 +97,24 @@ namespace MarriageWebWDB.Controllers
                 }
             }
         }
+
+        public ActionResult Logout()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return View("Login");
+            }
+
+            Session.Clear();
+            Session.Abandon();
+
+            return RedirectToAction("Login ", "Login");
+
+        }
+
     }
 }

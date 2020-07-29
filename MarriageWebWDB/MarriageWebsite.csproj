@@ -162,12 +162,14 @@
     <Compile Include="Helper\PasswordHelper.cs" />
     <Compile Include="Helper\ProfileHelper.cs" />
     <Compile Include="Helper\RegisterHelper.cs" />
+    <Compile Include="Helper\SuggestionsHelper.cs" />
     <Compile Include="Helper\UserHelper.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PasswordModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
+    <Compile Include="Models\SuggestionModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignalRChat\ChatHub.cs" />
@@ -233,6 +235,7 @@
     <Content Include="Views\Account\ChangeProfilePicture.cshtml" />
     <Content Include="Views\Home\Chat.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\SeeMatches.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
