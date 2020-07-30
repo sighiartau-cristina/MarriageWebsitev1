@@ -1,4 +1,5 @@
 ﻿using System;
+using BusinessModel.Contracts;
 
 namespace MarriageWebWDB.Models
 {
@@ -12,8 +13,8 @@ namespace MarriageWebWDB.Models
 
         public DateTime SendDate { get; set; }
 
-        public DateTime ReadDate { get; set; }
+        public string ReadDate { get; set; }
 
-        //public string Status { get; set; }
+        public MessageStatus Status { get; set; }
     }
 }

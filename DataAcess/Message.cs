@@ -18,11 +18,9 @@ namespace DataAccess
         [StringLength(255)]
         public string MessageText { get; set; }
 
-        [Column(TypeName = "date")]
         public DateTime SendDate { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime ReadDate { get; set; }
+        public DateTime? ReadDate { get; set; }
 
         [Required]
         [StringLength(10)]

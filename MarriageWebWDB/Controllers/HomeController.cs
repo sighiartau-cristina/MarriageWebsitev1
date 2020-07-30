@@ -204,7 +204,6 @@ namespace MarriageWebWDB.Controllers
                 SenderId = (int)Session["userId"],
                 ReceiverId = receiver.Entity.UserId,
                 SendDate = DateTime.Now,
-                ReadDate = DateTime.Now,
                 Status = MessageStatus.Sent
             };
 
@@ -295,6 +294,14 @@ namespace MarriageWebWDB.Controllers
             if(!matchHandler.Matched(userProfileId, userProfileToMatch.Entity.UserProfileId))
             {
                 TempData["error"] = MessageConstants.ChatNotAvailable;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var response = new MessageHandler().UpdateMessageStatus(userProfileId, userProfileToMatch.Entity.UserProfileId);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = ErrorConstants.MessageUpdateError;
                 return RedirectToAction("Index", "Error");
             }
 

@@ -3,6 +3,7 @@
     ViewBag.Title = "Chat Room";
 }
 
+
 <h2>Chat with @ViewBag.username:</h2>
 <div id="dataModel" style="height:700px;width:1250px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;"></div>
 <div id="scrollbox" name="scrollbox" align=center>
@@ -30,6 +31,7 @@
 </div>
 
 @section JavaScript{
+
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
     <script src="/signalr/hubs"></script>
     <script type="text/javascript">
@@ -43,9 +45,6 @@
             hubNotify.client.refreshChat = function () {
                 getAll();
             };
-
-            $('#scrollbox').stop().animate({
-                scrollTop: $('#scrollbox')[0].scrollHeight}, 800);
         });
 
         function getAll() {

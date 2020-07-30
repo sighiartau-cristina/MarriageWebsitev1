@@ -1,4 +1,5 @@
-﻿@model IEnumerable<MarriageWebWDB.Models.MessageModel>
+﻿
+@model IEnumerable<MarriageWebWDB.Models.MessageModel>
 
 <table class="table">
 
@@ -6,15 +7,23 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem =>item.SenderUsername)
+                @Html.DisplayFor(modelItem => item.SenderUsername)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.MessageText)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SendDate)
+                <p>
+                    <span title=@item.ReadDate>
+                        @Html.DisplayFor(modelItem => item.SendDate)
+                    </span>
+                </p>
+                @if (!item.SenderUsername.Equals(Session["userToken"]))
+                {
+                    <p>@Html.DisplayFor(modelItem => item.ReadDate)</p>
+                }
             </td>
         </tr>
     }
 
-</table>  
+</table>

@@ -19,7 +19,7 @@ namespace BusinessModel.Entities
 
         public DateTime SendDate { get; set; }
 
-        public DateTime ReadDate { get; set; }
+        public DateTime? ReadDate { get; set; }
 
         public MessageStatus Status { get; set; }
     }

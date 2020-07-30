@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BusinessModel.Constants;
@@ -230,13 +234,6 @@ namespace BusinessModel.Handlers
             };
         }
 
-        /*private bool CheckExisting(string name)
-        {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.Genders.Where(e => e.GenderName == name).FirstOrDefault();
-            return entity != null;
-        }*/
-
         private Message ConvertToDataEntity(MessageEntity messageEntity)
         {
             if (messageEntity == null)
@@ -270,8 +267,8 @@ namespace BusinessModel.Handlers
                 MessageText = message.MessageText,
                 ReceiverId = message.ReceiverId,
                 SenderId = message.SenderId,
-                ReadDate = message.ReadDate,
                 SendDate = message.SendDate,
+                ReadDate = message.ReadDate,
                 Status = result
             };
         }
@@ -303,6 +300,29 @@ namespace BusinessModel.Handlers
             {
                 CompletedRequest = true,
                 Entity = list
+            };
+        }
+
+        public ResponseEntity<bool> UpdateMessageStatus(int senderId, int receiverId)
+        {
+            DbModel dbModel = new DbModel();
+
+            try
+            {
+                dbModel.Database.ExecuteSqlCommand("exec updateMessageStatus @senderId, @receiverId", new SqlParameter("@senderId", senderId), new SqlParameter("@receiverId", receiverId));
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<bool>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MatchUpdateError
+                };
+            }
+
+            return new ResponseEntity<bool>
+            {
+                CompletedRequest = true
             };
         }
     }

@@ -23,13 +23,16 @@ namespace MarriageWebWDB.Helper
                 return null;
             }
 
+            string readDate = message.ReadDate == null ? ("Not opened") : ("Read: " + message.ReadDate.ToString());
+
             var result = new MessageModel
             {
                 MessageText = message.MessageText,
                 ReceiverUsername = to,
                 SenderUsername = from,
-                ReadDate = message.ReadDate,
-                SendDate = message.SendDate
+                ReadDate = readDate,
+                SendDate = message.SendDate,
+                Status = message.Status                
             };
 
             if((int)HttpContext.Current.Session["userId"] == message.SenderId)
