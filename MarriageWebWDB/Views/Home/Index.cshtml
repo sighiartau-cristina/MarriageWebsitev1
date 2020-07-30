@@ -11,58 +11,65 @@
     <title>Index</title>
 </head>
 <body>
-    <h1>hmmm</h1>
-    <table class="table">
-
-        @foreach (var item in Model)
-        {
-            <tr>
-                @if (item.File != null)
-                {
-                    <td>
-                    </td>
-                    <td>
-                        <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:200px;height:200px;" />
-                        @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
-                    </td>
-                }
-                else
-                {
-                    <td>
-                    </td>
-                    <td>
-                        <img src="~/Images/untitled.jpg" alt="avatar" style="width:200px;height:200px;" />
-                        @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
-                    </td>
-                }
-
-                <td>
-
-                    <p>Name: @Html.DisplayFor(modelItem => item.FullName)</p>
-
-                    <p>About: @Html.DisplayFor(modelItem => item.Description)</p>
-
-                    <p>Age: @Html.DisplayFor(modelItem => item.Age)</p>
-
-                    <p>Religion: @Html.DisplayFor(modelItem => item.Religion)</p>
-
-                    <p>Status: @Html.DisplayFor(modelItem => item.Status)</p>
-
-                    <p>Gender: @Html.DisplayFor(modelItem => item.Gender)</p>
-
-                    <p>Orientation: @Html.DisplayFor(modelItem => item.Orientation)</p>
-
-                    <p>@Html.ActionLink("See Profile", "ShowProfile", new { id = item.UserName })</p> 
-            </td>
-
-                <td>
-                    @Html.ActionLink("Match", "MakeMatch", new { id = item.UserName })
-                    <br />
-                    @Html.ActionLink("Reject", "RejectMatch", new { id = item.UserName })
-                </td>
-        </tr>
+    <h1>Yay or nay?</h1>
+    @if (Model.Count() == 0)
+    {
+        <div align="center"> No profiles fit your wishes.</div>
     }
+    else
+    {
+        <table class="table">
 
-    </table>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (item.File != null)
+                    {
+                        <td>
+                        </td>
+                        <td>
+                            <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:200px;height:200px;" />
+                            @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                        </td>
+                        <td>
+                            <img src="~/Images/untitled.jpg" alt="avatar" style="width:200px;height:200px;" />
+                            @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
+                        </td>
+                    }
+
+                    <td>
+
+                        <p>Name: @Html.DisplayFor(modelItem => item.FullName)</p>
+
+                        <p>About: @Html.DisplayFor(modelItem => item.Description)</p>
+
+                        <p>Age: @Html.DisplayFor(modelItem => item.Age)</p>
+
+                        <p>Religion: @Html.DisplayFor(modelItem => item.Religion)</p>
+
+                        <p>Status: @Html.DisplayFor(modelItem => item.Status)</p>
+
+                        <p>Gender: @Html.DisplayFor(modelItem => item.Gender)</p>
+
+                        <p>Orientation: @Html.DisplayFor(modelItem => item.Orientation)</p>
+
+                        <p>@Html.ActionLink("See Profile", "ShowProfile", new { id = item.UserName })</p>
+                    </td>
+
+                    <td>
+                        @Html.ActionLink("Match", "Match", new { id = item.UserName, accepted = true })
+                        <br />
+                        @Html.ActionLink("Reject", "RejectMatch", new { id = item.UserName, accepted = false })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    }
 </body>
 </html>

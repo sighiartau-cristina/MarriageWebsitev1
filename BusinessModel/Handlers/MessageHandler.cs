@@ -250,7 +250,8 @@ namespace BusinessModel.Handlers
                 ReceiverId = messageEntity.ReceiverId,
                 SenderId = messageEntity.SenderId,
                 ReadDate = messageEntity.ReadDate,
-                SendDate = messageEntity.SendDate
+                SendDate = messageEntity.SendDate,
+                Status = messageEntity.Status.ToString()
             };
         }
 
@@ -261,6 +262,8 @@ namespace BusinessModel.Handlers
                 return null;
             }
 
+            Enum.TryParse(message.Status, out MessageStatus result);
+
             return new MessageEntity
             {
                 MessageId = message.MessageId,
@@ -268,13 +271,39 @@ namespace BusinessModel.Handlers
                 ReceiverId = message.ReceiverId,
                 SenderId = message.SenderId,
                 ReadDate = message.ReadDate,
-                SendDate = message.SendDate
+                SendDate = message.SendDate,
+                Status = result
             };
         }
 
         public ResponseEntity<ICollection<MessageEntity>> GetAll()
         {
             throw new NotImplementedException();
+        }
+
+        public ResponseEntity<ICollection<MessageEntity>> GetChatHistory(int senderId, int receiverId)
+        {
+            DbModel dbModel = new DbModel();
+            ICollection<MessageEntity> list;
+
+            try
+            {
+                list = dbModel.Messages.Where(m => (m.SenderId == senderId && m.ReceiverId==receiverId) || (m.SenderId == receiverId && m.ReceiverId == senderId)).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<MessageEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<MessageEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
         }
     }
 }

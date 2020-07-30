@@ -297,6 +297,30 @@ namespace BusinessModel.Handlers
             };
         }
 
+        public bool Matched(int userProfileId, int userProfileToMatchId)
+        {
+            DbModel dbModel = new DbModel();
+            Match dataEntity;
+            Match dataEntityToMatch;
+
+            //TODO transform to stored procedure
+            try
+            {
+                dataEntity = dbModel.Matches.Where(m => m.UserProfileId == userProfileId && m.MatchUserProfileId==userProfileToMatchId).FirstOrDefault();
+                dataEntityToMatch = dbModel.Matches.Where(m => m.UserProfileId == userProfileToMatchId && m.MatchUserProfileId == userProfileId).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            if(dataEntity==null || dataEntityToMatch == null)
+            {
+                return false;
+            }
+
+            return true;
+        }
         private bool CheckExisting(MatchEntity entity)
         {
             DbModel dbModel = new DbModel();

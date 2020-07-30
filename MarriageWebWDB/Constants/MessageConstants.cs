@@ -30,5 +30,9 @@
         public static string NoChangesMade = "No changes have been made.";
         public static string NoFileSelected = "You must choose a file first.";
 
+        public static string ProfileError = "Error while fetching profile data.";
+
+        public static string ChatNotAvailable = "Chat with this user is not available.";
+
     }
 }

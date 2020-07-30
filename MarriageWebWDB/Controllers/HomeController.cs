@@ -3,13 +3,15 @@ using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
 using System.Web.Mvc;
 using BusinessModel.Constants;
+using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
+using MarriageWebWDB.Hubs;
 using MarriageWebWDB.Models;
-using MarriageWebWDB.SignalRChat;
 using MarriageWebWDB.Utils;
+using Microsoft.AspNet.SignalR.Messaging;
 
 namespace MarriageWebWDB.Controllers
 {
@@ -26,18 +28,20 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            var list = new UserProfileHandler().GetSuggestions((int)Session["userProfileId"]);
-            var models = new SuggestionsHelper().GetSuggestions(list.Entity);
+            var userProfileId = (int)Session["userProfileId"];
+            var suggestionsList = new UserProfileHandler().GetSuggestions((int)Session["userProfileId"]);
+
+            if (!suggestionsList.CompletedRequest)
+            {
+                TempData["error"] = suggestionsList.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var models = new SuggestionsHelper().GetSuggestions(suggestionsList.Entity);
 
             return View(models);
         }
 
-        public ActionResult Chat()
-        {
-            var start = new Startup(); 
-
-            return View();
-        }
         public ActionResult ShowProfile(string id)
         {
             try
@@ -63,21 +67,21 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var profile = new UserProfileHandler().GetByUserId(user.Entity.UserId);
+            var userProfile = new UserProfileHandler().GetByUserId(user.Entity.UserId);
 
-            if (!profile.CompletedRequest)
+            if (!userProfile.CompletedRequest)
             {
-                TempData["error"] = profile.ErrorMessage;
+                TempData["error"] = userProfile.ErrorMessage;
                 return RedirectToAction("Index", "Error");
             }
 
-            if (profile.Entity == null)
+            if (userProfile.Entity == null)
             {
-                TempData["error"] = ErrorConstants.UserNotFound;
+                TempData["error"] = ErrorConstants.UserProfileNotFound;
                 return RedirectToAction("Index", "Error");
             }
 
-            var address = new AddressHandler().GetForUserProfile(profile.Entity.UserProfileId);
+            var address = new AddressHandler().GetForUserProfile(userProfile.Entity.UserProfileId);
 
             if(!address.CompletedRequest)
             {
@@ -85,39 +89,18 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            //o sa le mut de aici
-            //TODO
-            var gender = new GenderHandler().Get(profile.Entity.GenderId);
-            var status = new MaritalStatusHandler().Get(profile.Entity.StatusId);
-            var religion = new ReligionHandler().Get(profile.Entity.ReligionId);
-            var orientation = new OrientationHandler().Get(profile.Entity.OrientationId);
-            var file = new FileHandler().GetByUserId(profile.Entity.UserProfileId);
+            var profileModel = new ProfileHelper().GetProfileModel(user.Entity, userProfile.Entity, address.Entity);
 
-            if(!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !file.CompletedRequest)
+            if(profileModel == null)
             {
-                TempData["error"] = gender.ErrorMessage + status.ErrorMessage + religion.ErrorMessage + orientation.ErrorMessage;
+                TempData["error"] = MessageConstants.ProfileError;
                 return RedirectToAction("Index", "Error");
             }
-
-            var profileModel = new ProfileModel();
-
-            profileModel.UserName = user.Entity.UserUsername;
-            profileModel.Job = string.IsNullOrEmpty(profile.Entity.UserProfileJob) ? "This user has not provided information about their job." : profile.Entity.UserProfileJob;
-            profileModel.Description = string.IsNullOrEmpty(profile.Entity.UserProfileDescription) ? "This user has not provided a description." : profile.Entity.UserProfileDescription;
-            profileModel.FullName = profile.Entity.UserProfileName + " " + profile.Entity.UserProfileSurname;
-            profileModel.Address = (address.Entity == null) ? "This user has not provided information about their address." : address.Entity.AddressStreet + ", " + address.Entity.AddressStreetNo + ", " + address.Entity.AddressCity + ", " + address.Entity.AddressCountry;
-            profileModel.Birthday = DateFormatter.GetDate(profile.Entity.UserProfileBirthday);
-            profileModel.Age = AgeCalculator.GetDifferenceInYears(profile.Entity.UserProfileBirthday, DateTime.Now).ToString();
-            profileModel.Gender = gender.Entity.GenderName;
-            profileModel.Orientation = orientation.Entity.OrientationName;
-            profileModel.Religion = religion.Entity.ReligionName;
-            profileModel.Status = status.Entity.StatusName;
-            profileModel.File = file.Entity;
-
+           
             return View("ShowProfile", profileModel);
         }
 
-        public ActionResult MakeMatch(string id)
+        public ActionResult Match(string id, bool accepted)
         {
             try
             {
@@ -128,9 +111,10 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            //TODO mai bine adaug o proprietate de UserProfileId?
             var userProfileHandler = new UserProfileHandler();
-            var userProfile = userProfileHandler.Get((int)Session["userProfileId"]);
+
+            var userProfileId = (int)Session["userProfileId"];
+            var userProfile = userProfileHandler.Get(userProfileId);
 
             if (!userProfile.CompletedRequest)
             {
@@ -159,63 +143,7 @@ namespace MarriageWebWDB.Controllers
                 MatchDate = DateTime.Now,
                 MatchUserProfileId = userProfileToMatch.Entity.UserProfileId,
                 UserProfileId = userProfile.Entity.UserProfileId,
-                Accepted = true
-            };
-
-            var matchResponse = new MatchHandler().Add(match);
-
-            if (!matchResponse.CompletedRequest)
-            {
-                TempData["error"] = matchResponse.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        public ActionResult RejectMatch(string id)
-        {
-            try
-            {
-                LoginHelper.CheckAccess(Session);
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
-            //TODO mai bine adaug o proprietate de UserProfileId?
-            var userProfileHandler = new UserProfileHandler();
-            var userProfile = userProfileHandler.Get((int)Session["userProfileId"]);
-
-            if (!userProfile.CompletedRequest)
-            {
-                TempData["error"] = userProfile.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var userToMatch = new UserHandler().GetByUsername(id);
-
-            if (!userToMatch.CompletedRequest)
-            {
-                TempData["error"] = userProfile.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
-
-            if (!userProfileToMatch.CompletedRequest)
-            {
-                TempData["error"] = userProfile.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var match = new MatchEntity
-            {
-                MatchDate = DateTime.Now,
-                MatchUserProfileId = userProfileToMatch.Entity.UserProfileId,
-                UserProfileId = userProfile.Entity.UserProfileId,
-                Accepted = false
+                Accepted = accepted
             };
 
             var matchResponse = new MatchHandler().Add(match);
@@ -240,10 +168,138 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Login", "Login");
             }
 
-            var list = new MatchHandler().GetAllForUserProfile((int)Session["userProfileId"]);
-            var models = new SuggestionsHelper().GetSuggestions(list.Entity);
+            var userProfileId = (int)Session["userProfileId"];
+            var matchList = new MatchHandler().GetAllForUserProfile(userProfileId);
+
+            if (!matchList.CompletedRequest)
+            {
+                TempData["error"] = matchList.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var models = new SuggestionsHelper().GetSuggestions(matchList.Entity);
 
             return View(models);
+        }
+
+        public ActionResult CreateMessage(string messageText, string username)
+        {
+
+            var receiver = new UserHandler().GetByUsername(username);
+            if (!receiver.CompletedRequest)
+            {
+                TempData["error"] = receiver.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            if (receiver.Entity == null)
+            {
+                TempData["error"] = ErrorConstants.UserNotFound;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var message = new MessageEntity
+            {
+                MessageText = messageText,
+                SenderId = (int)Session["userId"],
+                ReceiverId = receiver.Entity.UserId,
+                SendDate = DateTime.Now,
+                ReadDate = DateTime.Now,
+                Status = MessageStatus.Sent
+            };
+
+            var handler = new MessageHandler().Add(message);
+
+            if (!handler.CompletedRequest)
+            {
+                TempData["error"] = receiver.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            ChatHub.BroadcastData();
+            ViewBag.FromUsername = Session["userToken"].ToString();
+
+            return RedirectToAction("Chat", new { id = username });
+        }
+
+        [HttpGet]
+        public ActionResult GetChatHistory(string username)
+        {
+            var userHandler = new UserHandler();
+            var senderId = (int)Session["userId"];
+            var receiver = userHandler.GetByUsername(username);
+
+            if (!receiver.CompletedRequest)
+            {
+                TempData["error"] = receiver.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            if (receiver.Entity == null)
+            {
+                TempData["error"] = ErrorConstants.UserNotFound;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var messages = new MessageHandler().GetChatHistory( senderId, receiver.Entity.UserId);
+
+            if (!messages.CompletedRequest)
+            {
+                TempData["error"] = messages.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+
+            string from = Session["userToken"].ToString();
+            string to = receiver.Entity.UserUsername;
+            var models = new MessageHelper().GetMessageEntities(messages.Entity, from, to);
+
+            ViewBag.username = to;
+            return PartialView("_Chat", models);
+        }
+
+        public ActionResult Chat(string id)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var matchHandler = new MatchHandler();
+            var userProfileId = (int)Session["userProfileId"];
+            var userToMatch = new UserHandler().GetByUsername(id);
+
+            if (!userToMatch.CompletedRequest)
+            {
+                TempData["error"] = userToMatch.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            if (userToMatch.Entity == null)
+            {
+                TempData["error"] = ErrorConstants.UserNotFound;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userProfileToMatch = new UserProfileHandler().GetByUserId(userToMatch.Entity.UserId);
+            if (!userProfileToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfileToMatch.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            if(!matchHandler.Matched(userProfileId, userProfileToMatch.Entity.UserProfileId))
+            {
+                TempData["error"] = MessageConstants.ChatNotAvailable;
+                return RedirectToAction("Index", "Error");
+            }
+
+            ViewBag.username = id;
+            return View();
         }
     }
 }

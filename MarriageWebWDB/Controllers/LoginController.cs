@@ -23,7 +23,7 @@ namespace MarriageWebWDB.Controllers
                 return View();
             }
 
-            return RedirectToAction("Index", "Account");
+            return RedirectToAction("Index", "Home");
             
         }
 
@@ -47,7 +47,7 @@ namespace MarriageWebWDB.Controllers
                 Session.Add("userProfileId", responseProfile.Entity.UserProfileId);
                 Session["userId"] = response.Entity.UserId;
                 Session["userProfileId"] = responseProfile.Entity.UserProfileId;
-                return RedirectToAction("Index", "Account");
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.LoginMessage = response.ErrorMessage;
@@ -90,6 +90,7 @@ namespace MarriageWebWDB.Controllers
 
                     return View("Register", registerHelper.GetRegisterModel(registerModel));
                 }
+                //otherwise it's a server error
                 else
                 {
                     ViewBag.Error = response.ErrorMessage;

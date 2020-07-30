@@ -75,7 +75,7 @@ namespace MarriageWebWDB.Helper
             return addressModel;
         }
 
-        private AddressEntity ToDataEntity(int userProfileId, AddressModel addressModel)
+        public AddressEntity ToDataEntity(int userProfileId, AddressModel addressModel)
         {
             return new AddressEntity
             {

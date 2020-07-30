@@ -159,21 +159,23 @@
     </Compile>
     <Compile Include="Helper\AddressHelper.cs" />
     <Compile Include="Helper\LoginHelper.cs" />
+    <Compile Include="Helper\MessageHelper.cs" />
     <Compile Include="Helper\PasswordHelper.cs" />
     <Compile Include="Helper\ProfileHelper.cs" />
     <Compile Include="Helper\RegisterHelper.cs" />
     <Compile Include="Helper\SuggestionsHelper.cs" />
     <Compile Include="Helper\UserHelper.cs" />
+    <Compile Include="Hubs\ChatHub.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Models\PasswordModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Models\SuggestionModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignalRChat\ChatHub.cs" />
-    <Compile Include="SignalRChat\Startup.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Utils\AgeCalculator.cs" />
     <Compile Include="Utils\DateFormatter.cs" />
     <Compile Include="Utils\ErrorMessageGenerator.cs" />
@@ -205,6 +207,8 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -224,7 +228,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Login\Register.cshtml" />
-    <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Account\AddAddress.cshtml" />
@@ -236,6 +239,8 @@
     <Content Include="Views\Home\Chat.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\SeeMatches.cshtml" />
+    <Content Include="Views\Home\_Chat.cshtml" />
+    <Content Include="Views\Login\Logout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

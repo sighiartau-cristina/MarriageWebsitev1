@@ -1,0 +1,20 @@
+﻿@model IEnumerable<MarriageWebWDB.Models.MessageModel>
+
+<table class="table">
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem =>item.SenderUsername)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MessageText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SendDate)
+            </td>
+        </tr>
+    }
+
+</table>  
