@@ -5,6 +5,8 @@ namespace MarriageWebWDB.Models
 {
     public class MessageModel
     {
+        public int MessageId { get; set; }
+
         public string SenderUsername { get; set; }
 
         public string ReceiverUsername { get; set; }

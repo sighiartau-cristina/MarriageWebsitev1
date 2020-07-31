@@ -285,7 +285,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.Messages.Where(m => (m.SenderId == senderId && m.ReceiverId==receiverId) || (m.SenderId == receiverId && m.ReceiverId == senderId)).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Messages.Where(m => ((m.SenderId == senderId && m.ReceiverId==receiverId) || (m.SenderId == receiverId && m.ReceiverId == senderId)) && !m.Status.Equals(MessageStatus.Archived.ToString())).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
@@ -323,6 +323,79 @@ namespace BusinessModel.Handlers
             return new ResponseEntity<bool>
             {
                 CompletedRequest = true
+            };
+        }
+
+        public ResponseEntity<MessageEntity> ArchiveMessage(int id)
+        {
+
+            DbModel dbModel = new DbModel();
+            Message dataEntity;
+
+            try
+            {
+                dataEntity = dbModel.Messages.Find(id);
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MessageEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageGetError
+                };
+            }
+
+            if (dataEntity == null)
+            {
+                return new ResponseEntity<MessageEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageNotFound
+                };
+            }
+
+            try
+            {
+                dataEntity.Status = MessageStatus.Archived.ToString();
+                dbModel.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MessageEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageUpdateError
+                };
+            }
+
+            return new ResponseEntity<MessageEntity>
+            {
+                CompletedRequest = true
+            };
+        }
+
+        public ResponseEntity<ICollection<MessageEntity>> GetAllArchivedForSenderId(int senderId)
+        {
+            DbModel dbModel = new DbModel();
+            ICollection<MessageEntity> list;
+
+            try
+            {
+                list = dbModel.Messages.Where(m => m.SenderId == senderId && m.Status.Equals(MessageStatus.Archived.ToString())).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<MessageEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<MessageEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
             };
         }
     }

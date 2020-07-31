@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
 using System.Web.Mvc;
@@ -307,6 +308,72 @@ namespace MarriageWebWDB.Controllers
 
             ViewBag.username = id;
             return View();
+        }
+
+        public ActionResult ArchiveMessage(string messageId, string username)
+        {
+            int mId = int.Parse(messageId);
+            var response = new MessageHandler().ArchiveMessage(mId);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("Chat", new { id = username });
+        }
+
+        public ActionResult ShowArchivedMessages()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var userProfileId = (int)Session["userProfileId"];
+            var archivedMessages = new MessageHandler().GetAllArchivedForSenderId(userProfileId);
+
+            if (!archivedMessages.CompletedRequest)
+            {
+                TempData["error"] = archivedMessages.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var models = new List<MessageModel>();
+            var messageHelper = new MessageHelper();
+
+            //temporary
+            foreach(MessageEntity entity in archivedMessages.Entity)
+            {
+                var userProfileEntity = new UserProfileHandler().Get(entity.ReceiverId);
+
+                if (!userProfileEntity.CompletedRequest)
+                {
+                    TempData["error"] = userProfileEntity.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+
+                var userEntity = new UserHandler().Get(userProfileEntity.Entity.UserId);
+
+                if (!userEntity.CompletedRequest)
+                {
+                    TempData["error"] = userEntity.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+
+                string to = userEntity.Entity.UserUsername;
+                string from = Session["userToken"].ToString();
+
+                var model = messageHelper.ConvertToModel(entity, from, to);
+                models.Add(model);
+            }
+
+            return View(models);
         }
     }
 }

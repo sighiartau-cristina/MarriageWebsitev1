@@ -32,7 +32,8 @@ namespace MarriageWebWDB.Helper
                 SenderUsername = from,
                 ReadDate = readDate,
                 SendDate = message.SendDate,
-                Status = message.Status                
+                Status = message.Status,
+                MessageId = message.MessageId
             };
 
             if((int)HttpContext.Current.Session["userId"] == message.SenderId)
@@ -45,6 +46,20 @@ namespace MarriageWebWDB.Helper
             }
 
             return result;
+        }
+
+        public MessageEntity ToDataEntity(MessageModel message)
+        {
+            if(message == null)
+            {
+                return null;
+            }
+
+            return new MessageEntity
+            {
+                MessageId = message.MessageId,
+                Status = message.Status
+            };
         }
 
     }

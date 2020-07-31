@@ -23,6 +23,23 @@
                     <p>@Html.DisplayFor(modelItem => item.ReadDate)</p>
                 }
             </td>
+            <td>
+                @if (Session["userToken"].ToString().Equals(item.SenderUsername))
+                {
+                    using (Ajax.BeginForm("ArchiveMessage", "Home", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "messageId" }))
+                    {
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <input type="hidden" name="messageId" value=@item.MessageId class="form-control" />
+                                <input type="hidden" name="username" value=@ViewBag.username />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Archive" class="btn btn-default" />
+                            </div>
+                        </div>
+                    }
+                }
+            </td>
         </tr>
     }
 

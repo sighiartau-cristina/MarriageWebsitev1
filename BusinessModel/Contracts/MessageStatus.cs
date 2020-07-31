@@ -8,6 +8,6 @@ namespace BusinessModel.Contracts
 {
     public enum MessageStatus
     {
-        Sent = 1, Read, Deleted
+        Sent = 1, Read, Archived, Deleted
     }
 }
