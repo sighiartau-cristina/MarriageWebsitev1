@@ -4,84 +4,92 @@
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>ViewProfile</title>
+    <title>Profile</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
 <body>
-    <h1>Profile of @Model.UserName</h1>
-    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
-        <table>
-            <tbody>
+
+    <div class="profile-header-container">
+        <h1>@Model.UserName</h1>
+        <hr class="new1">
+        <div class="profile-container">
+            @if (@Model.File != null)
+            {
+                <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" align="left" style="height:150px;width:150px; float:left;"  />
+            }
+            else
+            {
+                <img src="~/Images/untitled.jpg" alt="avatar" align="left" style="height: 150px; width: 150px; float:left;" />
+            }
+            <h1>@Model.FullName</h1>
+            <h4><i class="fa fa-home">  @Model.Address </i></h4>
+            <h3>About: @Model.Description</h3>
+        </div>
+    </div>
+    <br>
+    <div class="profile-header-container">
+        <div class="table-container">
+            <table>
                 <tr>
-                    @if (Model.File != null)
-                    {
-                        <td>
-                        </td>
-                        <td>
-                            <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" style="width:200px;height:200px;" />
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                        </td>
-                        <td>
-                            <img src="~/Images/untitled.jpg" alt="avatar" style="width:200px;height:200px;" />
-                        </td>
-                    }
-                </tr>
-                <tr></tr>
-                <tr>
-                    <td>Name:</td>
-                    <td>@Model.FullName</td>
-                </tr>
-                <tr>
-                    <td>Description:</td>
-                    <td>
-                        @Model.Description
-                    </td>
+                    <td><i class="fa fa-venus-mars">  Gender</i></td>
+                    <td>@Model.Gender</td>
                 </tr>
                 <tr>
-                    <td>Gender:</td>
-                    <td> @Model.Gender</td>
+                    <td><i class="fa fa-venus-mars">  Orientation</i></td>
+                    <td>@Model.Orientation</td>
                 </tr>
                 <tr>
-                    <td>Orientation:</td>
-                    <td> @Model.Orientation</td>
+                    <td><i class="fas fa-ring">  Status</i></td>
+                    <td>@Model.Status</td>
                 </tr>
                 <tr>
-                    <td>Religion:</td>
-                    <td> @Model.Religion</td>
+                    <td><i class="fas fa-church">  Religion</i></td>
+                    <td>@Model.Religion</td>
                 </tr>
                 <tr>
-                    <td>Status:</td>
-                    <td> @Model.Status</td>
-                </tr>
-                <tr>
-                    <td>Job:</td>
-                    <td>
-                        @Model.Job
-                    </td>
-                </tr>
-                <tr>
-                    <td>Age:</td>
+                    <td><i class="fas fa-user">  Age</i></td>
                     <td>@Model.Age</td>
                 </tr>
+            </table>
+        </div>
+    </div>
+    <br>
+    <div class="profile-header-container">
+        <div class="table-container">
+            <table>
                 <tr>
-                    <td>Birthday:</td>
+                    <td><i class="fas fa-quote-left">  Motto</i></td>
+                    <td>@Model.Motto</td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-thumbs-up">  Likes</i></td>
+                    <td>@Model.Likes</td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-thumbs-down">  Dislikes</i></td>
+                    <td>@Model.Dislikes</td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-briefcase">  Job</i></td>
+                    <td>@Model.Job</td>
+                </tr>
+                <tr>
+                    <td><i class="fa fa-birthday-cake">  Birthday</i></td>
                     <td>@Model.Birthday</td>
                 </tr>
                 <tr>
-                    <td>Address:</td>
-                    <td>@Model.Address</td>
+                    <td><i class="fas fa-star">  Star sign</i></td>
+                    <td>@Model.Starsign</td>
                 </tr>
-            </tbody>
-        </table>
-
+            </table>
+        </div>
     </div>
-
 </body>
 </html>

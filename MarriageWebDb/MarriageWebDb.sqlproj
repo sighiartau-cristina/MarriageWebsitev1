@@ -76,5 +76,6 @@
     <Build Include="dbo\Tables\Messages.sql" />
     <Build Include="dbo\Stored Procedures\getAcceptedMatches.sql" />
     <Build Include="dbo\Stored Procedures\updateMessageStatus.sql" />
+    <Build Include="dbo\Tables\Starsigns.sql" />
   </ItemGroup>
 </Project>

@@ -53,19 +53,24 @@ namespace MarriageWebWDB.Helper
             userModel.Genders = SelectListGenerator.GetSelectedGenders(userProfile);
             userModel.Email = user.UserEmail;
             userModel.UserName = user.UserUsername;
-            userModel.Description = String.IsNullOrWhiteSpace(userProfile.UserProfileDescription) ? "" : userProfile.UserProfileDescription;
-            userModel.Phone = String.IsNullOrWhiteSpace(userProfile.UserProfilePhone) ? "" : userProfile.UserProfilePhone;
-            userModel.Job = String.IsNullOrWhiteSpace(userProfile.UserProfileJob) ? "" : userProfile.UserProfileJob;
+            userModel.Description = string.IsNullOrWhiteSpace(userProfile.UserProfileDescription) ? "" : userProfile.UserProfileDescription;
+            userModel.Phone = string.IsNullOrWhiteSpace(userProfile.UserProfilePhone) ? "" : userProfile.UserProfilePhone;
+            userModel.Job = string.IsNullOrWhiteSpace(userProfile.UserProfileJob) ? "" : userProfile.UserProfileJob;
             userModel.Name = userProfile.UserProfileName;
             userModel.Surname = userProfile.UserProfileSurname;
             userModel.ReligionId = userProfile.ReligionId;
             userModel.StatusId = userProfile.StatusId;
             userModel.OrientationId = userProfile.OrientationId;
             userModel.GenderId = userProfile.GenderId;
-            userModel.Age = userProfile.UserAge;
+            userModel.Age = AgeCalculator.GetDifferenceInYears(userProfile.UserProfileBirthday, DateTime.Now);
             userModel.Birthday = userProfile.UserProfileBirthday;
             userModel.BirthdayString = DateFormatter.GetDate(userProfile.UserProfileBirthday);
             userModel.File = file;
+            userModel.Starsign = StarsignCalculator.GetStarsignName(userProfile.UserProfileBirthday);
+            userModel.Likes = string.IsNullOrWhiteSpace(userProfile.Likes) ? "" : userProfile.Likes;
+            userModel.Dislikes = string.IsNullOrWhiteSpace(userProfile.Dislikes) ? "" : userProfile.Dislikes;
+            userModel.Motto = string.IsNullOrWhiteSpace(userProfile.Motto) ? "" : userProfile.Motto;
+
         }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
@@ -180,6 +185,20 @@ namespace MarriageWebWDB.Helper
                 return false;
             }
 
+            if (userModel.Motto != userProfileEntity.Motto)
+            {
+                return false;
+            }
+
+            if (userModel.Likes != userProfileEntity.Likes)
+            {
+                return false;
+            }
+
+            if (userModel.Dislikes != userProfileEntity.Dislikes)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -197,6 +216,13 @@ namespace MarriageWebWDB.Helper
 
         public UserProfileEntity ToDataEntity(UserModel model, UserProfileEntity userProfile)
         {
+            int starSignId = GetStarsignId(StarsignCalculator.GetStarsignName(model.Birthday));
+
+            if (starSignId < 0)
+            {
+                return null;
+            }
+
             return new UserProfileEntity
             {
                 UserProfileId = userProfile.UserProfileId,
@@ -211,8 +237,24 @@ namespace MarriageWebWDB.Helper
                 OrientationId = model.OrientationId,
                 StatusId = model.StatusId,
                 ReligionId = model.ReligionId,
-                UserId = userProfile.UserId
+                UserId = userProfile.UserId,
+                Motto = model.Motto,
+                Dislikes = model.Dislikes,
+                Likes = model.Likes,
+                StarsignId = starSignId
             };
+        }
+
+        private int GetStarsignId(string name)
+        {
+            var response = new StarSignHandler().GetByName(name);
+
+            if (!response.CompletedRequest)
+            {
+                return -1;
+            }
+
+            return response.Entity.SignId;
         }
     }
 }

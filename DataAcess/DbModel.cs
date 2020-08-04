@@ -19,6 +19,7 @@ namespace DataAccess
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Orientation> Orientations { get; set; }
         public virtual DbSet<Religion> Religions { get; set; }
+        public virtual DbSet<Starsign> Starsigns { get; set; }
         public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -89,6 +90,16 @@ namespace DataAccess
                 .WithRequired(e => e.Religion)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Starsign>()
+                .Property(e => e.SignName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Starsign>()
+                .HasMany(e => e.UserProfiles)
+                .WithRequired(e => e.Starsign)
+                .HasForeignKey(e => e.StarSignId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Status>()
                 .Property(e => e.StatusName)
                 .IsUnicode(false);
@@ -128,6 +139,18 @@ namespace DataAccess
 
             modelBuilder.Entity<UserProfile>()
                 .Property(e => e.Job)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Motto)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Likes)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<UserProfile>()
+                .Property(e => e.Dislikes)
                 .IsUnicode(false);
 
             modelBuilder.Entity<UserProfile>()

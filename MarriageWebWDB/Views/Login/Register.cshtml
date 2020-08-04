@@ -4,75 +4,82 @@
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
 <body>
-    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
-        @using (Html.BeginForm("RegisterUser", "Login", FormMethod.Post))
-        {
-            <table>
-                <tbody>
+
+    <div class="profile-header-container">
+        <h1><i class="fa fa-user">  Register</i></h1>
+        <hr class="new1">
+        <div class="table-container">
+            @using (Html.BeginForm("RegisterUser", "Login", FormMethod.Post))
+            {
+                <table>
                     <tr>
-                        <td>Email:</td>
-                        <td>@Html.TextBoxFor(m => m.UserEmail)</td>
+                        <td>Email</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserEmail)</td>
                     </tr>
                     <tr>
-                        <td>Username:</td>
-                        <td>@Html.TextBoxFor(m => m.UserName)</td>
+                        <td>Username</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
                     </tr>
                     <tr>
-                        <td>Password:</td>
-                        <td>@Html.PasswordFor(m => m.UserPassword)</td>
+                        <td>Password</td>
+                        <td style="color:black">@Html.PasswordFor(m => m.UserPassword)</td>
                     </tr>
                     <tr>
-                        <td>Confirm password:</td>
-                        <td>@Html.PasswordFor(m => m.UserConfirmPassword)</td>
+                        <td>Confirm password</td>
+                        <td style="color:black">@Html.PasswordFor(m => m.UserConfirmPassword)</td>
                     </tr>
                     <tr>
-                        <td>Name:</td>
-                        <td>@Html.TextBoxFor(m => m.UserProfileName)</td>
+                        <td>Name</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserProfileName)</td>
                     </tr>
                     <tr>
-                        <td>Surname:</td>
-                        <td>@Html.TextBoxFor(m => m.UserProfileSurname)</td>
+                        <td>Surname</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserProfileSurname)</td>
                     </tr>
                     <tr>
-                        <td>Gender:</td>
-                        <td>@Html.DropDownListFor(m => m.GenderId, Model.Genders)</td>
+                        <td>Gender</td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.GenderId, Model.Genders)</td>
                     </tr>
                     <tr>
-                        <td>Orientation:</td>
-                        <td>@Html.DropDownListFor(m => m.OrientationId, Model.Orientations)</td>
+                        <td>Orientation</td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.OrientationId, Model.Orientations)</td>
                     </tr>
                     <tr>
-                        <td>Religion:</td>
-                        <td>@Html.DropDownListFor(m => m.ReligionId, Model.Religions)</td>
+                        <td>Religion</td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.ReligionId, Model.Religions)</td>
                     </tr>
                     <tr>
-                        <td>Marital Status:</td>
-                        <td>@Html.DropDownListFor(m => m.StatusId, Model.Statuses)</td>
+                        <td>Status</td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.StatusId, Model.Statuses)</td>
                     </tr>
                     <tr>
-                        <td>Birthday:</td>
-                        <td><input type="date" name="UserProfileBirthday" value=@ViewBag.Date min="1920-01-01"/></td>
+                        <td>Birthday</td>
+                        <td style="color:black"><input type="date" name="UserProfileBirthday" value=@ViewBag.Date min="1920-01-01" /></td>
                     </tr>
+
                     <tr>
                         <td></td>
-                        <td><input type="submit" value="Register" /></td>
+                        <td><input class="button1" type="submit" value="Register" /></td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>@ViewBag.RegisterMessage</td>
 
                     </tr>
-                </tbody>
-            </table>
-        }
+                </table>
+            }
+        </div>
     </div>
 </body>
 </html>
-

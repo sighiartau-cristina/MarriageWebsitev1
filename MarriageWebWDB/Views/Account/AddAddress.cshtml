@@ -8,42 +8,53 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>AddAdress</title>
+    <title>Add Address</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
+
 <body>
-    <h1>Add address:</h1>
-    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
-        @using (Html.BeginForm("AddAddress", "Account", FormMethod.Post))
-        {
+    <br><br>
+
+    <div class="profile-header-container">
+        <h1><i class="fa fa-home">  Add Address</i></h1>
+        <hr class="new1">
+        <div class="table-container">
+            @using (Html.BeginForm("AddAddress", "Account", FormMethod.Post))
+            {
             <table>
-                <tbody>
-                    <tr>
-                        <td>Street name:</td>
-                        <td>@Html.TextBoxFor(m => m.Street)</td>
-                    </tr>
-                    <tr>z
-                        <td>Street number:</td>
-                        <td>@Html.TextBoxFor(m => m.StreetNo)</td>
-                    </tr>
-                    <tr>
-                        <td>City:</td>
-                        <td>@Html.TextBoxFor(m => m.City)</td>
-                    </tr>
-                    <tr>
-                        <td>Country:</td>
-                        <td>@Html.TextBoxFor(m => m.Country)</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td><input type="submit" value="Save" /></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>@ViewBag.AddressMessage</td>
-                    </tr>
-                </tbody>
+                <tr>
+                    <td>Street name</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.Street)</td>
+                </tr>
+                <tr>
+                    <td>Street number</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.StreetNo)</td>
+                </tr>
+                <tr>
+                    <td>City</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.City)</td>
+                </tr>
+                <tr>
+                    <td>Country</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.Country)</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input class="button1" type="submit" value="Save" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>@ViewBag.AddressMessage</td>
+
+                </tr>
             </table>
-        }
+            }
+        </div>
     </div>
+
 </body>
 </html>

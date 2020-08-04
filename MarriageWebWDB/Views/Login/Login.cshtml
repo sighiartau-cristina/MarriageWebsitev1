@@ -3,41 +3,53 @@
     @model MarriageWebWDB.Models.LoginModel
 }
 
-
-
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
 <body>
-    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:300px; width:300px">
-        @using (Html.BeginForm("LoginUser", "Login", FormMethod.Post))
-        {
-            <table>
-                <tbody>
+    <div align="center">
+        <img src="~/Images/logo.png" alt="Avatar" class="avatar" />
+    </div>
+    <p style="color: #6A2E35; font-size:15px;">There's no I in TEAM: Find your match now.*</p>
+    <br>
+
+    <div class="profile-header-container">
+        <h1><i class="fa fa-user">  Login</i></h1>
+        <hr class="new1">
+        <div class="table-container">
+            @using (Html.BeginForm("LoginUser", "Login", FormMethod.Post))
+            {
+                <table>
                     <tr>
-                        <td>Username:</td>
-                        <td>@Html.TextBoxFor(m => m.UserName)</td>
+                        <td>Username</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
                     </tr>
                     <tr>
-                        <td>Password:</td>
-                        <td>@Html.PasswordFor(m => m.UserPassword)</td>
+                        <td>Password</td>
+                        <td style="color:black">@Html.PasswordFor(m => m.UserPassword)</td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td><input type="submit" value="Log In" /></td>
+                        <td><input class="button1" type="submit" value="Log In" /></td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>@ViewBag.LoginMessage</td>
 
                     </tr>
-                </tbody>
-            </table>
-        }
+                </table>
+            }
+        </div>
     </div>
+    <p style="color: #6A2E35; font-size:15px;">*We do not provide divorce services. Yet.</p>
 </body>
 </html>
+

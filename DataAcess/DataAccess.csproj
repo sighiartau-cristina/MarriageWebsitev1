@@ -59,6 +59,7 @@
     <Compile Include="Orientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Religion.cs" />
+    <Compile Include="Starsign.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="sysdiagram.cs" />
     <Compile Include="User.cs" />

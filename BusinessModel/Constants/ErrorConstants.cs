@@ -39,6 +39,13 @@
         public static string GenderNotFound = "No gender has been found.";
         public static string GenderExisting = "A gender with this name has already been registered.";
 
+        public static string StarsignInsertError = "An error occured while registering starsign.";
+        public static string StarsignGetError = "An error occured while fetching starsign.";
+        public static string StarsignUpdateError = "An error occured while updating starsign.";
+        public static string StarsignDeleteError = "An error occured while deleting starsign.";
+        public static string StarsignNotFound = "No starsign has been found.";
+        public static string StarsignExisting = "A starsign with this name has already been registered.";
+
         public static string MaritalStatusInsertError = "An error occured while registering status.";
         public static string MaritalStatusGetError = "An error occured while fetching status.";
         public static string MaritalStatusUpdateError = "An error occured while updating status.";

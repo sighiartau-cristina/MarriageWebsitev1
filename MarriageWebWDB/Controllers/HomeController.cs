@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Core.Objects.DataClasses;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using BusinessModel.Constants;
 using BusinessModel.Contracts;
@@ -18,6 +19,7 @@ namespace MarriageWebWDB.Controllers
 {
     public class HomeController : Controller
     {
+        [HttpGet]
         public ActionResult Index()
         {
             try
@@ -40,7 +42,7 @@ namespace MarriageWebWDB.Controllers
 
             var models = new SuggestionsHelper().GetSuggestions(suggestionsList.Entity);
 
-            return View(models);
+            return View("Index", models);
         }
 
         public ActionResult ShowProfile(string id)
@@ -183,45 +185,6 @@ namespace MarriageWebWDB.Controllers
             return View(models);
         }
 
-        public ActionResult CreateMessage(string messageText, string username)
-        {
-
-            var receiver = new UserHandler().GetByUsername(username);
-            if (!receiver.CompletedRequest)
-            {
-                TempData["error"] = receiver.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            if (receiver.Entity == null)
-            {
-                TempData["error"] = ErrorConstants.UserNotFound;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var message = new MessageEntity
-            {
-                MessageText = messageText,
-                SenderId = (int)Session["userId"],
-                ReceiverId = receiver.Entity.UserId,
-                SendDate = DateTime.Now,
-                Status = MessageStatus.Sent
-            };
-
-            var handler = new MessageHandler().Add(message);
-
-            if (!handler.CompletedRequest)
-            {
-                TempData["error"] = receiver.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            ChatHub.BroadcastData();
-            ViewBag.FromUsername = Session["userToken"].ToString();
-
-            return RedirectToAction("Chat", new { id = username });
-        }
-
         [HttpGet]
         public ActionResult GetChatHistory(string username)
         {
@@ -258,7 +221,7 @@ namespace MarriageWebWDB.Controllers
             return PartialView("_Chat", models);
         }
 
-        public ActionResult Chat(string id)
+        public ActionResult Chats(string id)
         {
             try
             {
@@ -306,7 +269,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            ViewBag.username = id;
+            ViewBag.toUsername = id;
             return View();
         }
 
@@ -318,10 +281,10 @@ namespace MarriageWebWDB.Controllers
             if (!response.CompletedRequest)
             {
                 TempData["error"] = response.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                RedirectToAction("Index", "Error");
             }
 
-            return RedirectToAction("Chat", new { id = username });
+            return RedirectToAction("Chats", new { id = username });
         }
 
         public ActionResult ShowArchivedMessages()
@@ -375,5 +338,6 @@ namespace MarriageWebWDB.Controllers
 
             return View(models);
         }
+
     }
 }

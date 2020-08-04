@@ -56,6 +56,7 @@ namespace MarriageWebWDB.Helper
             return true;
         }
 
+        //TODO cahnge AddUser
         public ResponseEntity<UserEntity> AddUser(RegisterModel registerModel)
         {
 
@@ -79,12 +80,22 @@ namespace MarriageWebWDB.Helper
                 };
             }
 
-            ResponseEntity<UserEntity> responseUser = new UserHandler().Add(dataEntity);
+            var responseUser = new UserHandler().Add(dataEntity);
 
             if (responseUser.CompletedRequest)
             {
                 var userProfile = ToDataEntity(registerModel, responseUser.Entity.UserId);
-                ResponseEntity<UserProfileEntity> responseUserProfile = new UserProfileHandler().Add(userProfile);
+
+                if(userProfile == null)
+                {
+                    return new ResponseEntity<UserEntity>
+                    {
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.UserProfileInsertError
+                    };
+                }
+
+                var responseUserProfile = new UserProfileHandler().Add(userProfile);
 
                 if (!responseUserProfile.CompletedRequest)
                 {
@@ -121,6 +132,13 @@ namespace MarriageWebWDB.Helper
 
         private UserProfileEntity ToDataEntity(RegisterModel model, int userId)
         {
+            int starSignId = GetStarsignId(StarsignCalculator.GetStarsignName(model.UserProfileBirthday));
+
+            if(starSignId < 0)
+            {
+                return null;
+            }
+
             return new UserProfileEntity
             {
                 UserAge = AgeCalculator.GetDifferenceInYears(model.UserProfileBirthday, DateTime.Now),
@@ -131,8 +149,21 @@ namespace MarriageWebWDB.Helper
                 OrientationId = model.OrientationId,
                 StatusId = model.StatusId,
                 ReligionId = model.ReligionId,
-                UserId = userId
+                UserId = userId,
+                StarsignId = starSignId
             };
+        }
+
+        private int GetStarsignId(string name)
+        {
+            var response = new StarSignHandler().GetByName(name);
+
+            if (!response.CompletedRequest)
+            {
+                return -1;
+            }
+
+            return response.Entity.SignId;
         }
     }
 }

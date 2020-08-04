@@ -52,6 +52,17 @@ namespace DataAccess
 
         public int Age { get; set; }
 
+        [StringLength(150)]
+        public string Motto { get; set; }
+
+        [StringLength(255)]
+        public string Likes { get; set; }
+
+        [StringLength(255)]
+        public string Dislikes { get; set; }
+
+        public int StarSignId { get; set; }
+
         public int UserId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -77,6 +88,8 @@ namespace DataAccess
         public virtual Orientation Orientation { get; set; }
 
         public virtual Religion Religion { get; set; }
+
+        public virtual Starsign Starsign { get; set; }
 
         public virtual Status Status { get; set; }
 

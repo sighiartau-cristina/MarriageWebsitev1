@@ -1,60 +1,43 @@
 ﻿@model IEnumerable<MarriageWebWDB.Models.SuggestionModel>
 
-@{
-}
-
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Matches</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
 <body>
     <h1>Your matches:</h1>
     @if (Model.Count() == 0)
     {
-    <div align="center"> No matches yet.</div>
+        <div class="match-container">
+            <div align="center"> No matches yet.</div>
+        </div>
     }
     else
     {
-    <table class="table">
-
-        @foreach (var item in Model)
+        foreach (var item in Model)
         {
-        <tr>
-            @if (item.File != null)
-            {
-                <td>
-                </td>
-                <td>
-                    <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:100px;height:100px;" />
-                    @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
-                </td>
-            }
-            else
-            {
-                <td>
-                </td>
-                <td>
-                    <img src="~/Images/untitled.jpg" alt="avatar" style="width:100px;height:100px;" />
-                    @Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })
-                </td>
-            }
-
-            <td>
-
-                <p>@Html.DisplayFor(modelItem => item.FullName)</p>
-
-                <p>@Html.ActionLink("See Profile", "ShowProfile", new { id = item.UserName })</p>
-            </td>
-
-            <td>
-                @Html.ActionLink("CHAT", "Chat", new { id = item.UserName })
-            </td>
-        </tr>
+            <div class="match-container">
+                @if (@item.File != null)
+                {
+                    <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:100px; height:100px; float:left;" />
+                }
+                else
+                {
+                    <img src="~/Images/untitled.jpg" alt="avatar" style="width:100px; height:100px; float:left;"/>
+                }
+                <h2 align="center">@Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })</h2>
+                <a href="@Url.Action("Chats", "Home", new { id = item.UserName})" class="button2" style="color:white;"><i class="fas fa-comments"></i> Chat</a>
+            </div>
+            <br />
         }
-    </table>
     }
 </body>
 </html>

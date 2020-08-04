@@ -7,48 +7,62 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>ChangeAddress</title>
+    <title>Edit Address</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
+
 <body>
-    <h1>Change Address:</h1>
-    <div style="position:absolute; margin:auto; top:0px; left:0px; right:0px; bottom:0px; height:500px; width:500px">
-        @using (Html.BeginForm("EditAddress", "Account", FormMethod.Post))
-        {
-            <table>
-                <tbody>
+    <br><br>
+
+    <div class="profile-header-container">
+        <h1><i class="fa fa-home">  Edit Address</i></h1>
+        <hr class="new1">
+        <div class="table-container">
+            @using (Html.BeginForm("EditAddress", "Account", FormMethod.Post))
+            {
+                <table>
                     <tr>
-                        <td>Street name:</td>
-                        <td>@Html.TextBoxFor(m => m.Street)</td>
+                        <td>Street name</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Street)</td>
                     </tr>
                     <tr>
-                        <td>Street number:</td>
-                        <td>@Html.TextBoxFor(m => m.StreetNo)</td>
+                        <td>Street number</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.StreetNo)</td>
                     </tr>
                     <tr>
-                        <td>City:</td>
-                        <td>@Html.TextBoxFor(m => m.City)</td>
+                        <td>City</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.City)</td>
                     </tr>
                     <tr>
-                        <td>Country:</td>
-                        <td>@Html.TextBoxFor(m => m.Country)</td>
+                        <td>Country</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Country)</td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td><input type="submit" value="Save" /></td>
+                        <td><input class="button1" type="submit" value="Save" /></td>
                     </tr>
                     <tr>
                         <td></td>
                         <td>@ViewBag.AddressMessage</td>
+
                     </tr>
-                </tbody>
-            </table>
-        }
+                </table>
+            }
+        </div>
     </div>
-    <div>
-        @using (Html.BeginForm("DeleteAddress", "Account", FormMethod.Post))
-        {
-            <input type="submit" value="Delete" />
-        }
+    <br />
+    <br />
+    <div class="profile-header-container">
+        <div>
+            @using (Html.BeginForm("DeleteAddress", "Account", FormMethod.Post))
+            {
+                <input class="button1" type="submit" value="Delete Address" />
+            }
+        </div>
     </div>
+
 </body>
 </html>

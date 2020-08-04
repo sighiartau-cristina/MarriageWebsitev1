@@ -19,41 +19,41 @@ If @genderId = 1
 	If @orientationId = 1 
 		--straight male matches straight/bi/other female
 		BEGIN
-			Select u.UserProfileId from UserProfile u full join Match m on u.UserProfileId=m.MatchUserProfileId WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select u.UserProfileId from UserProfile u full join Match m on u.UserProfileId=m.MatchUserProfileId WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else If @orientationId = 2
 		--gay male matches gay/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else If @orientationId = 3
 		--bi male matches gay/bi/other male and straight/bi/other female
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=1) or (u.GenderId=2 and u.OrientationId!=2)) and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=1) or (u.GenderId=2 and u.OrientationId!=2)) and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else
 		--other male matches anything?
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 Else
 	If @orientationId = 1 
 		--straight female matches straight/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=2 and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=2 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else If @orientationId = 2
 		--gay female matches gay/bi/other female
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else If @orientationId = 3
 		--bi female matches gay/bi/other female or straight/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=2) or (u.GenderId=2 and u.OrientationId!=1)) and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=2) or (u.GenderId=2 and u.OrientationId!=1)) and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END
 	Else
 		--other female matches anything?
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile)
+			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
 		END

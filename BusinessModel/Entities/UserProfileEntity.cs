@@ -18,6 +18,14 @@ namespace BusinessModel.Entities
 
         public DateTime UserProfileBirthday { get; set; }
 
+        public int StarsignId { get; set; }
+
+        public string Motto { get; set; }
+
+        public string Likes { get; set; }
+
+        public string Dislikes { get; set; }
+
         public int ReligionId { get; set; }
 
         public int StatusId { get; set; }

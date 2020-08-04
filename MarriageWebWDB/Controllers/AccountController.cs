@@ -16,18 +16,6 @@ namespace MarriageWebWDB.Controllers
     public class AccountController : Controller
     {
         // GET: Account
-        public ActionResult Index()
-        {
-            try
-            {
-                LoginHelper.CheckAccess(Session);
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("Login", "Login");
-            }
-            return View();
-        }
 
         [HttpGet]
         public ActionResult UserProfile()
@@ -135,7 +123,7 @@ namespace MarriageWebWDB.Controllers
             var userProfileDataEntity = userHelper.ToDataEntity(userModel, userProfile.Entity);
             var resposeUserProfile = userProfileHandler.Update(userProfileDataEntity);
 
-            if (!resposeUserProfile.CompletedRequest)
+            if (!resposeUserProfile.CompletedRequest || userProfileDataEntity==null)
             {
                 TempData["error"] = resposeUserProfile.ErrorMessage;
                 return RedirectToAction("Index", "Error");
@@ -154,7 +142,7 @@ namespace MarriageWebWDB.Controllers
             //if username was changed
             Session["userToken"] = userModel.UserName;
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("UserProfile", "Account");
         }
 
         [HttpGet]

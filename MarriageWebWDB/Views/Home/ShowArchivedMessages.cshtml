@@ -1,32 +1,34 @@
 ﻿
 @model IEnumerable<MarriageWebWDB.Models.MessageModel>
 
-<table class="table">
-    <tr>
-        <td>From</td>
-        <td>To</td>
-        <td>Message</td>
-        <td>Details</td>
-    </tr>
-    @foreach (var item in Model)
-    {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.SenderUsername)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReceiverUsername)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MessageText)
-        </td>
-        <td>
-            <p>
-                    @Html.DisplayFor(modelItem => item.SendDate)
-            </p>
-                <p>@Html.DisplayFor(modelItem => item.ReadDate)</p>
-        </td>
-    </tr>
-    }
+<!DOCTYPE html>
 
-</table>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Matches</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
+
+<body>
+    @if (Model.Count() == 0)
+    {
+        <div class="match-container">
+            <div align="center"> Hmm, it seems you haven't regretted any texts yet. Impressive.</div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <div class="match-container">
+                <p>@Html.DisplayFor(modelItem => item.SenderUsername) @Html.DisplayFor(modelItem => item.ReceiverUsername) @Html.DisplayFor(modelItem => item.MessageText) @Html.DisplayFor(modelItem => item.SendDate) @Html.DisplayFor(modelItem => item.ReadDate)</p>
+            </div>
+            <br />
+        }
+    }
+</body>
+</html>

@@ -175,6 +175,10 @@ namespace BusinessModel.Handlers
             dataEntity.OrientationId = entity.OrientationId;
             dataEntity.ReligionId = entity.ReligionId;
             dataEntity.Age = entity.UserAge;
+            dataEntity.StarSignId = entity.StarsignId;
+            dataEntity.Likes = entity.Likes;
+            dataEntity.Dislikes = entity.Dislikes;
+            dataEntity.Motto = entity.Motto;
 
             try
             {
@@ -295,7 +299,11 @@ namespace BusinessModel.Handlers
                 GenderId = entity.GenderId,
                 ReligionId = entity.ReligionId,
                 StatusId = entity.StatusId,
-                Age = entity.UserAge
+                Age = entity.UserAge,
+                Motto = entity.Motto,
+                StarSignId = entity.StarsignId,
+                Likes = entity.Likes,
+                Dislikes = entity.Dislikes
             };
         }
 
@@ -321,7 +329,11 @@ namespace BusinessModel.Handlers
                 GenderId = dataEntity.GenderId,
                 ReligionId = dataEntity.ReligionId,
                 StatusId = dataEntity.StatusId,
-                UserAge = dataEntity.Age
+                UserAge = dataEntity.Age,
+                StarsignId = dataEntity.StarSignId,
+                Motto = dataEntity.Motto,
+                Likes = dataEntity.Likes,
+                Dislikes = dataEntity.Dislikes
             };
         }
 

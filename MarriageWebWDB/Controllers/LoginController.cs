@@ -113,7 +113,7 @@ namespace MarriageWebWDB.Controllers
             Session.Clear();
             Session.Abandon();
 
-            return RedirectToAction("Login ", "Login");
+            return RedirectToAction("Login", "Login");
 
         }
 

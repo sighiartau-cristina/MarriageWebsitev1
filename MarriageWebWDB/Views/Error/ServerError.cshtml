@@ -1,12 +1,27 @@
 ﻿@{
     ViewBag.Title = "Error Page";
 }
-<div style=" padding:20px; color:red">
 
-    <h4>
-        Sorry, an error occured. Try again later.
-    </h4>
-    <h6>@Html.ActionLink("Go Back To Profile", "Index", "Account")</h6> @*link name , action method name , controller name*@
-    <br />
-    <br />
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
+
+<body>
+    <div style=" padding:20px; color:red">
+
+        <h4>
+            Sorry, an error occured. Try again later.
+        </h4>
+        <h6>@Html.ActionLink("Go Back To Profile", "Index", "Account")</h6> @*link name , action method name , controller name*@
+        <br />
+        <br />
+    </div>
+</body>
+</html>
