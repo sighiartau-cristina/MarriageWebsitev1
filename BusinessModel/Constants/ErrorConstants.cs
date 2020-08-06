@@ -87,5 +87,13 @@
         public static string MessageUpdateError = "An error occured while updating the message.";
         public static string MessageDeleteError = "An error occured while deleting the message.";
         public static string MessageNotFound = "No message has been found.";
+
+        public static string PreferenceInsertError = "An error occured while registering preference.";
+        public static string PreferenceGetError = "An error occured while fetching preference.";
+        public static string PreferenceUpdateError = "An error occured while updating the preference.";
+        public static string PreferenceDeleteError = "An error occured while deleting the preference.";
+        public static string PreferenceNotFound = "No preference has been found.";
+        public static string PreferenceExisting = "A preference with this name has already been registered.";
+
     }
 }

@@ -12,9 +12,14 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
+
+    <br />
+    <br />
+
 
     <div class="profile-image-container">
         <div class="image-container" style="height:300px">
@@ -32,22 +37,22 @@
             {
                 <img src="~/Images/untitled.jpg" alt="avatar" align="left" style="height:150px;width:150px;" />
             }
-        <p>
-            <div>
-                @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))
-                {
-                    <input class="button1" type="submit" value="Change Profile Picture" />
-                }
-            </div>
-        </p>
-        <p>
-            <div>
-                @using (Html.BeginForm("DeleteProfilePicture", "Account", FormMethod.Post))
-                {
-                    <input class="button1" type="submit" value="Delete Profile Picture" />
-                }
-            </div>
-        </p>
+            <p>
+                <div>
+                    @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))
+                    {
+                        <input class="button1" type="submit" value="Change Profile Picture" />
+                    }
+                </div>
+            </p>
+            <p>
+                <div>
+                    @using (Html.BeginForm("DeleteProfilePicture", "Account", FormMethod.Post))
+                    {
+                        <input class="button1" type="submit" value="Delete Profile Picture" />
+                    }
+                </div>
+            </p>
         </div>
     </div>
     <br>
@@ -58,85 +63,122 @@
         <div class="table-container">
             @using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post))
             {
-            <table>
-                <tr>
-                    <td><i class="fas fa-envelope">  Email</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Email)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-font">  Username</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-font">  Name</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Name)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-font">  Surname</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Surname)</td>
-                </tr>
-                <tr>
-                    <td><i class="far fa-comment-alt">  Description</i></td>
-                    <td style="color:black">@Html.TextAreaFor(m => m.Description)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-venus-mars">  Gender</i></td>
-                    <td style="color:black">@Html.DropDownListFor(m => m.GenderId, Model.Genders)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-venus-mars">  Orientation</i></td>
-                    <td style="color:black">@Html.DropDownListFor(m => m.OrientationId, Model.Orientations)</td>
-                </tr>
-                <tr>
-                    <td><i class="fas fa-ring">  Status</i></td>
-                    <td style="color:black">@Html.DropDownListFor(m => m.StatusId, Model.Statuses)</td>
-                </tr>
-                <tr>
-                    <td><i class="fas fa-church">  Religion</i></td>
-                    <td style="color:black">@Html.DropDownListFor(m => m.ReligionId, Model.Religions)</td>
-                </tr>
-                <tr>
-                    <td><i class="fas fa-user">  Age</i></td>
-                    <td>@Model.Age</td>
-                </tr>
-                <tr>
-                    <td><i class="fas fa-quote-left">  Motto</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Motto)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-thumbs-up">  Likes</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Likes)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-thumbs-down">  Dislikes</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Dislikes)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-briefcase">  Job</i></td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Job)</td>
-                </tr>
-                <tr>
-                    <td><i class="fa fa-birthday-cake">  Birthday</i></td>
-                    <td style="color:black"><input  type="date" name="Birthday" value=@Model.BirthdayString min="1920-01-01" /></td>
-                </tr>
-                <tr>
-                    <td><i class="fas fa-star">  Star sign</i></td>
-                    <td>@Html.DisplayFor(m => m.Starsign)</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><input class="button1" type="submit" value="Update" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>@ViewBag.UpdateUserMessage</td>
+                <table>
+                    <tr>
+                        <td><i class="fas fa-envelope">  Email</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Email)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-font">  Username</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-font">  Name</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Name)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-font">  Surname</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Surname)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="far fa-comment-alt">  Description</i></td>
+                        <td style="color:black">@Html.TextAreaFor(m => m.Description)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-venus-mars">  Gender</i></td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.GenderId, Model.Genders)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-venus-mars">  Orientation</i></td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.OrientationId, Model.Orientations)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-ring">  Status</i></td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.StatusId, Model.Statuses)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-church">  Religion</i></td>
+                        <td style="color:black">@Html.DropDownListFor(m => m.ReligionId, Model.Religions)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user">  Age</i></td>
+                        <td>@Model.Age</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-quote-left">  Motto</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Motto)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-thumbs-up">  Likes</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Likes)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-thumbs-down">  Dislikes</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Dislikes)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-briefcase">  Job</i></td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Job)</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa fa-birthday-cake">  Birthday</i></td>
+                        <td style="color:black"><input type="date" name="Birthday" value=@Model.BirthdayString min="1920-01-01" /></td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-star">  Star sign</i></td>
+                        <td>@Html.DisplayFor(m => m.Starsign)</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input class="button1" type="submit" value="Update" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>@ViewBag.UpdateUserMessage</td>
 
-                </tr>
-            </table>
+                    </tr>
+                </table>
             }
-            </div>
+        </div>
     </div>
-    <br>
+
+    <br />
+    <br />
+
+    <div style="color:white; height:400px" class="profile-header-container">
+        <div style="color:white" id="likes-label">Add likes and interests:</div>
+        <input style="color:black" id="likes">
+        <input style="color:black" type="hidden" id="likes-id">
+        <button class="button1" style="width:100px;" id="addLikeButton" type="button">Add</button>
+        <hr class="new1" />
+        <h1><label style="font-size:20px">Your likes</label></h1>
+        <h4><label>*check all items you want to remove</label></h4>
+        <hr class="new1" />
+        <h2><label id="noLikesLabel"></label></h2>
+
+        <div id="checkboxes">
+            <ul id="likes-list" style="list-style-type:none;">
+                @if (Model.LikesList != null)
+                {
+                    foreach (var item in Model.LikesList)
+                    {
+                        <li>
+                            <input type="checkbox" id="@item.Id" name=@item.Name>
+                            <label for="@item.Id">@item.Name</label>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <br>
+        <br>
+        <div id="showDeleteButton">
+            <button class="button1" style="width:300px;" id="deleteLikesButton" type="button">Remove Selected</button>
+        </div>
+    </div>
+
+    <br />
+    <br />
 
     <div class="profile-header-container">
         <div class="profile-container">
@@ -169,3 +211,116 @@
 
 </body>
 </html>
+
+@section JavaScript{
+
+    <script src="~/Scripts/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var length = document.getElementById("likes-list").getElementsByTagName("li").length;
+
+            if (length == 0) {
+                $('#noLikesLabel').text("No Likes");
+                document.getElementById("showDeleteButton").style.display = "none";
+            }
+            else {
+                $('#noLikesLabel').text("");
+                document.getElementById("showDeleteButton").style.display = "block";
+            }
+        });
+
+        $(function () {
+
+            $("#deleteLikesButton").click(function () {
+
+                var checkedIds = $(":checkbox:checked").map(function () {
+                    return this.id;
+                }).get()
+
+                checkedIds.forEach(e => $.ajax({
+                    url: '/Account/DeleteLike',
+                    data: { id: e },
+                    dataType: 'html',
+                    success: function (result) { }
+                }));
+
+                $("input:checkbox").each(function () {
+                    var $this = $(this);
+                    if ($this.is(":checked")) {
+                        $(this).parent().remove()
+                    }
+                });
+
+                var length = document.getElementById("likes-list").getElementsByTagName("li").length;
+
+                if (length == 0) {
+                    $('#noLikesLabel').text("No Likes");
+                    document.getElementById("showDeleteButton").style.display = "none";
+                }
+            })
+
+            $("#addLikeButton").click(function () {
+                var likeName = $('#likes').val();
+                var likeId = $('#likes-id').val();
+
+                if (likeName == "") return;
+
+                if (likeId == "") likeId = 0;
+
+                $.ajax({
+                    url: '/Account/AddLike',
+                    data: { name: likeName, id: likeId },
+                    dataType: 'html',
+                    success: function (result) {
+
+                        var newline = "";
+                        newline += '<li><input type="checkbox" id="' + result + '" name="' + likeName + '"<label for="' + result + '">' + likeName + '</label></li>';
+                        $('ul').append(newline);
+
+                        var length = document.getElementById("likes-list").getElementsByTagName("li").length;
+
+                        if (length > 0) {
+                            $('#noLikesLabel').text("");
+                            document.getElementById("showDeleteButton").style.display = "block";
+                        }
+                    }
+                });
+            });
+
+            $("#likes").autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Account/GetAllLikes",
+                        dataType: "json",
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            $("#likes-id").val("");
+                            response(data);
+                        }
+                    });
+                },
+                focus: function (event, ui) {
+                    $("#likes").val(ui.item.Name);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#likes").val(ui.item.Name);
+                    $("#likes-id").val(ui.item.Id);
+
+                    return false;
+                }
+            })
+
+                .autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                        .append("<div>" + item.Name + "</div>")
+                        .appendTo(ul);
+                };
+        });
+    </script>
+}

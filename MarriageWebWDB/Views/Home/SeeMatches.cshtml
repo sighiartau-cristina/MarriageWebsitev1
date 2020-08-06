@@ -22,6 +22,8 @@
     }
     else
     {
+        <h1 style="color:black">Your matches</h1>
+        <hr class="new2" />
         foreach (var item in Model)
         {
             <div class="match-container">
@@ -31,7 +33,7 @@
                 }
                 else
                 {
-                    <img src="~/Images/untitled.jpg" alt="avatar" style="width:100px; height:100px; float:left;"/>
+                    <img src="~/Images/untitled.jpg" alt="avatar" style="width:100px; height:100px; float:left;" />
                 }
                 <h2 align="center">@Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })</h2>
                 <a href="@Url.Action("Chats", "Home", new { id = item.UserName})" class="button2" style="color:white;"><i class="fas fa-comments"></i> Chat</a>

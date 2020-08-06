@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 using BusinessModel.Entities;
 
 namespace MarriageWebWDB.Models
 {
     public class UserModel
     {
-        public IEnumerable<System.Web.Mvc.SelectListItem> Religions { get; set; }
+        public IEnumerable<SelectListItem> Religions { get; set; }
 
-        public IEnumerable<System.Web.Mvc.SelectListItem> Genders { get; set; }
+        public IEnumerable<SelectListItem> Genders { get; set; }
 
-        public IEnumerable<System.Web.Mvc.SelectListItem> Orientations { get; set; }
+        public IEnumerable<SelectListItem> Orientations { get; set; }
 
-        public IEnumerable<System.Web.Mvc.SelectListItem> Statuses { get; set; }
+        public IEnumerable<SelectListItem> Statuses { get; set; }
 
         public string UserName { get; set; }
 
@@ -51,5 +52,10 @@ namespace MarriageWebWDB.Models
         public string Dislikes { get; set; }
 
         public string Motto { get; set; }
+
+        public List<PreferenceEntity> LikesList{ get; set; }
+
+        public string LikeInput { get; set; }
+
     }
 }

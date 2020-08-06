@@ -22,13 +22,29 @@
     }
     else
     {
-        foreach (var item in Model)
-        {
-            <div class="match-container">
-                <p>@Html.DisplayFor(modelItem => item.SenderUsername) @Html.DisplayFor(modelItem => item.ReceiverUsername) @Html.DisplayFor(modelItem => item.MessageText) @Html.DisplayFor(modelItem => item.SendDate) @Html.DisplayFor(modelItem => item.ReadDate)</p>
-            </div>
-            <br />
-        }
+        <div class="match-container">
+            <table style="color:#FFFFFA">
+                <thead>
+                    <tr>
+                        <td style="color:#FFFFFA"><u>To</u></td>
+                        <td style="color:#FFFFFA"><u>Text</u></td>
+                        <td style="color: #FFFFFA"><u>Sent</u></td>
+                        <td style="color:#FFFFFA"><u>Status</u></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.ReceiverUsername)</td>
+                            <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.MessageText)</td>
+                            <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.SendDate)</td>
+                            <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.ReadDate)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 </body>
 </html>

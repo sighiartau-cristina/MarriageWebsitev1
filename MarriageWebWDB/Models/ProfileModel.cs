@@ -35,7 +35,7 @@ namespace MarriageWebWDB.Models
 
         public string Starsign { get; set; }
 
-        public string Likes { get; set; }
+        public List<string> Likes { get; set; }
 
         public string Dislikes { get; set; }
 

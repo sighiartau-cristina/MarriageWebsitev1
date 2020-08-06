@@ -18,6 +18,7 @@ namespace DataAccess
             Matches1 = new HashSet<Match>();
             Messages = new HashSet<Message>();
             Messages1 = new HashSet<Message>();
+            UserProfile_Preference = new HashSet<UserProfile_Preference>();
         }
 
         public int UserProfileId { get; set; }
@@ -94,5 +95,8 @@ namespace DataAccess
         public virtual Status Status { get; set; }
 
         public virtual User User { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserProfile_Preference> UserProfile_Preference { get; set; }
     }
 }

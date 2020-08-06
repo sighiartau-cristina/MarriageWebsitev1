@@ -13,17 +13,19 @@ namespace DataAccess
         }
 
         public virtual DbSet<Address> Addresses { get; set; }
+        public virtual DbSet<Dislike> Dislikes { get; set; }
         public virtual DbSet<File> Files { get; set; }
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<Match> Matches { get; set; }
         public virtual DbSet<Message> Messages { get; set; }
         public virtual DbSet<Orientation> Orientations { get; set; }
+        public virtual DbSet<Preference> Preferences { get; set; }
         public virtual DbSet<Religion> Religions { get; set; }
         public virtual DbSet<Starsign> Starsigns { get; set; }
         public virtual DbSet<Status> Status { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual DbSet<UserProfile_Preference> UserProfile_Preference { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -41,6 +43,10 @@ namespace DataAccess
 
             modelBuilder.Entity<Address>()
                 .Property(e => e.AddressCountry)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Dislike>()
+                .Property(e => e.Name)
                 .IsUnicode(false);
 
             modelBuilder.Entity<File>()
@@ -79,6 +85,16 @@ namespace DataAccess
             modelBuilder.Entity<Orientation>()
                 .HasMany(e => e.UserProfiles)
                 .WithRequired(e => e.Orientation)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Preference>()
+                .Property(e => e.Name)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Preference>()
+                .HasMany(e => e.UserProfile_Preference)
+                .WithRequired(e => e.Preference)
+                .HasForeignKey(e => e.PrefId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Religion>()
@@ -175,6 +191,11 @@ namespace DataAccess
                 .HasMany(e => e.Messages1)
                 .WithRequired(e => e.UserProfile1)
                 .HasForeignKey(e => e.SenderId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(e => e.UserProfile_Preference)
+                .WithRequired(e => e.UserProfile)
                 .WillCascadeOnDelete(false);
         }
     }

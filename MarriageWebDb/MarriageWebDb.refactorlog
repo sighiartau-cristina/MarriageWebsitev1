@@ -91,4 +91,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="USER_PROFILE_ID" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="b6230384-c0d9-47f1-b9ef-aeb61639e980" ChangeDateTime="08/06/2020 14:06:01">
+    <Property Name="ElementName" Value="[dbo].[UserProfile_Preference].[Like]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UserProfile_Preference]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Likes" />
+  </Operation>
 </Operations>

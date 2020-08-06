@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
@@ -10,6 +12,7 @@ using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
 using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.SignalR.Messaging;
+using Newtonsoft.Json;
 
 namespace MarriageWebWDB.Controllers
 {
@@ -451,5 +454,78 @@ namespace MarriageWebWDB.Controllers
             return RedirectToAction("UserProfile", "Account");
         }
 
+        public string GetAllLikes(string term)
+        {
+            var likesList = new PreferenceHandler().GetAll();
+
+            if (!likesList.CompletedRequest)
+            {
+                TempData["error"] = likesList.ErrorMessage;
+                RedirectToAction("Index", "Error");
+            }
+
+            if (string.IsNullOrEmpty(term))
+            {
+                return JsonConvert.SerializeObject(likesList.Entity);
+            }
+
+            var newlist = likesList.Entity.ToList().FindAll(x => x.Name.ToLowerInvariant().Contains(term.ToLowerInvariant())).ToList();
+
+            return JsonConvert.SerializeObject(newlist);
+        }
+
+        public int AddLike(string name, int id)
+        {
+            var handler = new PreferenceHandler();
+            int likeId = id;
+            //new like preference => add it to likes table
+            if (id == 0)
+            {
+                var entity = new PreferenceEntity
+                {
+                    Name = name
+                };
+
+                var response = handler.Add(entity);
+
+                if (!response.CompletedRequest)
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    RedirectToAction("Index", "Error");
+                }
+
+                likeId = response.Entity.Id;
+            }
+
+            //add to user's likes
+
+            int userProfileId = (int)Session["userProfileId"];
+            var response2 = handler.AddForUser(likeId, userProfileId, true);
+
+            if (!response2.CompletedRequest)
+            {
+                TempData["error"] = response2.ErrorMessage;
+                RedirectToAction("Index", "Error");
+            }
+
+            return likeId;
+        }
+
+        public void DeleteLike(string id)
+        {
+            var handler = new PreferenceHandler();
+            int likeId = int.Parse(id);
+
+            //delete from user's likes
+
+            int userProfileId = (int)Session["userProfileId"];
+            var response = handler.DeleteForUser(likeId, userProfileId, true);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                RedirectToAction("Index", "Error");
+            }
+        }
     }
 }

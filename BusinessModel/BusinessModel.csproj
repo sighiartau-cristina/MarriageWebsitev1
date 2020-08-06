@@ -56,6 +56,7 @@
     <Compile Include="Entities\AddressEntity.cs" />
     <Compile Include="Entities\FileEntity.cs" />
     <Compile Include="Entities\GenderEntity.cs" />
+    <Compile Include="Entities\PreferenceEntity.cs" />
     <Compile Include="Entities\MessageEntity.cs" />
     <Compile Include="Entities\StarSignEntity.cs" />
     <Compile Include="Entities\StatusEntity.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Handlers\AddressHandler.cs" />
     <Compile Include="Handlers\FileHandler.cs" />
     <Compile Include="Handlers\GenderHandler.cs" />
+    <Compile Include="Handlers\PreferenceHandler.cs" />
     <Compile Include="Handlers\MaritalStatusHandler.cs" />
     <Compile Include="Handlers\MatchHandler.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />

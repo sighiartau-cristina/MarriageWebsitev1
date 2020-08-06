@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using System.Web;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
@@ -10,6 +11,7 @@ using MarriageWebWDB.Constants;
 using MarriageWebWDB.Models;
 using MarriageWebWDB.Utils;
 using MarriageWebWDB.Validators;
+using Newtonsoft.Json;
 
 namespace MarriageWebWDB.Helper
 {
@@ -71,6 +73,9 @@ namespace MarriageWebWDB.Helper
             userModel.Dislikes = string.IsNullOrWhiteSpace(userProfile.Dislikes) ? "" : userProfile.Dislikes;
             userModel.Motto = string.IsNullOrWhiteSpace(userProfile.Motto) ? "" : userProfile.Motto;
 
+
+            userModel.LikesList = new PreferenceHandler().GetAllForUserProfile(userProfile.UserProfileId, true).Entity.ToList();
+            
         }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
