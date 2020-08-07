@@ -129,7 +129,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!userToMatch.CompletedRequest)
             {
-                TempData["error"] = userProfile.ErrorMessage;
+                TempData["error"] = userToMatch.ErrorMessage;
                 return RedirectToAction("Index", "Error");
             }
 
@@ -137,7 +137,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!userProfileToMatch.CompletedRequest)
             {
-                TempData["error"] = userProfile.ErrorMessage;
+                TempData["error"] = userProfileToMatch.ErrorMessage;
                 return RedirectToAction("Index", "Error");
             }
 
@@ -337,6 +337,63 @@ namespace MarriageWebWDB.Controllers
             }
 
             return View(models);
+        }
+
+        public ActionResult Unmatch(string username)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var userProfileHandler = new UserProfileHandler();
+
+            var userProfileId = (int)Session["userProfileId"];
+            //var userProfile = userProfileHandler.Get(userProfileId);
+
+            //if (!userProfile.CompletedRequest)
+            //{
+            //    TempData["error"] = userProfile.ErrorMessage;
+            //    return RedirectToAction("Index", "Error");
+            //}
+
+            var userToMatch = new UserHandler().GetByUsername(username);
+
+            if (!userToMatch.CompletedRequest)
+            {
+                TempData["error"] = userToMatch.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
+
+            if (!userProfileToMatch.CompletedRequest)
+            {
+                TempData["error"] = userProfileToMatch.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var matchResponse = new MatchHandler().UnmatchForUsers(userProfileId, userProfileToMatch.Entity.UserProfileId);
+
+            if (!matchResponse.CompletedRequest)
+            {
+                TempData["error"] = matchResponse.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var messagesResponse = new MessageHandler().ArchiveAllForUsers(userProfileId, userProfileToMatch.Entity.UserProfileId);
+
+            if (!messagesResponse.CompletedRequest)
+            {
+                TempData["error"] = messagesResponse.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
     }

@@ -69,13 +69,13 @@ namespace MarriageWebWDB.Helper
             userModel.BirthdayString = DateFormatter.GetDate(userProfile.UserProfileBirthday);
             userModel.File = file;
             userModel.Starsign = StarsignCalculator.GetStarsignName(userProfile.UserProfileBirthday);
-            userModel.Likes = string.IsNullOrWhiteSpace(userProfile.Likes) ? "" : userProfile.Likes;
-            userModel.Dislikes = string.IsNullOrWhiteSpace(userProfile.Dislikes) ? "" : userProfile.Dislikes;
             userModel.Motto = string.IsNullOrWhiteSpace(userProfile.Motto) ? "" : userProfile.Motto;
 
+            var prefHandler = new PreferenceHandler();
+            //TODO check
+            userModel.LikesList =prefHandler.GetAllForUserProfile(userProfile.UserProfileId, true).Entity.ToList();
+            userModel.DislikesList = prefHandler.GetAllForUserProfile(userProfile.UserProfileId, false).Entity.ToList();
 
-            userModel.LikesList = new PreferenceHandler().GetAllForUserProfile(userProfile.UserProfileId, true).Entity.ToList();
-            
         }
 
         public static void CheckAccess(HttpSessionStateBase httpSession)
@@ -195,15 +195,6 @@ namespace MarriageWebWDB.Helper
                 return false;
             }
 
-            if (userModel.Likes != userProfileEntity.Likes)
-            {
-                return false;
-            }
-
-            if (userModel.Dislikes != userProfileEntity.Dislikes)
-            {
-                return false;
-            }
             return true;
         }
 
@@ -244,8 +235,6 @@ namespace MarriageWebWDB.Helper
                 ReligionId = model.ReligionId,
                 UserId = userProfile.UserId,
                 Motto = model.Motto,
-                Dislikes = model.Dislikes,
-                Likes = model.Likes,
                 StarsignId = starSignId
             };
         }

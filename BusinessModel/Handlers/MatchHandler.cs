@@ -215,6 +215,53 @@ namespace BusinessModel.Handlers
             };
         }
 
+        public ResponseEntity<MatchEntity> UnmatchForUsers(int userProfileId, int userToMatchId)
+        {
+            DbModel dbModel = new DbModel();
+            Match entity;
+            try
+            {
+                entity = dbModel.Matches.Where(u => u.UserProfileId == userProfileId && u.MatchUserProfileId == userToMatchId).FirstOrDefault();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MatchEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MatchGetError
+                };
+            }
+            if (entity == null)
+            {
+                return new ResponseEntity<MatchEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MatchNotFound
+                };
+            }
+
+            try
+            {
+                entity.Accepted = false;
+                dbModel.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MatchEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MatchUpdateError
+                };
+            }
+
+            return new ResponseEntity<MatchEntity>
+            {
+                CompletedRequest = true
+            };
+
+        }
 
         public ResponseEntity<ICollection<MatchEntity>> GetAll()
         {

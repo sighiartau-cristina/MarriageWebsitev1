@@ -92,8 +92,7 @@ namespace BusinessModel.Handlers
             {
                 return new ResponseEntity<PreferenceEntity>
                 {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.NullEntityError
+                    CompletedRequest = true
                 };
             }
 

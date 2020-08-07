@@ -474,7 +474,7 @@ namespace MarriageWebWDB.Controllers
             return JsonConvert.SerializeObject(newlist);
         }
 
-        public int AddLike(string name, int id)
+        public int AddPreference(string name, int id, bool like)
         {
             var handler = new PreferenceHandler();
             int likeId = id;
@@ -483,7 +483,7 @@ namespace MarriageWebWDB.Controllers
             {
                 var entity = new PreferenceEntity
                 {
-                    Name = name
+                    Name = name.First().ToString().ToUpper() + name.Substring(1)
                 };
 
                 var response = handler.Add(entity);
@@ -497,10 +497,10 @@ namespace MarriageWebWDB.Controllers
                 likeId = response.Entity.Id;
             }
 
-            //add to user's likes
+            //add to user's likes/dislikes
 
             int userProfileId = (int)Session["userProfileId"];
-            var response2 = handler.AddForUser(likeId, userProfileId, true);
+            var response2 = handler.AddForUser(likeId, userProfileId, like);
 
             if (!response2.CompletedRequest)
             {
@@ -511,15 +511,13 @@ namespace MarriageWebWDB.Controllers
             return likeId;
         }
 
-        public void DeleteLike(string id)
+        public void DeletePreference(string id, bool like)
         {
             var handler = new PreferenceHandler();
             int likeId = int.Parse(id);
 
-            //delete from user's likes
-
             int userProfileId = (int)Session["userProfileId"];
-            var response = handler.DeleteForUser(likeId, userProfileId, true);
+            var response = handler.DeleteForUser(likeId, userProfileId, like);
 
             if (!response.CompletedRequest)
             {

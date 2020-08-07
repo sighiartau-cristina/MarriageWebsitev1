@@ -47,13 +47,11 @@ namespace MarriageWebWDB.Models
 
         public string Starsign { get; set; }
 
-        public string Likes { get; set; }
-
-        public string Dislikes { get; set; }
-
         public string Motto { get; set; }
 
         public List<PreferenceEntity> LikesList{ get; set; }
+
+        public List<PreferenceEntity> DislikesList { get; set; }
 
         public string LikeInput { get; set; }
 

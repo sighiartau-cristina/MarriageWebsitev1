@@ -398,6 +398,31 @@ namespace BusinessModel.Handlers
                 Entity = list
             };
         }
+
+        public ResponseEntity<MessageEntity> ArchiveAllForUsers(int userProfileId, int matchUserProfileId)
+        {
+
+            DbModel dbModel = new DbModel();
+
+            try
+            {
+                //TODO unmatched -> deleted?
+                dbModel.Database.ExecuteSqlCommand("Update Messages SET Status = 'Deleted' WHERE (SenderId = @userProfile AND ReceiverId = @matchProfile) OR (SenderId = @matchProfile AND ReceiverId = @userProfile)", new SqlParameter("@userProfile", userProfileId), new SqlParameter("@matchProfile", matchUserProfileId));
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<MessageEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageGetError
+                };
+            }
+
+            return new ResponseEntity<MessageEntity>
+            {
+                CompletedRequest = true
+            };
+        }
     }
 }
 

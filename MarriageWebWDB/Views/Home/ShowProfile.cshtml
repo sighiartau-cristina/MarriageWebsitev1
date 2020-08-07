@@ -69,10 +69,6 @@
                     <td>@Model.Motto</td>
                 </tr>
                 <tr>
-                    <td><i class="fa fa-thumbs-down">  Dislikes</i></td>
-                    <td>@Model.Dislikes</td>
-                </tr>
-                <tr>
                     <td><i class="fa fa-briefcase">  Job</i></td>
                     <td>@Model.Job</td>
                 </tr>
@@ -93,19 +89,34 @@
     <div style="color:white; height:400px" class="profile-header-container">
         <h1><i class="fa fa-thumbs-up">  Likes</i></h1>
         <hr class="new1" />
-        @if(Model.Likes == null)
+        @if (Model.Likes == null)
         {
             <h2>No likes yet.</h2>
         }
         else
         {
-            foreach(var item in Model.Likes)
+            foreach (var item in Model.Likes)
             {
                 <p>@item</p>
             }
         }
-        <br>
-        <br>
+    </div>
+    <br />
+    <br />
+    <div style="color:white; height:400px" class="profile-header-container">
+        <h1><i class="fa fa-thumbs-down">  Dislikes</i></h1>
+        <hr class="new1" />
+        @if (Model.Dislikes == null)
+        {
+            <h2>No dislikes yet.</h2>
+        }
+        else
+        {
+            foreach (var item in Model.Dislikes)
+            {
+                <p>@item</p>
+            }
+        }
     </div>
 </body>
 </html>

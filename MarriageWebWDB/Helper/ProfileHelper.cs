@@ -20,9 +20,12 @@ namespace MarriageWebWDB.Helper
             var orientation = new OrientationHandler().Get(profile.OrientationId);
             var file = new FileHandler().GetByUserId(profile.UserProfileId);
             var starsign = new StarSignHandler().Get(profile.StarsignId);
-            var likes = new PreferenceHandler().GetAllForUserProfile(profile.UserProfileId, true);
 
-            if (!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !file.CompletedRequest || !starsign.CompletedRequest || !likes.CompletedRequest)
+            var likesHandler = new PreferenceHandler();
+            var likes = likesHandler.GetAllForUserProfile(profile.UserProfileId, true);
+            var dislikes = likesHandler.GetAllForUserProfile(profile.UserProfileId, false);
+
+            if (!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !file.CompletedRequest || !starsign.CompletedRequest || !likes.CompletedRequest || !dislikes.CompletedRequest)
             {
                 return null; 
             }
@@ -44,7 +47,7 @@ namespace MarriageWebWDB.Helper
                 Starsign = starsign.Entity.SignName,
                 Motto = string.IsNullOrEmpty(profile.Motto) ? "-" : profile.Motto,
                 Likes = likes.Entity.Count > 0 ? likes.Entity.Select(x => x.Name).ToList() : null,
-                Dislikes = string.IsNullOrEmpty(profile.Dislikes) ? "-" : profile.Dislikes
+                Dislikes = dislikes.Entity.Count > 0 ? dislikes.Entity.Select(x => x.Name).ToList() : null,
             };
 
             return profileModel;

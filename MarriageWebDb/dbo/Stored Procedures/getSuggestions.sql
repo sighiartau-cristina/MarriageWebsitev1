@@ -1,59 +1,133 @@
 ﻿CREATE PROCEDURE getSuggestions( @user_profile int) 
 AS
 
-DECLARE @genderId INT;
-DECLARE @orientationId INT;
-DECLARE @statusId INT;
+DECLARE @user_age INT;
+DECLARE @addressCity VARCHAR(255);
+DECLARE @addressCountry VARCHAR(255);
+
+DECLARE @gender VARCHAR(255);
+DECLARE @orientation VARCHAR(255);
+
 DECLARE @religionId INT;
-DECLARE @addressCity VARCHAR;
-DECLARE @addressCountry VARCHAR;
+DECLARE @statusId INT;
 
-SET @genderId = (SELECT UserProfile.GenderId from UserProfile where UserProfile.UserProfileId = @user_profile)
-SET @orientationId = (SELECT UserProfile.OrientationId from UserProfile where UserProfile.UserProfileId = @user_profile)
-SET @statusId = (SELECT UserProfile.StatusId from UserProfile where UserProfile.UserProfileId = @user_profile)
-SET @religionId = (SELECT UserProfile.ReligionId from UserProfile where UserProfile.UserProfileId = @user_profile)
-SET @addressCity = (SELECT a.AddressCity from UserProfile u join ADDRESS a on a.UserProfileId=u.UserProfileId where u.UserProfileId = @user_profile)
-SET @addressCountry = (SELECT a.AddressCountry from UserProfile u join ADDRESS a on a.UserProfileId=u.UserProfileId where u.UserProfileId = @user_profile)
+SET @religionId = (SELECT u.ReligionId from UserProfile u where u.UserProfileId = @user_profile);
+SET @statusId = (SELECT u.StatusId from UserProfile u where u.UserProfileId = @user_profile);
 
-If @genderId = 1
-	If @orientationId = 1 
+SET @gender = (SELECT g.GenderName from Gender g join UserProfile u on g.GenderId=u.GenderId where u.UserProfileId = @user_profile);
+SET @orientation = (SELECT o.OrientationName from Orientation o join UserProfile u on o.OrientationId=u.OrientationId where u.UserProfileId = @user_profile);
+SET @addressCity = (SELECT a.AddressCity from UserProfile u join ADDRESS a on a.UserProfileId=u.UserProfileId where u.UserProfileId = @user_profile);
+SET @addressCountry = (SELECT a.AddressCountry from UserProfile u join ADDRESS a on a.UserProfileId=u.UserProfileId where u.UserProfileId = @user_profile);
+SET @user_age = (SELECT u.Age from UserProfile u where u.UserProfileId=@user_profile);
+
+If @gender = 'Male'
+	If @orientation = 'Straight' 
 		--straight male matches straight/bi/other female
 		BEGIN
-			Select u.UserProfileId from UserProfile u full join Match m on u.UserProfileId=m.MatchUserProfileId WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and (SELECT g.GenderName from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Female' 
+				and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Gay' 
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END
-	Else If @orientationId = 2
+	Else If @orientation = 'Gay'
 		--gay male matches gay/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and (SELECT g.GenderName from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Male' 
+				and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Straight' 
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END
-	Else If @orientationId = 3
+	Else If @orientation = 'Bisexual'
 		--bi male matches gay/bi/other male and straight/bi/other female
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=1) or (u.GenderId=2 and u.OrientationId!=2)) and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and ((SELECT g.GenderName as gender from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Male' and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Straight' 
+				OR (SELECT g.GenderName as gender from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Female' and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Gay' )
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END
 	Else
 		--other male matches anything?
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END
 Else
-	If @orientationId = 1 
+	If @orientation = 'Straight'
 		--straight female matches straight/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=1 and u.OrientationId!=2 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and (SELECT g.GenderName from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Male' 
+				and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Gay' 
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
+			
 		END
-	Else If @orientationId = 2
+	Else If @orientation = 'Gay'
 		--gay female matches gay/bi/other female
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and u.GenderId=2 and u.OrientationId!=1 and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and (SELECT g.GenderName from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Female' 
+				and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Straight' 
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;					  
 		END
-	Else If @orientationId = 3
+	Else If @orientation = 'Bisexual'
 		--bi female matches gay/bi/other female or straight/bi/other male
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and ((u.GenderId=1 and u.OrientationId!=2) or (u.GenderId=2 and u.OrientationId!=1)) and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and ((SELECT g.GenderName as gender from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Male' and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Gay' 
+				OR (SELECT g.GenderName as gender from Gender g join UserProfile u1 on g.GenderId=u.GenderId where u1.UserProfileId = u.UserProfileId)='Female' and (SELECT o.OrientationName from Orientation o join UserProfile u1 on o.OrientationId=u.OrientationId where u1.UserProfileId = u.UserProfileId)!='Straight' )
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END
 	Else
 		--other female matches anything?
 		BEGIN
-			Select UserProfileId from UserProfile u WHERE u.UserProfileId!=@user_profile and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.Accepted=0))
+			Select TOP(10) u.UserProfileId from UserProfile u WHERE 
+				u.UserProfileId!=@user_profile 
+				and NOT EXISTS (SELECT * from Match m where (m.MatchUserProfileId=u.UserProfileId and m.UserProfileId=@user_profile) or (m.MatchUserProfileId=@user_profile and m.UserProfileId=u.UserProfileId and m.Accepted=0))
+				ORDER BY  ABS(u.Age - @user_age) ASC, 
+						  (SELECT COUNT(p.Id) from UserProfile_Preference p where p.UserProfileId=@user_profile and EXISTS (SELECT * from UserProfile_Preference up where up.Likes=p.Likes and up.UserProfileId=u.UserProfileId and p.PrefId=up.PrefId)) DESC, 
+						  (SELECT COUNT (a.AddressId) from Address a where EXISTS(SELECT * from Address a where a.UserProfileId=u.UserProfileId and (@addressCity=a.AddressCity OR a.AddressCountry=@addressCountry))) DESC,
+						  (SELECT COUNT (r.ReligionId) from Religion r where EXISTS(SELECT * from Religion r join UserProfile up on r.ReligionId=up.ReligionId where up.UserProfileId=u.UserProfileId and r.ReligionId=@religionId)) DESC,
+						  (SELECT COUNT (s.StatusId) from Status s where EXISTS(SELECT * from Status s join UserProfile up on s.StatusId=up.StatusId where up.UserProfileId=u.UserProfileId and s.StatusId=@statusId)) DESC;
 		END

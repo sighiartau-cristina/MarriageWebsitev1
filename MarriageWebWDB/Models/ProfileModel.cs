@@ -37,7 +37,7 @@ namespace MarriageWebWDB.Models
 
         public List<string> Likes { get; set; }
 
-        public string Dislikes { get; set; }
+        public List<string> Dislikes { get; set; }
 
         public string Motto { get; set; }
     }

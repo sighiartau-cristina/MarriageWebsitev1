@@ -6,5 +6,4 @@ Update Messages
 SET ReadDate=GETDATE(), Status='Read' WHERE
 SenderId = @receiverId AND ReceiverId=@senderId AND ReadDate is NULL
 
-select * from Messages;
 END
