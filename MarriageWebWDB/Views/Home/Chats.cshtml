@@ -1,24 +1,38 @@
-﻿
-@{
-    ViewBag.Title = "Chat";
-}
+﻿<!DOCTYPE html>
 
-<h2>Chat with @ViewBag.toUsername:</h2>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Chat</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
 
-<div id="dataModel" style="height:700px;width:1250px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;"></div>
-<div id="scrollbox" name="scrollbox" align=center>
+<body>
+    <h2 style="color:black">Chat with @ViewBag.toUsername:</h2>
 
-    <div class="message-send-area">
-        <div class="message-forum">
-            <div class="mf-field">
-                <input id="messageInput" type="text" name="message" placeholder="Type a message here">
-                <button id="sendMessageButton" type="button">Send</button>
+    <div id="dataModel" style="height:600px;width:1000px;border:1px solid #6A2E35; border-radius: 15px;font:16px/26px Georgia, Garamond, Serif;overflow:auto;"></div>
+    <p id="lastStatus" style="color:black" align="right"></p>
+    <br />
+    <br />
+    <div>
+        <div class="message-send-area">
+            <div class="message-forum">
+                <div class="mf-field">
+                    <input id="messageInput" type="text" name="message" placeholder="Type a message here" style="height:50px; color:black">
+                    <button id="sendMessageButton" type="button" class="button2" style="height:50px">Send</button>
+                </div>
             </div>
         </div>
+        <div id="messagetext"></div>
     </div>
-    <div id="messagetext"></div>
-</div>
-<p id="sender-status"></p>
+    <br />
+    <p id="sender-status" style="color:black"></p>
+</body>
+</html>
+
 @section JavaScript{
 
     <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
@@ -53,6 +67,7 @@
             var chatHub = $.connection.chatHub; // SignalR Class Name = ChatHub
             $.connection.hub.qs = { "userName": "@ViewBag.connected" };
             $.connection.hub.qs = { "userId": "@Session["userId"]" };
+
             $.connection.hub.start().done(function ()
             {
                 chatHub.server.connect();
@@ -62,58 +77,61 @@
             {
                 console.log(username + " connected!");
                 getAll();
+                $("dataModel").animate({ scrollTop: $('dataModel').prop("scrollHeight") }, 0);
             };
 
             chatHub.client.sendPrivateMessage = function (toUserName, msg, sendDate) // After sending message to do
             {
                 var result = "";
-                result += "<tr><td>" + toUserName + "</td><td>" + msg + "</td><td>" + sendDate + "</td><td></td></tr>";
-                $("table").append(result);
-                $('#lastStatus').text("");
+                result += '<div class="chat-container"><img src="/w3images/bandmember.jpg" alt="Avatar">' +
+                    '<p>' + msg + '</p>' +
+                    '<span class="time-right" style="color:black">' + sendDate + '</span></div>';
+                $('#dataModel').append(result);
             };
 
             chatHub.client.addMessage = function (myUserName, msg, sendDate, messageId) // add message
             {
                 var result = "";
-                result += "<tr><td>" + myUserName + "</td><td>" + msg + "</td><td>" + sendDate + "</td><td><div class='archiveMessage'><input type='hidden' name='messageId' name='messageId' value=" + messageId + "/><button onclick='fun(" + messageId + ")' id='archiveMessageButton' type='button'>Archive</button></div ></td></tr>";
-                $("table").append(result);
-                $('#lastStatus').text("Sent");
-
+                result += '<div class="chat-container darker"><img src="../../File/UserFile/?id=' + myUserName + '" alt="Avatar" class="right">' +
+                    '<p>' + msg + '</p>' +
+                    '<span class="time-left" style="color:white">' + sendDate + '  • </span>' +
+                    '<span class="time-left" style="color:white"><a href="../ArchiveMessage?messageId=' + messageId + '&username=' + '@ViewBag.toUsername' + '"> Archive</span></div>';
+                $('#dataModel').append(result);
             };
 
             var typingListener;
             chatHub.client.setTyping = function (fromUserName) // setting typing text
             {
                     $("#sender-status").text(fromUserName + ' is typing...');
-                    clearTimeout(typingListener);
-                    $('#lastStatus').text("Read");
-                    typingListener = setTimeout(function () {
+                            clearTimeout(typingListener);
+                            //$('#lastStatus').text("Read");
+                            typingListener = setTimeout(function () {
                         $("#sender-status").text('');
-                    }, 5000);
-            };
+                            }, 5000);
+                        };
 
             $('#messageInput').keypress(function (e) // keypress on message input
             {
-                if (e.which == 13) //enter
-                {
+                            if (e.which == 13) //enter
+                            {
                     $("#sendMessageButton").click();
-                    return false;
-                }
-                else {
-                    var toUserName = "@ViewBag.toUsername";
-                    chatHub.server.setTyping(toUserName);
-                }
-            });
+                                return false;
+                            }
+                            else {
+                                var toUserName = "@ViewBag.toUsername";
+                                chatHub.server.setTyping(toUserName);
+                            }
+                        });
 
             $("#sendMessageButton").click(function () // Send button click
             {
-                var toUserName = "@ViewBag.toUsername";
-                var msg = $('#messageInput').val();
-                if (msg == "") return;
-                chatHub.server.sendPrivateMessage(toUserName, msg);
+                            var toUserName = "@ViewBag.toUsername";
+                            var msg = $('#messageInput').val();
+                            if (msg == "") return;
+                            chatHub.server.sendPrivateMessage(toUserName, msg);
                 $('#messageInput').val("");
-            });
+                        });
 
-        });
+                    });
     </script>
 }

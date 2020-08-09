@@ -23,6 +23,26 @@ namespace MarriageWebWDB.Controllers
             TempData["Error"] = fileToRetrieve.ErrorMessage;
             return RedirectToAction("Index", "Error");
         }
-        
+
+        public ActionResult UserFile(string id)
+        {
+            var fileToRetrieve = new FileHandler().GetForUser(id);
+
+            if (fileToRetrieve.CompletedRequest)
+            {
+                if (fileToRetrieve.Entity != null)
+                {
+                    return File(fileToRetrieve.Entity.Content, fileToRetrieve.Entity.ContentType);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            TempData["Error"] = fileToRetrieve.ErrorMessage;
+            return RedirectToAction("Index", "Error");
+        }
+
     }
 }

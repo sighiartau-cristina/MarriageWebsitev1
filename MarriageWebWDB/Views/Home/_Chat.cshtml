@@ -1,44 +1,29 @@
-﻿
-@model IEnumerable<MarriageWebWDB.Models.MessageModel>
+﻿@model IEnumerable<MarriageWebWDB.Models.MessageModel>
 
-    <table class="table">
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SenderUsername)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MessageText)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SendDate)
-
-                    </td>
-                    <td>
-                        @if (Session["userToken"].ToString().Equals(item.SenderUsername))
-                        {
-                            using (Ajax.BeginForm("ArchiveMessage", "Home", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "messageId" }))
-                            {
-                                <div class="form-horizontal">
-                                    <div class="form-group">
-                                        <input type="hidden" name="messageId" value=@item.MessageId class="form-control" />
-                                        <input type="hidden" name="username" value=@ViewBag.username />
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="Archive" class="btn btn-default" />
-                                    </div>
-                                </div>
-                            }
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    @if (Model.Count() > 0)
+ 
+@foreach (var item in Model)
+{
+    if (string.Equals(item.SenderUsername, Session["userToken"]))
     {
-        <div id="lastStatus">@Model.Last().ReadDate</div>
+        <div class="chat-container darker">
+            <img src="../../File/UserFile/?id=@item.SenderUsername" alt="" onerror="this.src='untitled.jpg'" class="right">
+            <p>@item.MessageText</p>
+            <span class="time-left" style="color:white">@item.SendDate  • </span>
+            <span class="time-left" style="color:white">@Html.ActionLink("Archive", "ArchiveMessage", new { messageId=item.MessageId, username=ViewBag.username})</span>
+        </div>
     }
+    else
+    {
+        <div class="chat-container">
+            <img src="/w3images/bandmember.jpg" alt="" onnull="this.src='untitled.jpg'">
+            <p>@item.MessageText</p>
+            <span class="time-right" style="color:black">@item.SendDate</span>
+        </div>
+    }
+}
+
+
+
+
+
+

@@ -16,8 +16,6 @@ namespace DataAccess
             Files = new HashSet<File>();
             Matches = new HashSet<Match>();
             Matches1 = new HashSet<Match>();
-            Messages = new HashSet<Message>();
-            Messages1 = new HashSet<Message>();
             UserProfile_Preference = new HashSet<UserProfile_Preference>();
         }
 
@@ -79,12 +77,6 @@ namespace DataAccess
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Match> Matches1 { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Message> Messages { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Message> Messages1 { get; set; }
 
         public virtual Orientation Orientation { get; set; }
 

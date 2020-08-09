@@ -12,8 +12,8 @@ namespace DataAccess
         {
         }
 
+        public virtual DbSet<C__RefactorLog> C__RefactorLog { get; set; }
         public virtual DbSet<Address> Addresses { get; set; }
-        public virtual DbSet<Dislike> Dislikes { get; set; }
         public virtual DbSet<File> Files { get; set; }
         public virtual DbSet<Gender> Genders { get; set; }
         public virtual DbSet<Match> Matches { get; set; }
@@ -23,6 +23,7 @@ namespace DataAccess
         public virtual DbSet<Religion> Religions { get; set; }
         public virtual DbSet<Starsign> Starsigns { get; set; }
         public virtual DbSet<Status> Status { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserProfile> UserProfiles { get; set; }
         public virtual DbSet<UserProfile_Preference> UserProfile_Preference { get; set; }
@@ -43,10 +44,6 @@ namespace DataAccess
 
             modelBuilder.Entity<Address>()
                 .Property(e => e.AddressCountry)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Dislike>()
-                .Property(e => e.Name)
                 .IsUnicode(false);
 
             modelBuilder.Entity<File>()
@@ -137,6 +134,18 @@ namespace DataAccess
                 .Property(e => e.Password)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Messages)
+                .WithRequired(e => e.User)
+                .HasForeignKey(e => e.ReceiverId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<User>()
+                .HasMany(e => e.Messages1)
+                .WithRequired(e => e.User1)
+                .HasForeignKey(e => e.SenderId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<UserProfile>()
                 .Property(e => e.Name)
                 .IsUnicode(false);
@@ -179,18 +188,6 @@ namespace DataAccess
                 .HasMany(e => e.Matches1)
                 .WithRequired(e => e.UserProfile1)
                 .HasForeignKey(e => e.UserProfileId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<UserProfile>()
-                .HasMany(e => e.Messages)
-                .WithRequired(e => e.UserProfile)
-                .HasForeignKey(e => e.ReceiverId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<UserProfile>()
-                .HasMany(e => e.Messages1)
-                .WithRequired(e => e.UserProfile1)
-                .HasForeignKey(e => e.SenderId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<UserProfile>()

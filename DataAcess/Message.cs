@@ -26,8 +26,8 @@ namespace DataAccess
         [StringLength(10)]
         public string Status { get; set; }
 
-        public virtual UserProfile UserProfile { get; set; }
+        public virtual User User { get; set; }
 
-        public virtual UserProfile UserProfile1 { get; set; }
+        public virtual User User1 { get; set; }
     }
 }

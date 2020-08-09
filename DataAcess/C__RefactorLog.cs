@@ -6,12 +6,10 @@ namespace DataAccess
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Dislike
+    [Table("__RefactorLog")]
+    public partial class C__RefactorLog
     {
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        public string Name { get; set; }
+        [Key]
+        public Guid OperationKey { get; set; }
     }
 }

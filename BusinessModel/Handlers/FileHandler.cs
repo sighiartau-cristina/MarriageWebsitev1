@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -275,5 +276,50 @@ namespace BusinessModel.Handlers
                 UserProfileId = file.UserProfileId
             };
         }
+        public ResponseEntity<FileEntity> GetForUser(string username)
+        {
+            DbModel dbModel = new DbModel();
+            File file;
+
+            try
+            {
+                file = dbModel.Database.SqlQuery<File>("select f.* from UserProfile up join [User] u on up.UserId = u.UserID join Files f on f.UserProfileId = up.UserProfileId where @user=u.Username;", new SqlParameter("user", username)).FirstOrDefault();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.FileGetError
+                };
+            }
+
+            if (file == null)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = true
+                };
+            }
+
+            FileEntity fileEntity = ConvertToEntity(file);
+
+            if (fileEntity == null)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullConvertedEntityError
+                };
+            }
+
+            return new ResponseEntity<FileEntity>
+            {
+                CompletedRequest = true,
+                Entity = fileEntity
+            };
+        }
+
     }
 }

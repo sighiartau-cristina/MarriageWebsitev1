@@ -210,7 +210,6 @@ namespace BusinessModel.Handlers
             try
             {
                 list = dbModel.Database.SqlQuery<Preference>("select p.* from Preference p join UserProfile_Preference u on p.Id=u.PrefId where u.UserProfileId=@user_profile and u.Likes=@likes;", new SqlParameter("user_profile", userProfileId), new SqlParameter("likes", likes)).ToList();
-
             }
             catch (Exception)
             {

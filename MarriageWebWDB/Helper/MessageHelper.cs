@@ -36,7 +36,7 @@ namespace MarriageWebWDB.Helper
                 MessageId = message.MessageId
             };
 
-            if((int)HttpContext.Current.Session["userProfileId"] == message.SenderId)
+            if((int)HttpContext.Current.Session["userId"] == message.SenderId)
             {
                 result.SenderUsername = from;
             }

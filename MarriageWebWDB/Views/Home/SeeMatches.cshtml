@@ -26,19 +26,19 @@
         <hr class="new2" />
         foreach (var item in Model)
         {
-            <div class="match-container">
-                @if (@item.File != null)
-                {
-                    <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:100px; height:100px; float:left;" />
-                }
-                else
-                {
-                    <img src="~/Images/untitled.jpg" alt="avatar" style="width:100px; height:100px; float:left;" />
-                }
-                <h2 align="center">@Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })</h2>
-                <a href="@Url.Action("Chats", "Home", new { id = item.UserName})" class="button2" style="color:white;"><i class="fas fa-comments"></i> Chat</a>
-                <a href="@Url.Action("Unmatch", "Home", new { username = item.UserName})" class="button2" style="color:white; float:right"><i class="fas fa-close"></i> Unmatch</a>
-            </div>
+<div class="match-container">
+    @if (@item.File != null)
+    {
+        <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:50px; height:50px; float:left;" />
+    }
+    else
+    {
+        <img src="~/Images/untitled.jpg" alt="avatar" style="width:50px; height:50px; float:left;" />
+    }
+    <h2 style="float:left">@Html.ActionLink(item.UserName, "ShowProfile", new { id = item.UserName })</h2>
+    <a href="@Url.Action("Chats", "Home", new { id = item.UserName})" class="button2" style="color:white;" align="center";><i class="fas fa-comments"></i> Chat</a>
+    <a href="@Url.Action("Unmatch", "Home", new { username = item.UserName})" class="button2" style="color:white"; align="right";><i class="fas fa-close"></i> Unmatch</a>
+</div>
             <br />
         }
     }

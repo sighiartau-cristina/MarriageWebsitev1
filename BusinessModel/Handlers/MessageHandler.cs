@@ -285,7 +285,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.Messages.Where(m => ((m.SenderId == senderId && m.ReceiverId==receiverId) || (m.SenderId == receiverId && m.ReceiverId == senderId)) && !m.Status.Equals(MessageStatus.Archived.ToString())).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
+                list = dbModel.Messages.Where(m => ((m.SenderId == senderId && m.ReceiverId==receiverId && !m.Status.Equals(MessageStatus.Archived.ToString()) && !m.Status.Equals("Deleted")) || (m.SenderId == receiverId && m.ReceiverId == senderId && !m.Status.Equals(MessageStatus.Archived.ToString()) && !m.Status.Equals("Deleted")))).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {

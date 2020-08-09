@@ -51,8 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Address.cs" />
+    <Compile Include="C__RefactorLog.cs" />
     <Compile Include="DbModel.cs" />
-    <Compile Include="Dislike.cs" />
     <Compile Include="File.cs" />
     <Compile Include="Gender.cs" />
     <Compile Include="Match.cs" />
