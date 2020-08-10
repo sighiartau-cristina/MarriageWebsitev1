@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -464,22 +466,24 @@ namespace MarriageWebWDB.Controllers
 
         public string GetAllLikes(string term)
         {
-            var likesList = new PreferenceHandler().GetAll();
-
-            if (!likesList.CompletedRequest)
-            {
-                TempData["error"] = likesList.ErrorMessage;
-                RedirectToAction("Index", "Error");
-            }
+            ResponseEntity<ICollection<PreferenceEntity>> list;
 
             if (string.IsNullOrEmpty(term))
             {
-                return JsonConvert.SerializeObject(likesList.Entity);
+                list= new PreferenceHandler().GetAll();
+            }
+            else
+            {
+                list = new PreferenceHandler().GetAllForTerm(term);
             }
 
-            var newlist = likesList.Entity.ToList().FindAll(x => x.Name.ToLower().Contains(term.ToLower())).ToList();
+            if (!list.CompletedRequest)
+            {
+                TempData["error"] = list.ErrorMessage;
+                RedirectToAction("Index", "Error");
+            }
 
-            return JsonConvert.SerializeObject(newlist);
+            return JsonConvert.SerializeObject(list.Entity);
         }
 
         public int AddPreference(string name, int id, bool like)

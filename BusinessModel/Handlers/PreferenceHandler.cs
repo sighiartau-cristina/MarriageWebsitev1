@@ -207,6 +207,31 @@ namespace BusinessModel.Handlers
             };
         }
 
+        public ResponseEntity<ICollection<PreferenceEntity>> GetAllForTerm(string term)
+        {
+            DbModel dbModel = new DbModel();
+            ICollection<PreferenceEntity> list;
+
+            try
+            {
+                list = dbModel.Preferences.ToList().FindAll(x => x.Name.ToLower().Contains(term.ToLower())).Select(x=> ConvertToEntity(x)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<PreferenceEntity>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.PreferenceGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<PreferenceEntity>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
+        }
+
         public ResponseEntity<ICollection<PreferenceEntity>> GetAllForUserProfile(int userProfileId, bool likes)
         {
             DbModel dbModel = new DbModel();
