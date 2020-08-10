@@ -237,6 +237,7 @@ namespace BusinessModel.Handlers
                 Entity = list
             };
         }
+
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();

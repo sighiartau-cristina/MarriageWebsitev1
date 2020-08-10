@@ -28,19 +28,19 @@
             <table>
                 <tr>
                     <td>Street name</td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Street)</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.Street, new { maxlength = 30 })</td>
                 </tr>
                 <tr>
                     <td>Street number</td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.StreetNo)</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.StreetNo, new { maxlength = 30 })</td>
                 </tr>
                 <tr>
                     <td>City</td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.City)</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.City, new { maxlength = 30 })</td>
                 </tr>
                 <tr>
                     <td>Country</td>
-                    <td style="color:black">@Html.TextBoxFor(m => m.Country)</td>
+                    <td style="color:black">@Html.TextBoxFor(m => m.Country, new { maxlength = 30 })</td>
                 </tr>
                 <tr>
                     <td></td>

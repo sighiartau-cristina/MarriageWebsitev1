@@ -25,6 +25,7 @@ namespace MarriageWebWDB.Helper
             registerModel.Statuses = SelectListGenerator.GetStatuses();
             registerModel.Orientations = SelectListGenerator.GetOrientations();
             registerModel.Genders = SelectListGenerator.GetGenders();
+
             return registerModel;
         }
 
@@ -56,67 +57,47 @@ namespace MarriageWebWDB.Helper
             return true;
         }
 
-        //TODO cahnge AddUser
-        public ResponseEntity<UserEntity> AddUser(RegisterModel registerModel)
+        public bool AddUser(RegisterModel registerModel)
         {
 
             if (!CheckRegister(registerModel))
             {
-                return new ResponseEntity<UserEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = InvalidRegisterMessage
-                }; 
+                return true;
             }
 
             var dataEntity = ToDataEntity(registerModel);
 
             if (dataEntity == null)
             {
-                return new ResponseEntity<UserEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.NullEntityError
-                };
+                InvalidRegisterMessage = ErrorConstants.NullConvertedEntityError;
+                return false;
             }
 
-            var responseUser = new UserHandler().Add(dataEntity);
+            var userResponse = new UserHandler().Add(dataEntity);
 
-            if (responseUser.CompletedRequest)
+            if (!userResponse.CompletedRequest)
             {
-                var userProfile = ToDataEntity(registerModel, responseUser.Entity.UserId);
-
-                if(userProfile == null)
-                {
-                    return new ResponseEntity<UserEntity>
-                    {
-                        CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.UserProfileInsertError
-                    };
-                }
-
-                var responseUserProfile = new UserProfileHandler().Add(userProfile);
-
-                if (!responseUserProfile.CompletedRequest)
-                {
-                    InvalidRegisterMessage = responseUserProfile.ErrorMessage;
-                    return new ResponseEntity<UserEntity>
-                    {
-                        CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.UserProfileInsertError
-                    };
-                }
+                InvalidRegisterMessage = userResponse.ErrorMessage;
+                return false;
             }
-            else
+
+            var userProfile = ToDataEntity(registerModel, userResponse.Entity.UserId);
+
+            if (userProfile==null)
             {
-                return new ResponseEntity<UserEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = responseUser.ErrorMessage
-                };
+                InvalidRegisterMessage = ErrorConstants.NullConvertedEntityError;
+                return false;
             }
 
-            return responseUser;
+            var responseUserProfile = new UserProfileHandler().Add(userProfile);
+
+            if (!responseUserProfile.CompletedRequest)
+            {
+                InvalidRegisterMessage = responseUserProfile.ErrorMessage;
+                return false;   
+            }
+
+            return true;
         }
 
         private UserEntity ToDataEntity(RegisterModel model)
@@ -132,9 +113,10 @@ namespace MarriageWebWDB.Helper
 
         private UserProfileEntity ToDataEntity(RegisterModel model, int userId)
         {
-            int starSignId = GetStarsignId(StarsignCalculator.GetStarsignName(model.UserProfileBirthday));
+            var starSignName = StarsignCalculator.GetStarsignName(model.UserProfileBirthday);
+            var starSignResponse = new StarSignHandler().GetByName(starSignName);
 
-            if(starSignId < 0)
+            if(!starSignResponse.CompletedRequest)
             {
                 return null;
             }
@@ -150,20 +132,8 @@ namespace MarriageWebWDB.Helper
                 StatusId = model.StatusId,
                 ReligionId = model.ReligionId,
                 UserId = userId,
-                StarsignId = starSignId
+                StarsignId = starSignResponse.Entity.SignId
             };
-        }
-
-        private int GetStarsignId(string name)
-        {
-            var response = new StarSignHandler().GetByName(name);
-
-            if (!response.CompletedRequest)
-            {
-                return -1;
-            }
-
-            return response.Entity.SignId;
         }
     }
 }

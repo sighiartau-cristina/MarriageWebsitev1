@@ -19,8 +19,6 @@
 
     <br />
     <br />
-
-
     <div class="profile-image-container">
         <div class="image-container" style="height:300px">
             <h1> Your profile</h1>
@@ -29,14 +27,7 @@
                 <input class="button1" type="submit" value="Change Password" />
             }
             <hr class="new1" />
-            @if (Model.File != null)
-            {
-                <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" align="left" style="height:150px;width:150px;" />
-            }
-            else
-            {
-                <img src="~/Images/untitled.jpg" alt="avatar" align="left" style="height:150px;width:150px;" />
-            }
+            <img align="left" style="height:150px;width:150px;" src="../../File/UserFile/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
             <p>
                 <div>
                     @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))
@@ -66,23 +57,23 @@
                 <table>
                     <tr>
                         <td><i class="fas fa-envelope">  Email</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.Email)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Email, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-font">  Username</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserName, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-font">  Name</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.Name)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Name, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-font">  Surname</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.Surname)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Surname, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td><i class="far fa-comment-alt">  Description</i></td>
-                        <td style="color:black">@Html.TextAreaFor(m => m.Description)</td>
+                        <td style="color:black">@Html.TextAreaFor(m => m.Description, new { maxlength = 255 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-venus-mars">  Gender</i></td>
@@ -106,11 +97,11 @@
                     </tr>
                     <tr>
                         <td><i class="fas fa-quote-left">  Motto</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.Motto)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Motto, new { maxlength = 255 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-briefcase">  Job</i></td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.Job)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.Job, new { maxlength = 50 })</td>
                     </tr>
                     <tr>
                         <td><i class="fa fa-birthday-cake">  Birthday</i></td>

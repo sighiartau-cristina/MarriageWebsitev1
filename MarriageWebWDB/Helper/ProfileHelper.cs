@@ -18,14 +18,13 @@ namespace MarriageWebWDB.Helper
             var status = new MaritalStatusHandler().Get(profile.StatusId);
             var religion = new ReligionHandler().Get(profile.ReligionId);
             var orientation = new OrientationHandler().Get(profile.OrientationId);
-            var file = new FileHandler().GetByUserId(profile.UserProfileId);
             var starsign = new StarSignHandler().Get(profile.StarsignId);
 
             var likesHandler = new PreferenceHandler();
             var likes = likesHandler.GetAllForUserProfile(profile.UserProfileId, true);
             var dislikes = likesHandler.GetAllForUserProfile(profile.UserProfileId, false);
 
-            if (!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !file.CompletedRequest || !starsign.CompletedRequest || !likes.CompletedRequest || !dislikes.CompletedRequest)
+            if (!gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest || !starsign.CompletedRequest || !likes.CompletedRequest || !dislikes.CompletedRequest)
             {
                 return null; 
             }
@@ -43,7 +42,6 @@ namespace MarriageWebWDB.Helper
                 Orientation = orientation.Entity.OrientationName,
                 Religion = religion.Entity.ReligionName,
                 Status = status.Entity.StatusName,
-                File = file.Entity,
                 Starsign = starsign.Entity.SignName,
                 Motto = string.IsNullOrEmpty(profile.Motto) ? "-" : profile.Motto,
                 Likes = likes.Entity.Count > 0 ? likes.Entity.Select(x => x.Name).ToList() : null,

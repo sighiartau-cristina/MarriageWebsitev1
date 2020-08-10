@@ -16,11 +16,8 @@ namespace MarriageWebWDB.Hubs
     public class ChatHub : Hub, IReadOnlySessionState
 
     {
-
         static List<UserDetails> ConnectedUsers = new List<UserDetails>(); // list of connected users
 
-        //private static readonly ConcurrentDictionary<string, UserDetails> Users = new ConcurrentDictionary<string, UserDetails>();
-        
         public void Connect()
         {
             int userId = int.Parse(Context.QueryString["userId"]);
@@ -93,6 +90,20 @@ namespace MarriageWebWDB.Hubs
             if (toUser != null && fromUser!=null) // if the person we talk to is online
             {
                     Clients.Client(toUser.ConnectionId).setTyping(fromUser.UserName);
+            }
+        }
+
+        public void ChangeMessageStatus(string toUserName)
+        {
+
+            string fromconnectionid = Context.ConnectionId;
+
+            var toUser = ConnectedUsers.FirstOrDefault(x => x.UserName.Equals(toUserName));
+            var fromUser = ConnectedUsers.FirstOrDefault(x => x.ConnectionId.Equals(fromconnectionid));
+
+            if (toUser != null && fromUser != null) // if the person we talk to is online
+            {
+                Clients.Client(toUser.ConnectionId).changeMessageStatus();
             }
         }
 

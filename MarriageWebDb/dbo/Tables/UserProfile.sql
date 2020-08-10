@@ -14,14 +14,14 @@
     [Motto] VARCHAR(150),
     [Likes] VARCHAR(255),
     [Dislikes] VARCHAR(255),
-    [StarSignId] INT NOT NULL,
+    [StarsignId] INT NOT NULL,
     [UserId] INT NOT NULL, 
     PRIMARY KEY CLUSTERED ([UserProfileId] ASC), 
     CONSTRAINT [FK_USER_PROFILE_ToReligion] FOREIGN KEY ([ReligionId]) REFERENCES [Religion]([ReligionId]),
     CONSTRAINT [FK_USER_PROFILE_ToGender] FOREIGN KEY ([GenderId]) REFERENCES [Gender]([GenderId]),
     CONSTRAINT [FK_USER_PROFILE_ToStatus] FOREIGN KEY ([StatusId]) REFERENCES [Status]([StatusId]),
     CONSTRAINT [FK_USER_PROFILE_ToOrientation] FOREIGN KEY ([OrientationId]) REFERENCES [Orientation]([OrientationId]),
-    CONSTRAINT [FK_USER_PROFILE_ToStarSigns] FOREIGN KEY ([StarSignId]) REFERENCES [StarSigns]([SignId]),
+    CONSTRAINT [FK_USER_PROFILE_ToStarsigns] FOREIGN KEY ([StarsignId]) REFERENCES [Starsigns]([SignId]),
     CONSTRAINT [FK_USER_PROFILE_ToProfile] FOREIGN KEY ([UserId]) REFERENCES [User]([UserId]) ON DELETE CASCADE
 );
 

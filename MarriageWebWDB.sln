@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAcess\Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessModel", "BusinessModel\BusinessModel.csproj", "{92D6152A-242D-4534-A125-6FBCB64BE91F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqLessons", "LinqLessons\LinqLessons.csproj", "{26A9B3A0-7833-4E90-B51A-94304BE0CFBF}"
-EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MarriageWebDb", "MarriageWebDb\MarriageWebDb.sqlproj", "{01643372-D688-458B-B7C3-B98902A80FF3}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{92D6152A-242D-4534-A125-6FBCB64BE91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92D6152A-242D-4534-A125-6FBCB64BE91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92D6152A-242D-4534-A125-6FBCB64BE91F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{26A9B3A0-7833-4E90-B51A-94304BE0CFBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{26A9B3A0-7833-4E90-B51A-94304BE0CFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{26A9B3A0-7833-4E90-B51A-94304BE0CFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{26A9B3A0-7833-4E90-B51A-94304BE0CFBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01643372-D688-458B-B7C3-B98902A80FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{01643372-D688-458B-B7C3-B98902A80FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01643372-D688-458B-B7C3-B98902A80FF3}.Debug|Any CPU.Deploy.0 = Debug|Any CPU

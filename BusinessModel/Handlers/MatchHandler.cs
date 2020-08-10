@@ -268,76 +268,25 @@ namespace BusinessModel.Handlers
             throw new NotImplementedException();
         }
 
-        public ResponseEntity<ICollection<int>> GetAllForUserProfile(int id)
+        public ResponseEntity<ICollection<string>> GetAllForUserProfile(int id)
         {
             DbModel dbModel = new DbModel();
-            List<int> list;
+            List<string> list;
 
             try
             {
-                list = dbModel.Database.SqlQuery<int>("getAcceptedMatches @user_profile", new SqlParameter("user_profile", id)).ToList();
-
+                list = dbModel.Database.SqlQuery<string>("getAcceptedMatches @user_profile", new SqlParameter("user_profile", id)).ToList();
             }
             catch (Exception)
             {
-                return new ResponseEntity<ICollection<int>>
+                return new ResponseEntity<ICollection<string>>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MatchGetError
                 };
             }
 
-            return new ResponseEntity<ICollection<int>>
-            {
-                CompletedRequest = true,
-                Entity = list
-            };
-        }
-
-        public ResponseEntity<ICollection<MatchEntity>> GetAllForUser(int userId)
-        {
-            DbModel dbModel = new DbModel();
-            ICollection<MatchEntity> list;
-
-            try
-            {
-                list = dbModel.Matches.Where(e => e.UserProfileId == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
-            }
-            catch (Exception)
-            {
-                return new ResponseEntity<ICollection<MatchEntity>>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.MatchGetError
-                };
-            }
-
-            return new ResponseEntity<ICollection<MatchEntity>>
-            {
-                CompletedRequest = true,
-                Entity = list
-            };
-        }
-
-        public ResponseEntity<ICollection<MatchEntity>> GetAllAgainstUser(int userId)
-        {
-            DbModel dbModel = new DbModel();
-            ICollection<MatchEntity> list;
-
-            try
-            {
-                list = dbModel.Matches.Where(e => e.MatchUserProfileId == userId).ToList().Select(x => ConvertToEntity(x)).ToList();
-            }
-            catch (Exception)
-            {
-                return new ResponseEntity<ICollection<MatchEntity>>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.MatchGetError
-                };
-            }
-
-            return new ResponseEntity<ICollection<MatchEntity>>
+            return new ResponseEntity<ICollection<string>>
             {
                 CompletedRequest = true,
                 Entity = list
@@ -350,11 +299,10 @@ namespace BusinessModel.Handlers
             Match dataEntity;
             Match dataEntityToMatch;
 
-            //TODO transform to stored procedure
             try
             {
-                dataEntity = dbModel.Matches.Where(m => m.UserProfileId == userProfileId && m.MatchUserProfileId==userProfileToMatchId).FirstOrDefault();
-                dataEntityToMatch = dbModel.Matches.Where(m => m.UserProfileId == userProfileToMatchId && m.MatchUserProfileId == userProfileId).FirstOrDefault();
+                dataEntity = dbModel.Matches.Where(m => m.UserProfileId == userProfileId && m.MatchUserProfileId==userProfileToMatchId && m.Accepted==true).FirstOrDefault();
+                dataEntityToMatch = dbModel.Matches.Where(m => m.UserProfileId == userProfileToMatchId && m.MatchUserProfileId == userProfileId && m.Accepted == true).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -368,6 +316,7 @@ namespace BusinessModel.Handlers
 
             return true;
         }
+
         private bool CheckExisting(MatchEntity entity)
         {
             DbModel dbModel = new DbModel();
@@ -407,6 +356,5 @@ namespace BusinessModel.Handlers
                 Accepted = (bool) match.Accepted
             };
         }
-
     }
 }

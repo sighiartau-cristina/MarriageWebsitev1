@@ -14,7 +14,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Add(UserProfileEntity entity)
         {
             DbModel dbModel = new DbModel();
-            UserProfile dataEntity = null;
+            UserProfile dataEntity;
 
             if (entity == null)
             {
@@ -27,10 +27,10 @@ namespace BusinessModel.Handlers
 
             try
             {
-                bool registeredUser = CheckExistingProfileForUser(entity.UserId);
-                if (!registeredUser)
+                if (!CheckExisting(entity.UserId))
                 {
                     dataEntity = ConvertToDataEntity(entity);
+
                     if (dataEntity == null)
                     {
                         return new ResponseEntity<UserProfileEntity>
@@ -82,7 +82,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Delete(int id)
         {
             DbModel dbModel = new DbModel();
-            UserProfile entity = null;
+            UserProfile entity;
 
             try
             {
@@ -139,7 +139,7 @@ namespace BusinessModel.Handlers
             }
 
             DbModel dbModel = new DbModel();
-            UserProfile dataEntity = null;
+            UserProfile dataEntity;
 
             try
             {
@@ -241,7 +241,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> Get(int id)
         {
             DbModel dbModel = new DbModel();
-            UserProfile entity = null;
+            UserProfile entity;
 
             try
             {
@@ -272,7 +272,7 @@ namespace BusinessModel.Handlers
             };
         }
 
-        private bool CheckExistingProfileForUser(int userId)
+        private bool CheckExisting(int userId)
         {
             DbModel dbModel = new DbModel();
             var entity = dbModel.UserProfiles.Where(e => e.UserId == userId).FirstOrDefault();
@@ -340,7 +340,6 @@ namespace BusinessModel.Handlers
         public ResponseEntity<ICollection<int>> GetSuggestions(int userProfileId)
         {
             DbModel dbModel = new DbModel();
-            //ICollection<int> list;
             List<int> list;
 
             try
@@ -361,6 +360,40 @@ namespace BusinessModel.Handlers
             {
                 CompletedRequest = true,
                 Entity = list
+            };
+        }
+
+        public ResponseEntity<UserProfileEntity> GetByUsername(string username)
+        {
+            DbModel dbModel = new DbModel();
+            UserProfileEntity userProfile;
+
+            try
+            {
+                userProfile = dbModel.Database.SqlQuery<UserProfileEntity>("select up.* from UserProfile up join [User] u on up.UserId=u.UserID where u.Username=@username;", new SqlParameter("username", username)).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<UserProfileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.UserProfileGetError
+                };
+            }
+
+            if (userProfile == null)
+            {
+                return new ResponseEntity<UserProfileEntity>
+                {
+                    CompletedRequest = true,
+                    ErrorMessage = ErrorConstants.UserProfileNotFound
+                };
+            }
+
+            return new ResponseEntity<UserProfileEntity>
+            {
+                CompletedRequest = true,
+                Entity = userProfile
             };
         }
 

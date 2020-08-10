@@ -30,11 +30,11 @@
                 <table>
                     <tr>
                         <td>Username</td>
-                        <td style="color:black">@Html.TextBoxFor(m => m.UserName)</td>
+                        <td style="color:black">@Html.TextBoxFor(m => m.UserName, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td>Password</td>
-                        <td style="color:black">@Html.PasswordFor(m => m.UserPassword)</td>
+                        <td style="color:black">@Html.PasswordFor(m => m.UserPassword, new { maxlength = 25 })</td>
                     </tr>
                     <tr>
                         <td></td>

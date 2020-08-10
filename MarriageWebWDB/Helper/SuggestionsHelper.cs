@@ -17,30 +17,31 @@ namespace MarriageWebWDB.Helper
             foreach(int id in ids) 
             { 
             
-            var profile = new UserProfileHandler().Get(id);
-            var user = new UserHandler().Get(profile.Entity.UserId);
+                var profile = new UserProfileHandler().Get(id);
+                var user = new UserHandler().Get(profile.Entity.UserId);
+                var gender = new GenderHandler().Get(profile.Entity.GenderId);
+                var status = new MaritalStatusHandler().Get(profile.Entity.StatusId);
+                var religion = new ReligionHandler().Get(profile.Entity.ReligionId);
+                var orientation = new OrientationHandler().Get(profile.Entity.OrientationId);
 
-                //o sa le mut de aici
-                //TODO
-            var gender = new GenderHandler().Get(profile.Entity.GenderId);
-            var status = new MaritalStatusHandler().Get(profile.Entity.StatusId);
-            var religion = new ReligionHandler().Get(profile.Entity.ReligionId);
-            var orientation = new OrientationHandler().Get(profile.Entity.OrientationId);
-            var file = new FileHandler().GetByUserId(profile.Entity.UserProfileId);
+                if(!profile.CompletedRequest || !user.CompletedRequest || !gender.CompletedRequest || !status.CompletedRequest || !religion.CompletedRequest || !orientation.CompletedRequest) 
+                {
+                    return null;
+                }
 
-            var suggestionModel = new SuggestionModel();
+                var suggestionModel = new SuggestionModel
+                {
+                    UserName = user.Entity.UserUsername,
+                    Description = string.IsNullOrEmpty(profile.Entity.UserProfileDescription) ? "This user has not provided a description." : profile.Entity.UserProfileDescription,
+                    FullName = profile.Entity.UserProfileName + " " + profile.Entity.UserProfileSurname,
+                    Age = AgeCalculator.GetDifferenceInYears(profile.Entity.UserProfileBirthday, DateTime.Now).ToString(),
+                    Gender = gender.Entity.GenderName,
+                    Orientation = orientation.Entity.OrientationName,
+                    Religion = religion.Entity.ReligionName,
+                    Status = status.Entity.StatusName
+                };
 
-            suggestionModel.UserName = user.Entity.UserUsername;
-            suggestionModel.Description = string.IsNullOrEmpty(profile.Entity.UserProfileDescription) ? "This user has not provided a description." : profile.Entity.UserProfileDescription;
-            suggestionModel.FullName = profile.Entity.UserProfileName + " " + profile.Entity.UserProfileSurname;
-            suggestionModel.Age = AgeCalculator.GetDifferenceInYears(profile.Entity.UserProfileBirthday, DateTime.Now).ToString();
-            suggestionModel.Gender = gender.Entity.GenderName;
-            suggestionModel.Orientation = orientation.Entity.OrientationName;
-            suggestionModel.Religion = religion.Entity.ReligionName;
-            suggestionModel.Status = status.Entity.StatusName;
-            suggestionModel.File = file.Entity;
-
-            list.Add(suggestionModel);
+                list.Add(suggestionModel);
             }
             return list;
         }

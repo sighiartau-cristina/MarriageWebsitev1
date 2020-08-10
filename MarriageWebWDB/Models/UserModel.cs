@@ -43,8 +43,6 @@ namespace MarriageWebWDB.Models
 
         public string BirthdayString { get; set; }
 
-        public FileEntity File { get; set; }
-
         public string Starsign { get; set; }
 
         public string Motto { get; set; }

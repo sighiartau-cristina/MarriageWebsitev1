@@ -29,26 +29,15 @@ namespace BusinessModel.Handlers
                     ErrorMessage = ErrorConstants.NullEntityError
                 };
             }
-
-            try
-            {
-                
-                dataEntity = ConvertToDataEntity(entity);
-                if (dataEntity == null)
-                {
-                    return new ResponseEntity<MessageEntity>
-                    {
-                        CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.NullConvertedEntityError
-                    };
-                }
-            }
-            catch (Exception)
+ 
+            dataEntity = ConvertToDataEntity(entity);
+            
+            if (dataEntity == null)
             {
                 return new ResponseEntity<MessageEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.MessageGetError
+                    ErrorMessage = ErrorConstants.NullConvertedEntityError
                 };
             }
 
@@ -209,31 +198,6 @@ namespace BusinessModel.Handlers
             };
         }
 
-        public ResponseEntity<ICollection<MessageEntity>> GetAllForSenderId(int senderId)
-        {
-            DbModel dbModel = new DbModel();
-            ICollection<MessageEntity> list;
-
-            try
-            {
-                list = dbModel.Messages.Where(m => m.SenderId==senderId).OrderBy(m => m.SendDate).ToList().Select(x => ConvertToEntity(x)).ToList();
-            }
-            catch (Exception)
-            {
-                return new ResponseEntity<ICollection<MessageEntity>>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.MessageGetError
-                };
-            }
-
-            return new ResponseEntity<ICollection<MessageEntity>>
-            {
-                CompletedRequest = true,
-                Entity = list
-            };
-        }
-
         private Message ConvertToDataEntity(MessageEntity messageEntity)
         {
             if (messageEntity == null)
@@ -326,7 +290,7 @@ namespace BusinessModel.Handlers
             };
         }
 
-        public ResponseEntity<MessageEntity> ArchiveMessage(int id)
+        public ResponseEntity<bool> ArchiveMessage(int id)
         {
 
             DbModel dbModel = new DbModel();
@@ -338,7 +302,7 @@ namespace BusinessModel.Handlers
             }
             catch (Exception)
             {
-                return new ResponseEntity<MessageEntity>
+                return new ResponseEntity<bool>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MessageGetError
@@ -347,7 +311,7 @@ namespace BusinessModel.Handlers
 
             if (dataEntity == null)
             {
-                return new ResponseEntity<MessageEntity>
+                return new ResponseEntity<bool>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MessageNotFound
@@ -361,14 +325,14 @@ namespace BusinessModel.Handlers
             }
             catch (Exception)
             {
-                return new ResponseEntity<MessageEntity>
+                return new ResponseEntity<bool>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MessageUpdateError
                 };
             }
 
-            return new ResponseEntity<MessageEntity>
+            return new ResponseEntity<bool>
             {
                 CompletedRequest = true
             };
@@ -399,7 +363,7 @@ namespace BusinessModel.Handlers
             };
         }
 
-        public ResponseEntity<MessageEntity> ArchiveAllForUsers(int userProfileId, int matchUserProfileId)
+        public ResponseEntity<bool> ArchiveAllForUsers(int user, int match)
         {
 
             DbModel dbModel = new DbModel();
@@ -407,18 +371,18 @@ namespace BusinessModel.Handlers
             try
             {
                 //TODO unmatched -> deleted?
-                dbModel.Database.ExecuteSqlCommand("Update Messages SET Status = 'Deleted' WHERE (SenderId = @userProfile AND ReceiverId = @matchProfile) OR (SenderId = @matchProfile AND ReceiverId = @userProfile)", new SqlParameter("@userProfile", userProfileId), new SqlParameter("@matchProfile", matchUserProfileId));
+                dbModel.Database.ExecuteSqlCommand("Update Messages SET Status = 'Deleted' WHERE (SenderId = @user AND ReceiverId = @match) OR (SenderId = @match AND ReceiverId = @user)", new SqlParameter("@user", user), new SqlParameter("@match", match));
             }
             catch (Exception)
             {
-                return new ResponseEntity<MessageEntity>
+                return new ResponseEntity<bool>
                 {
                     CompletedRequest = false,
                     ErrorMessage = ErrorConstants.MessageGetError
                 };
             }
 
-            return new ResponseEntity<MessageEntity>
+            return new ResponseEntity<bool>
             {
                 CompletedRequest = true
             };

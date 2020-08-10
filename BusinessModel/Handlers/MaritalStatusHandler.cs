@@ -10,8 +10,6 @@ namespace BusinessModel.Handlers
 {
     public class MaritalStatusHandler : IBusinessAccess<StatusEntity>
     {
-
-
         public ResponseEntity<StatusEntity> Add(StatusEntity entity)
         {
             DbModel dbModel = new DbModel();
@@ -238,6 +236,7 @@ namespace BusinessModel.Handlers
                 Entity = list
             };
         }
+
         private bool CheckExisting(string name)
         {
             DbModel dbModel = new DbModel();

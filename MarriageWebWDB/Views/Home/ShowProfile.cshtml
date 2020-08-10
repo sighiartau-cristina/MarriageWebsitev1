@@ -20,14 +20,7 @@
         <h1>@Model.UserName</h1>
         <hr class="new1">
         <div class="profile-container">
-            @if (@Model.File != null)
-            {
-                <img src="../../File/Index/?id=@Model.File.FileId" alt="avatar" align="left" style="height:150px;width:150px; float:left;" />
-            }
-            else
-            {
-                <img src="~/Images/untitled.jpg" alt="avatar" align="left" style="height: 150px; width: 150px; float:left;" />
-            }
+            <img align="left" style="height:150px;width:150px; float:left;" src="../../File/UserFile/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
             <h1>@Model.FullName</h1>
             <h4><i class="fa fa-home">  @Model.Address </i></h4>
             <h3>About: @Model.Description</h3>

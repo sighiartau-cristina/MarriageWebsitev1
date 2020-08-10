@@ -30,9 +30,13 @@ namespace BusinessModel.Handlers
 
             try
             {
-                if (!CheckExisting(entity.Name))
+                var existing = dbModel.Preferences.Where(x => x.Name == entity.Name).FirstOrDefault();
+
+                //new preference, save it
+                if (existing == null)
                 {
                     dataEntity = ConvertToDataEntity(entity);
+
                     if (dataEntity == null)
                     {
                         return new ResponseEntity<PreferenceEntity>
@@ -42,13 +46,13 @@ namespace BusinessModel.Handlers
                         };
                     }
                 }
+                //already existing preference, retrieve it
                 else
                 {
-                    //TODO change
                     return new ResponseEntity<PreferenceEntity>
                     {
                         CompletedRequest = true,
-                        Entity = ConvertToEntity(dbModel.Preferences.Where(x=>x.Name==entity.Name).FirstOrDefault())
+                        Entity = ConvertToEntity(existing)
                     };
                 }
             }
@@ -88,6 +92,7 @@ namespace BusinessModel.Handlers
 
             var existing = dbModel.UserProfile_Preference.Where(u => u.PrefId == prefId && u.UserProfileId == userProfileId && u.Likes==like).FirstOrDefault();
 
+            //do nothing if preference already exists
             if(existing != null)
             {
                 return new ResponseEntity<PreferenceEntity>
@@ -143,7 +148,7 @@ namespace BusinessModel.Handlers
                 return new ResponseEntity<PreferenceEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.NullEntityError
+                    ErrorMessage = ErrorConstants.PreferenceNotFound
                 };
             }
 
@@ -157,7 +162,7 @@ namespace BusinessModel.Handlers
                 return new ResponseEntity<PreferenceEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.PreferenceInsertError
+                    ErrorMessage = ErrorConstants.PreferenceDeleteError
                 };
             }
 
@@ -257,13 +262,6 @@ namespace BusinessModel.Handlers
             {
                 Name = preference.Name
             };
-        }
-
-        private bool CheckExisting(string name)
-        {
-            DbModel dbModel = new DbModel();
-            var entity = dbModel.Preferences.Where(e => e.Name == name).FirstOrDefault();
-            return entity != null;
         }
     }
 }

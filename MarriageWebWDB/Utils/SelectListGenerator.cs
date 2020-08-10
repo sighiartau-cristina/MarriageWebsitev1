@@ -8,7 +8,6 @@ namespace MarriageWebWDB.Utils
 {
     public static class SelectListGenerator
     {
-        //TODO check for nulls in controller for each
         public static IEnumerable<SelectListItem> GetSelectedReligions(UserProfileEntity profile)
         {
             ReligionHandler religionHandler = new ReligionHandler();

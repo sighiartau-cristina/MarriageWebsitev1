@@ -23,6 +23,7 @@
 
         public static string InvalidPhoneMessage = "Phone number must be 10 digits long.";
         public static string IncorrectPasswordMessage = "The password is incorrect.";
+        public static string NoPasswordChange = "Your new password must be different from the old one.";
 
         public static string InvalidCityMessage = "The city name is not valid.";
         public static string InvalidCountryMessage = "The country name is not valid.";
@@ -33,6 +34,7 @@
         public static string ProfileError = "Error while fetching profile data.";
 
         public static string ChatNotAvailable = "Chat with this user is not available.";
+        public static string ModelError = "Error while retrieving model";
 
     }
 }

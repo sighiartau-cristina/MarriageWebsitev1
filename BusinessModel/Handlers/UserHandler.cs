@@ -119,6 +119,8 @@ namespace BusinessModel.Handlers
 
         public ResponseEntity<UserEntity> Update(UserEntity entity)
         {
+            DbModel dbModel = new DbModel();
+            User dataEntity;
 
             if (entity == null)
             {
@@ -129,12 +131,10 @@ namespace BusinessModel.Handlers
                 };
             }
 
-            DbModel dbModel = new DbModel();
-            User dataEntity;
-
             try
             {
                 dataEntity = dbModel.Users.Find(entity.UserId);
+
                 if (dataEntity == null)
                 {
                     return new ResponseEntity<UserEntity>
@@ -144,35 +144,6 @@ namespace BusinessModel.Handlers
                     };
                 }
 
-            }
-            catch (Exception)
-            {
-                return new ResponseEntity<UserEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.UserGetError
-                };
-            }
-
-            try
-            {
-                if (!dataEntity.Email.Equals(entity.UserEmail) && CheckExistingEmail(entity.UserEmail))
-                {
-                    return new ResponseEntity<UserEntity>
-                    {
-                        CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.ExistingEmailError
-                    };
-                }
-
-                if (!dataEntity.Username.Equals(entity.UserUsername) && CheckExistingUsername(entity.UserUsername))
-                {
-                    return new ResponseEntity<UserEntity>
-                    {
-                        CompletedRequest = false,
-                        ErrorMessage = ErrorConstants.ExistingUsernameError
-                    };
-                }
             }
             catch (Exception)
             {
@@ -209,7 +180,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> GetByUsername(string username)
         {
             DbModel dbModel = new DbModel();
-            User entity = null;
+            User entity;
 
             try
             {
@@ -219,7 +190,8 @@ namespace BusinessModel.Handlers
                 {
                     return new ResponseEntity<UserEntity>
                     {
-                        CompletedRequest = true
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.UserNotFound
                     };
                 }
             }
@@ -252,7 +224,8 @@ namespace BusinessModel.Handlers
                 {
                     return new ResponseEntity<UserEntity>
                     {
-                        CompletedRequest = true
+                        CompletedRequest = false,
+                        ErrorMessage = ErrorConstants.UserNotFound
                     };
                 }
             }
@@ -275,7 +248,7 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserEntity> CheckUsernameAndPassword(string username, string password)
         {
             DbModel dbModel = new DbModel();
-            User entity = null;
+            User entity;
 
             try
             {

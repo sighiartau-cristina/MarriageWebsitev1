@@ -32,15 +32,7 @@
                 <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = true })" class="button2" style="color:white"><i class="fa fa-check"></i> Match</a>
                 <hr class="new2">
                 <div class="picture-container">
-                    @if (item.File != null)
-                    {
-                        <img src="../../File/Index/?id=@item.File.FileId" alt="avatar" style="width:150px; height:150px" />
-
-                    }
-                    else
-                    {
-                        <img src="~/Images/untitled.jpg" alt="avatar" style="width:150px; height:150px" />
-                    }
+                    <img style="width:150px; height:150px" src="../../File/UserFile/?id=@item.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
                 </div>
                 <div class="details-container">
                     <h2>@item.FullName</h2>

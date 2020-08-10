@@ -169,6 +169,7 @@
     <Compile Include="Hubs\UserDetails.cs" />
     <Compile Include="Models\AddressModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MatchModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Models\PasswordModel.cs" />
     <Compile Include="Models\ProfileModel.cs" />
@@ -187,7 +188,6 @@
     <Compile Include="Validators\PasswordValidator.cs" />
     <Compile Include="Validators\RegisterModelValidator.cs" />
     <Compile Include="Validators\UpdatedUserValidator.cs" />
-    <Compile Include="Validators\UserModelValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -253,7 +253,7 @@
     <Content Include="Views\Home\SeeMatches.cshtml" />
     <Content Include="Views\Home\_Chat.cshtml" />
     <Content Include="Views\Home\ShowArchivedMessages.cshtml" />
-    <Content Include="Views\Home\Chats.cshtml" />
+    <Content Include="Views\Home\Chat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

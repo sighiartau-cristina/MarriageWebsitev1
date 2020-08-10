@@ -12,7 +12,7 @@ namespace MarriageWebWDB.Helper
     {
         public string UpdatePasswordMessage { get; private set; }
 
-        public bool CheckPassword(int userId, PasswordModel passwordModel)
+        public bool CheckPassword(UserEntity user, PasswordModel passwordModel)
         {
             PasswordValidator validator = new PasswordValidator();
             var result = validator.Validate(passwordModel);
@@ -23,24 +23,20 @@ namespace MarriageWebWDB.Helper
                 return false;
             }
 
-            UserHandler userHandler = new UserHandler();
-            ResponseEntity<UserEntity> responseUser = userHandler.Get(userId);
-
-            if (!responseUser.CompletedRequest)
-            {
-                //TODO change
-                UpdatePasswordMessage = "An error occured. Please try again later";
-                return false;
-            }
-
-            if (!passwordModel.OldPassword.Equals(responseUser.Entity.UserPassword))
+            if (!passwordModel.OldPassword.Equals(user.UserPassword))
             {
                 UpdatePasswordMessage = MessageConstants.IncorrectPasswordMessage;
                 return false;
             }
 
+            if (passwordModel.OldPassword.Equals(passwordModel.NewPassword))
+            {
+                UpdatePasswordMessage = MessageConstants.NoPasswordChange;
+                return false;
+            }
+
+            user.UserPassword = passwordModel.NewPassword;
             return true;
         }
-
     }
 }

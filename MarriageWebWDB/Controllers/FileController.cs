@@ -26,7 +26,7 @@ namespace MarriageWebWDB.Controllers
 
         public ActionResult UserFile(string id)
         {
-            var fileToRetrieve = new FileHandler().GetForUser(id);
+            var fileToRetrieve = new FileHandler().GetForUserUsername(id);
 
             if (fileToRetrieve.CompletedRequest)
             {
@@ -34,10 +34,8 @@ namespace MarriageWebWDB.Controllers
                 {
                     return File(fileToRetrieve.Entity.Content, fileToRetrieve.Entity.ContentType);
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
 
             TempData["Error"] = fileToRetrieve.ErrorMessage;

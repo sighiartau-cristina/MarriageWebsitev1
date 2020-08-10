@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Web;
 using BusinessModel.Contracts;
@@ -27,27 +25,23 @@ namespace MarriageWebWDB.Helper
             }
 
             int id = int.Parse(HttpContext.Current.Session["userId"].ToString());
-            ResponseEntity<UserEntity> responseUserEntity = new UserHandler().Get(id);
+            var responseUser = new UserHandler().Get(id);
 
-            if (responseUserEntity.CompletedRequest)
+            if (responseUser.CompletedRequest)
             {
-                UserEntity user = responseUserEntity.Entity;
-                var responseUserProfileEntity = new UserProfileHandler().GetByUserId(user.UserId);
-                if (responseUserProfileEntity.CompletedRequest)
+                var user = responseUser.Entity;
+                var responseUserProfile = new UserProfileHandler().GetByUserId(user.UserId);
+
+                if (responseUserProfile.CompletedRequest)
                 {
-                    var responseFile = new FileHandler().GetByUserId(responseUserProfileEntity.Entity.UserProfileId);
-                    if (responseFile.CompletedRequest)
-                    {
-                        UserProfileEntity userProfile = responseUserProfileEntity.Entity;
-                        PopulateModel(userModel, user, userProfile, responseFile.Entity);
-                    }
+                    PopulateModel(userModel, user, responseUserProfile.Entity);
                 }
             }
 
             return userModel;
         }
 
-        private void PopulateModel(UserModel userModel, UserEntity user, UserProfileEntity userProfile, FileEntity file)
+        private void PopulateModel(UserModel userModel, UserEntity user, UserProfileEntity userProfile)
         {
             userModel.Religions = SelectListGenerator.GetSelectedReligions(userProfile);
             userModel.Statuses = SelectListGenerator.GetSelectedStatuses(userProfile);
@@ -67,12 +61,10 @@ namespace MarriageWebWDB.Helper
             userModel.Age = AgeCalculator.GetDifferenceInYears(userProfile.UserProfileBirthday, DateTime.Now);
             userModel.Birthday = userProfile.UserProfileBirthday;
             userModel.BirthdayString = DateFormatter.GetDate(userProfile.UserProfileBirthday);
-            userModel.File = file;
             userModel.Starsign = StarsignCalculator.GetStarsignName(userProfile.UserProfileBirthday);
             userModel.Motto = string.IsNullOrWhiteSpace(userProfile.Motto) ? "" : userProfile.Motto;
 
             var prefHandler = new PreferenceHandler();
-            //TODO check
             userModel.LikesList =prefHandler.GetAllForUserProfile(userProfile.UserProfileId, true).Entity.ToList();
             userModel.DislikesList = prefHandler.GetAllForUserProfile(userProfile.UserProfileId, false).Entity.ToList();
 
@@ -212,9 +204,9 @@ namespace MarriageWebWDB.Helper
 
         public UserProfileEntity ToDataEntity(UserModel model, UserProfileEntity userProfile)
         {
-            int starSignId = GetStarsignId(StarsignCalculator.GetStarsignName(model.Birthday));
+            var starSign = new StarSignHandler().GetByName(StarsignCalculator.GetStarsignName(model.Birthday));
 
-            if (starSignId < 0)
+            if (!starSign.CompletedRequest)
             {
                 return null;
             }
@@ -235,20 +227,8 @@ namespace MarriageWebWDB.Helper
                 ReligionId = model.ReligionId,
                 UserId = userProfile.UserId,
                 Motto = model.Motto,
-                StarsignId = starSignId
+                StarsignId = starSign.Entity.SignId
             };
-        }
-
-        private int GetStarsignId(string name)
-        {
-            var response = new StarSignHandler().GetByName(name);
-
-            if (!response.CompletedRequest)
-            {
-                return -1;
-            }
-
-            return response.Entity.SignId;
         }
     }
 }

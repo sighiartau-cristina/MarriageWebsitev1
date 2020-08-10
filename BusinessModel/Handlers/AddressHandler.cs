@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using BusinessModel.Constants;
 using BusinessModel.Contracts;
@@ -138,7 +139,8 @@ namespace BusinessModel.Handlers
             {
                 return new ResponseEntity<AddressEntity>
                 {
-                    CompletedRequest = true
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.MessageNotFound
                 };
             }
 
@@ -236,11 +238,47 @@ namespace BusinessModel.Handlers
                     ErrorMessage = ErrorConstants.AddressGetError
                 };
             }
+
             if (entity == null)
             {
                 return new ResponseEntity<AddressEntity>
                 {
-                    CompletedRequest = true
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressNotFound
+                };
+            }
+
+            return new ResponseEntity<AddressEntity>
+            {
+                CompletedRequest = true,
+                Entity = ConvertToEntity(entity)
+            };
+        }
+
+        public ResponseEntity<AddressEntity> GetForUser(int id)
+        {
+            DbModel dbModel = new DbModel();
+            Address entity;
+
+            try
+            {
+                entity = dbModel.Database.SqlQuery<Address>("select a.* from UserProfile up join [User] u on up.UserId = u.UserID join Address a on a.UserProfileId = up.UserProfileId where @user=u.UserID;", new SqlParameter("user", id)).FirstOrDefault();
+
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressGetError
+                };
+            }
+            if (entity == null)
+            {
+                return new ResponseEntity<AddressEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.AddressNotFound
                 };
             }
 
@@ -297,6 +335,5 @@ namespace BusinessModel.Handlers
                 UserProfileId = address.UserProfileId
             };
         }
-
     }
 }

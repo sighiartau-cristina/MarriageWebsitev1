@@ -26,36 +26,6 @@ namespace MarriageWebWDB.Helper
             return true;
         }
 
-        public ResponseEntity<AddressEntity> AddAddress(int userProfile, AddressModel addressModel)
-        {
-            AddressEntity address = ToDataEntity(userProfile, addressModel);
-
-            if (address == null)
-            {
-                return new ResponseEntity<AddressEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = ErrorConstants.NullEntityError
-                };
-            }
-
-            var response = new AddressHandler().Add(address);
-
-            if (!response.CompletedRequest)
-            {
-                return new ResponseEntity<AddressEntity>
-                {
-                    CompletedRequest = false,
-                    ErrorMessage = response.ErrorMessage
-                };
-            }
-
-            return new ResponseEntity<AddressEntity>
-            {
-                CompletedRequest = true
-            };
-        }
-
         public AddressModel GetAddressModel(int id, AddressModel addressModel = null)
         {
             if (addressModel == null)
@@ -65,13 +35,14 @@ namespace MarriageWebWDB.Helper
 
             var address = new AddressHandler().Get(id);
 
-            if (address.CompletedRequest && address.Entity != null)
+            if (address.CompletedRequest)
             {
                 addressModel.Street = address.Entity.AddressStreet;
                 addressModel.StreetNo = address.Entity.AddressStreetNo;
                 addressModel.City = address.Entity.AddressCity;
                 addressModel.Country = address.Entity.AddressCountry;
             }
+
             return addressModel;
         }
 
@@ -98,6 +69,31 @@ namespace MarriageWebWDB.Helper
                 UserProfileId = userProfileId,
                 AddressId = addressId
             };
+        }
+
+        public bool NoChanges(AddressEntity address, AddressModel addressModel)
+        {
+            if(!string.Equals(address.AddressStreet, addressModel.Street))
+            {
+                return false;
+            }
+
+            if (!string.Equals(address.AddressStreetNo, addressModel.StreetNo))
+            {
+                return false;
+            }
+
+            if (!string.Equals(address.AddressCity, addressModel.City))
+            {
+                return false;
+            }
+
+            if (!string.Equals(address.AddressCountry, addressModel.Country))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

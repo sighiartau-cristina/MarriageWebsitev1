@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Objects.DataClasses;
-using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using BusinessModel.Constants;
-using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
-using MarriageWebWDB.Hubs;
 using MarriageWebWDB.Models;
-using MarriageWebWDB.Utils;
-using Microsoft.AspNet.SignalR.Messaging;
 
 namespace MarriageWebWDB.Controllers
 {
@@ -32,7 +25,7 @@ namespace MarriageWebWDB.Controllers
             }
 
             var userProfileId = (int)Session["userProfileId"];
-            var suggestionsList = new UserProfileHandler().GetSuggestions((int)Session["userProfileId"]);
+            var suggestionsList = new UserProfileHandler().GetSuggestions(userProfileId);
 
             if (!suggestionsList.CompletedRequest)
             {
@@ -41,6 +34,12 @@ namespace MarriageWebWDB.Controllers
             }
 
             var models = new SuggestionsHelper().GetSuggestions(suggestionsList.Entity);
+
+            if (models == null)
+            {
+                TempData["error"] = ErrorConstants.NullEntityError;
+                return RedirectToAction("Index", "Error");
+            }
 
             return View("Index", models);
         }
@@ -64,12 +63,6 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            if (user.Entity == null)
-            {
-                TempData["error"] = ErrorConstants.UserNotFound;
-                return RedirectToAction("Index", "Error");
-            }
-
             var userProfile = new UserProfileHandler().GetByUserId(user.Entity.UserId);
 
             if (!userProfile.CompletedRequest)
@@ -78,18 +71,15 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            if (userProfile.Entity == null)
-            {
-                TempData["error"] = ErrorConstants.UserProfileNotFound;
-                return RedirectToAction("Index", "Error");
-            }
-
             var address = new AddressHandler().GetForUserProfile(userProfile.Entity.UserProfileId);
 
             if(!address.CompletedRequest)
             {
-                TempData["error"] = address.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                if(!string.Equals(ErrorConstants.AddressNotFound, address.ErrorMessage))
+                {
+                    TempData["error"] = address.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
             }
 
             var profileModel = new ProfileHelper().GetProfileModel(user.Entity, userProfile.Entity, address.Entity);
@@ -125,15 +115,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var userToMatch = new UserHandler().GetByUsername(id);
-
-            if (!userToMatch.CompletedRequest)
-            {
-                TempData["error"] = userToMatch.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
+            var userProfileToMatch = userProfileHandler.GetByUsername(id);
 
             if (!userProfileToMatch.CompletedRequest)
             {
@@ -180,9 +162,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var models = new SuggestionsHelper().GetSuggestions(matchList.Entity);
-
-            return View(models);
+            return View(matchList.Entity);
         }
 
         [HttpGet]
@@ -198,13 +178,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            if (receiver.Entity == null)
-            {
-                TempData["error"] = ErrorConstants.UserNotFound;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var messages = new MessageHandler().GetChatHistory( senderId, receiver.Entity.UserId);
+            var messages = new MessageHandler().GetChatHistory(senderId, receiver.Entity.UserId);
 
             if (!messages.CompletedRequest)
             {
@@ -221,7 +195,7 @@ namespace MarriageWebWDB.Controllers
             return PartialView("_Chat", models);
         }
 
-        public ActionResult Chats(string id)
+        public ActionResult Chat(string id)
         {
             try
             {
@@ -234,22 +208,9 @@ namespace MarriageWebWDB.Controllers
 
             var matchHandler = new MatchHandler();
             var userProfileId = (int)Session["userProfileId"];
-            var userToMatch = new UserHandler().GetByUsername(id);
             var userId = (int)Session["userId"];
 
-            if (!userToMatch.CompletedRequest)
-            {
-                TempData["error"] = userToMatch.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            if (userToMatch.Entity == null)
-            {
-                TempData["error"] = ErrorConstants.UserNotFound;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var userProfileToMatch = new UserProfileHandler().GetByUserId(userToMatch.Entity.UserId);
+            var userProfileToMatch = new UserProfileHandler().GetByUsername(id);
             if (!userProfileToMatch.CompletedRequest)
             {
                 TempData["error"] = userProfileToMatch.ErrorMessage;
@@ -262,7 +223,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var response = new MessageHandler().UpdateMessageStatus(userId, userToMatch.Entity.UserId);
+            var response = new MessageHandler().UpdateMessageStatus(userId, userProfileToMatch.Entity.UserId);
 
             if (!response.CompletedRequest)
             {
@@ -276,6 +237,15 @@ namespace MarriageWebWDB.Controllers
 
         public ActionResult ArchiveMessage(string messageId, string username)
         {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             int mId = int.Parse(messageId);
             var response = new MessageHandler().ArchiveMessage(mId);
 
@@ -285,7 +255,7 @@ namespace MarriageWebWDB.Controllers
                 RedirectToAction("Index", "Error");
             }
 
-            return RedirectToAction("Chats", new { id = username });
+            return RedirectToAction("Chat", new { id = username });
         }
 
         public ActionResult ShowArchivedMessages()
@@ -311,7 +281,7 @@ namespace MarriageWebWDB.Controllers
             var models = new List<MessageModel>();
             var messageHelper = new MessageHelper();
 
-            //temporary
+            //TODO 
             foreach(MessageEntity entity in archivedMessages.Entity)
             {           
                 var userEntity = new UserHandler().Get(entity.ReceiverId);
@@ -345,15 +315,9 @@ namespace MarriageWebWDB.Controllers
 
             var userProfileHandler = new UserProfileHandler();
             var userProfileId = (int)Session["userProfileId"];
-            var userToMatch = new UserHandler().GetByUsername(username);
+            var userId = (int)Session["userId"];
 
-            if (!userToMatch.CompletedRequest)
-            {
-                TempData["error"] = userToMatch.ErrorMessage;
-                return RedirectToAction("Index", "Error");
-            }
-
-            var userProfileToMatch = userProfileHandler.GetByUserId(userToMatch.Entity.UserId);
+            var userProfileToMatch = userProfileHandler.GetByUsername(username);
 
             if (!userProfileToMatch.CompletedRequest)
             {
@@ -369,7 +333,7 @@ namespace MarriageWebWDB.Controllers
                 return RedirectToAction("Index", "Error");
             }
 
-            var messagesResponse = new MessageHandler().ArchiveAllForUsers(userProfileId, userProfileToMatch.Entity.UserProfileId);
+            var messagesResponse = new MessageHandler().ArchiveAllForUsers(userId, userProfileToMatch.Entity.UserId);
 
             if (!messagesResponse.CompletedRequest)
             {

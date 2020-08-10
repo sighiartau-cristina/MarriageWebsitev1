@@ -31,8 +31,6 @@ namespace MarriageWebWDB.Models
 
         public string Address { get; set; }
 
-        public FileEntity File { get; set; }
-
         public string Starsign { get; set; }
 
         public List<string> Likes { get; set; }

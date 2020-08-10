@@ -4,6 +4,5 @@ AS
 BEGIN
 Update Messages 
 SET ReadDate=GETDATE(), Status='Read' WHERE
-SenderId = @receiverId AND ReceiverId=@senderId AND ReadDate is NULL
-
+SenderId = @receiverId AND ReceiverId=@senderId AND ReadDate is NULL AND Status='Sent'
 END

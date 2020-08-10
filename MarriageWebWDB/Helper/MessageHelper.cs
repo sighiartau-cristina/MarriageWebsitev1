@@ -12,8 +12,7 @@ namespace MarriageWebWDB.Helper
     {
         public ICollection<MessageModel> GetMessageEntities(ICollection<MessageEntity> messages, string from, string to)
         {
-            var list = messages.Select(m => ConvertToModel(m, from, to)).ToList();
-            return list;
+            return messages.Select(m => ConvertToModel(m, from, to)).ToList();
         }
 
         public MessageModel ConvertToModel(MessageEntity message, string from, string to)
@@ -23,7 +22,7 @@ namespace MarriageWebWDB.Helper
                 return null;
             }
 
-            string readDate = message.ReadDate == null ? ("Not opened") : ("Read: " + message.ReadDate.ToString());
+            string readDate = message.ReadDate == null ? ("Not opened") : ("Read:" + message.ReadDate.ToString());
 
             var result = new MessageModel
             {
@@ -47,20 +46,5 @@ namespace MarriageWebWDB.Helper
 
             return result;
         }
-
-        public MessageEntity ToDataEntity(MessageModel message)
-        {
-            if(message == null)
-            {
-                return null;
-            }
-
-            return new MessageEntity
-            {
-                MessageId = message.MessageId,
-                Status = message.Status
-            };
-        }
-
     }
 }

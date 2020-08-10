@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
+using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
 using MarriageWebWDB.Utils;
@@ -35,18 +36,18 @@ namespace MarriageWebWDB.Controllers
 
             if (response.CompletedRequest)
             {
-                //temporary solution
+                //get user profile to store in session
                 var responseProfile = new UserProfileHandler().GetByUserId(response.Entity.UserId);
                 if (!responseProfile.CompletedRequest)
                 {
                     TempData["error"] = responseProfile.ErrorMessage;
                     return RedirectToAction("Index", "Error");
                 }
+
                 Session.Add("userToken", loginModel.UserName);
                 Session.Add("userId", response.Entity.UserId);
                 Session.Add("userProfileId", responseProfile.Entity.UserProfileId);
-                Session["userId"] = response.Entity.UserId;
-                Session["userProfileId"] = responseProfile.Entity.UserProfileId;
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -66,37 +67,37 @@ namespace MarriageWebWDB.Controllers
             }
 
             ViewBag.Date = DateFormatter.GetDate(DateTime.Now);
-            RegisterHelper registerHelper = new RegisterHelper();
-            var registerModel = registerHelper.GetRegisterModel();
+            var registerModel = new RegisterHelper().GetRegisterModel();
+
             return View(registerModel);
         }
 
+        [HandleError]
         public ActionResult RegisterUser(RegisterModel registerModel)
         {
             RegisterHelper registerHelper = new RegisterHelper();
-            ResponseEntity<UserEntity> response = registerHelper.AddUser(registerModel);
+            var response = registerHelper.AddUser(registerModel);
 
-            if (response.CompletedRequest)
+            if (response)
             {
-                return RedirectToAction("Login", "Login");
-            }
-            else
-            {
-                //If the error is caused by incorrect fields
+                //errors caused by incorrect user input
                 if (!string.IsNullOrEmpty(registerHelper.InvalidRegisterMessage))
                 {
-                    ViewBag.RegisterMessage = response.ErrorMessage;
+                    ViewBag.RegisterMessage = registerHelper.InvalidRegisterMessage;
                     ViewBag.Date = DateFormatter.GetDate(DateTime.Now);
 
-                    return View("Register", registerHelper.GetRegisterModel(registerModel));
+                    var model = registerHelper.GetRegisterModel(registerModel);
+
+                    return View("Register", model);
                 }
-                //otherwise it's a server error
-                else
-                {
-                    ViewBag.Error = response.ErrorMessage;
-                    return RedirectToAction("Error", "Index");
-                }
+               
+                //success
+                return RedirectToAction("Login", "Login");
             }
+
+            //errors due to other causes
+            ViewBag.Error = registerHelper.InvalidRegisterMessage;
+            return RedirectToAction("Error", "Index");
         }
 
         public ActionResult Logout()

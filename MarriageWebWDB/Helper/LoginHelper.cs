@@ -11,8 +11,6 @@ namespace MarriageWebWDB.Helper
 {
     public class LoginHelper
     {
-         public string InvalidLoginMessage { get; private set; }
-
         public static void CheckAccess(HttpSessionStateBase httpSession)
         {
             if (httpSession["userToken"] == null)
@@ -21,12 +19,10 @@ namespace MarriageWebWDB.Helper
             }
         }
 
-
         public ResponseEntity<UserEntity> CheckLogin(LoginModel loginModel)
         {
             if (loginModel == null)
             {
-                //InvalidLoginMessage = InvalidLoginMessage;
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
@@ -36,7 +32,6 @@ namespace MarriageWebWDB.Helper
 
             if (loginModel.UserName.IsNullOrWhiteSpace() || loginModel.UserPassword.IsNullOrWhiteSpace())
             {
-                //InvalidLoginMessage = MessageConstants.MissingFieldsMessage;
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
@@ -49,7 +44,6 @@ namespace MarriageWebWDB.Helper
 
             if (!entity.CompletedRequest)
             {
-                //InvalidLoginMessage = MessageConstants.InvalidLoginMessage;
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
@@ -59,6 +53,5 @@ namespace MarriageWebWDB.Helper
 
             return entity;
         }
-
     }
 }

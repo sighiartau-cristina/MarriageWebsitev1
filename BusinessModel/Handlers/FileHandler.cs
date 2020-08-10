@@ -17,7 +17,18 @@ namespace BusinessModel.Handlers
         public ResponseEntity<FileEntity> Add(FileEntity fileEntity)
         {
             DbModel dbModel = new DbModel();
-            File file = ConvertToDataEntity(fileEntity);
+            File file; 
+
+            if (fileEntity == null)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullEntityError
+                };
+            }
+            
+            file= ConvertToDataEntity(fileEntity);
 
             if (file == null)
             {
@@ -145,7 +156,7 @@ namespace BusinessModel.Handlers
             throw new NotImplementedException();
         }
 
-        public ResponseEntity<FileEntity> GetByUserId(int id)
+        public ResponseEntity<FileEntity> GetForUserProfileId(int id)
         {
             DbModel dbModel = new DbModel();
             File file;
@@ -276,7 +287,8 @@ namespace BusinessModel.Handlers
                 UserProfileId = file.UserProfileId
             };
         }
-        public ResponseEntity<FileEntity> GetForUser(string username)
+
+        public ResponseEntity<FileEntity> GetForUserUsername(string username)
         {
             DbModel dbModel = new DbModel();
             File file;
@@ -284,7 +296,6 @@ namespace BusinessModel.Handlers
             try
             {
                 file = dbModel.Database.SqlQuery<File>("select f.* from UserProfile up join [User] u on up.UserId = u.UserID join Files f on f.UserProfileId = up.UserProfileId where @user=u.Username;", new SqlParameter("user", username)).FirstOrDefault();
-
             }
             catch (Exception)
             {
