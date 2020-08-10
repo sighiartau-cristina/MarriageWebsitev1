@@ -214,7 +214,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                list = dbModel.Preferences.ToList().FindAll(x => x.Name.ToLower().Contains(term.ToLower())).Select(x=> ConvertToEntity(x)).ToList();
+                list = dbModel.Preferences.Where(x => x.Name.ToLower().Contains(term.ToLower())).ToList().Select(x=> ConvertToEntity(x)).ToList();
             }
             catch (Exception)
             {
