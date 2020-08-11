@@ -29,9 +29,20 @@ namespace MarriageWebWDB.Hubs
             if (ConnectedUsers.Count(x => x.ConnectionId.Equals(connectionId)) == 0)
             {
                 ConnectedUsers.Add(new UserDetails { ConnectionId = Context.ConnectionId, UserID = userId, UserName = username });
+
+                Clients.Caller.onConnected(username);
+                Clients.Others.onUserConnected(connectionId, username);
             }
-           
-            Clients.Caller.onConnected(username);
+        }
+
+        public void UserStatus(string username)
+        {
+            var user = ConnectedUsers.FirstOrDefault(x => x.UserName.Equals(username));
+
+            if (user != null)
+            {
+                Clients.Caller.setOnline();
+            }
         }
 
         public bool SendPrivateMessage(string toUserName, string msg)
@@ -70,7 +81,7 @@ namespace MarriageWebWDB.Hubs
 
             Clients.Caller.addMessage(fromUser.UserName, msg, handler.Entity.SendDate.ToString(), handler.Entity.MessageId);
 
-            // if the person we talk to is online, Send message
+            // if the other person is online, send message
             if (toUser != null)
             {
                 Clients.Client(toUser.ConnectionId).sendPrivateMessage(fromUser.UserName, msg, handler.Entity.SendDate.ToString());
@@ -115,6 +126,7 @@ namespace MarriageWebWDB.Hubs
             if (user != null)
             {
                 ConnectedUsers.Remove(user);
+                Clients.Others.onUserDisconnected(connectionId, user.UserName);
             }
 
             return base.OnDisconnected(stopCalled);

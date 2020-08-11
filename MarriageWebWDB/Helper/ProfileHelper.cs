@@ -35,7 +35,7 @@ namespace MarriageWebWDB.Helper
                 Job = string.IsNullOrEmpty(profile.UserProfileJob) ? "This user has not provided information about their job." : profile.UserProfileJob,
                 Description = string.IsNullOrEmpty(profile.UserProfileDescription) ? "This user has not provided a description." : profile.UserProfileDescription,
                 FullName = profile.UserProfileName + " " + profile.UserProfileSurname,
-                Address = (address == null) ? "This user has not provided information about their address." : address.AddressCity + ", " + address.AddressCountry,
+                Address = (address == null) ? "No address information." : address.AddressCity + ", " + address.AddressCountry,
                 Birthday = DateFormatter.GetDate(profile.UserProfileBirthday),
                 Age = AgeCalculator.GetDifferenceInYears(profile.UserProfileBirthday, DateTime.Now).ToString(),
                 Gender = gender.Entity.GenderName,

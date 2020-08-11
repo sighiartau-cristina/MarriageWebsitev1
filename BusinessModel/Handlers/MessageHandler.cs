@@ -370,8 +370,7 @@ namespace BusinessModel.Handlers
 
             try
             {
-                //TODO unmatched -> deleted?
-                dbModel.Database.ExecuteSqlCommand("Update Messages SET Status = 'Deleted' WHERE (SenderId = @user AND ReceiverId = @match) OR (SenderId = @match AND ReceiverId = @user)", new SqlParameter("@user", user), new SqlParameter("@match", match));
+                dbModel.Database.ExecuteSqlCommand("Update Messages SET Status = 'Archived' WHERE (SenderId = @user AND ReceiverId = @match) OR (SenderId = @match AND ReceiverId = @user)", new SqlParameter("@user", user), new SqlParameter("@match", match));
             }
             catch (Exception)
             {

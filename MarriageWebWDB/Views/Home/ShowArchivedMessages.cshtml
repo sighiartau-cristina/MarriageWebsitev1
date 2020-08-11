@@ -23,19 +23,21 @@
     else
     {
         <div class="match-container">
-            <table style="color:#FFFFFA">
+            <table id="table" style="color:#FFFFFA">
                 <thead>
                     <tr>
-                        <td style="color:#FFFFFA"><u>To</u></td>
+                        <td><input type="checkbox" name="select-all" id="select-all" />Select All</td>
+                        <td onclick="sortTable(0)" style="color:#FFFFFA"><u>To</u></td>
                         <td style="color:#FFFFFA"><u>Text</u></td>
-                        <td style="color: #FFFFFA"><u>Sent</u></td>
-                        <td style="color:#FFFFFA"><u>Status</u></td>
+                        <td onclick="sortTable(1)" style="color: #FFFFFA"><u>Sent</u></td>
+                        <td onclick="sortTable(2)" style="color:#FFFFFA"><u>Status</u></td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
                         <tr>
+                            <td><input type="checkbox" id="@item.MessageId" name="toDelete"></td>
                             <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.ReceiverUsername)</td>
                             <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.MessageText)</td>
                             <td style="color:#FFFFFA">@Html.DisplayFor(modelItem => item.SendDate)</td>
@@ -44,7 +46,18 @@
                     }
                 </tbody>
             </table>
+            <p id="noMessages"></p>
+        </div>
+        <br />
+        <br />
+        <div id="showLikesDeleteButton">
+            <button align="left" class="button1" style="width:300px;" id="deleteButton" type="button">Delete Selected</button>
         </div>
     }
+
 </body>
 </html>
+
+@section JavaScript{
+    <script type="text/javascript" src="~/Scripts/archivedMessages.js"></script>
+}

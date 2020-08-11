@@ -281,7 +281,7 @@ namespace MarriageWebWDB.Controllers
             var models = new List<MessageModel>();
             var messageHelper = new MessageHelper();
 
-            //TODO 
+            //TODO hmmm
             foreach(MessageEntity entity in archivedMessages.Entity)
             {           
                 var userEntity = new UserHandler().Get(entity.ReceiverId);
@@ -342,6 +342,29 @@ namespace MarriageWebWDB.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult DeleteMessage(string id)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            int mId = int.Parse(id);
+            var response = new MessageHandler().Delete(mId);
+
+            if (!response.CompletedRequest)
+            {
+                TempData["error"] = response.ErrorMessage;
+                RedirectToAction("Index", "Error");
+            }
+
+            return RedirectToAction("ShowArchivedMessages");
         }
 
     }
