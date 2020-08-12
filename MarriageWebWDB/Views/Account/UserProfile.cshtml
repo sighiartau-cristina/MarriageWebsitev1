@@ -27,7 +27,7 @@
                 <input class="button1" type="submit" value="Change Password" />
             }
             <hr class="new1" />
-            <img align="left" style="height:150px;width:150px;" src="../../File/UserFile/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+            <img align="left" style="height:150px;width:150px; border-radius: 50%;" src="../../File/UserFile/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
             <p>
                 <div>
                     @using (Html.BeginForm("ChangeProfilePicture", "Account", FormMethod.Get))

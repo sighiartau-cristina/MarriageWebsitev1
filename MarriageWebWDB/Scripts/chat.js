@@ -62,7 +62,7 @@ function archive(msgId) {
             {
                 var result = "";
                 result += '<div class="chat-container" id=' + messageId + '>' +
-                    '<img class="left" style="height:50px; width:50px;" src="../../File/UserFile/?id=' + toUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
+                    '<img class="left" style="height:50px; width:50px; border-radius: 50%;" src="../../File/UserFile/?id=' + toUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
                     '<p align="left" style="color:black">' + msg + '</p>' +
                     '<span class="time-right" style="color:black">' + sendDate + '</span></div>';
                 $('#dataModel').append(result);
@@ -74,7 +74,7 @@ function archive(msgId) {
             {
                 var result = "";
                 result += '<div class="chat-container darkest" id=' + messageId + '> ' +
-                    '<img class="right" style="height:50px; width:50px;" src="../../File/UserFile/?id=' + myUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
+                    '<img class="right" style="height:50px; width:50px; border-radius: 50%;" src="../../File/UserFile/?id=' + myUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
                     '<p align="right"><span title=Sent>' + msg + '</span></p >' + 
                     '<span class="time-left" style="color:white">' + sendDate + '  • </span>' +
                     '<a href="#"><span class="time-left" style="color:white" onclick="archive(' + messageId + ')">Archive</span></a>';

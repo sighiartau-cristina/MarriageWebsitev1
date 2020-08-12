@@ -6,36 +6,70 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Gallery</title>
-    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="~/BlueImpGallery/css/blueimp-gallery.min.css" />
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 </head>
 
 <body>
-    <br><br>
+    <!-- The Gallery as lightbox dialog, should be a document body child element -->
+    <div id="blueimp-gallery"
+         class="blueimp-gallery"
+         aria-label="image gallery"
+         aria-modal="true"
+         role="dialog">
+        <div class="slides" aria-live="polite"></div>
+        <h3 class="title"></h3>
+        <a class="prev"
+           aria-controls="blueimp-gallery"
+           aria-label="previous slide"
+           aria-keyshortcuts="ArrowLeft"></a>
+        <a class="next"
+           aria-controls="blueimp-gallery"
+           aria-label="next slide"
+           aria-keyshortcuts="ArrowRight"></a>
+        <a class="close"
+           aria-controls="blueimp-gallery"
+           aria-label="close"
+           aria-keyshortcuts="Escape"></a>
+        <a class="play-pause"
+           aria-controls="blueimp-gallery"
+           aria-label="play slideshow"
+           aria-keyshortcuts="Space"
+           aria-pressed="false"
+           role="button"></a>
+        <ol class="indicator"></ol>
+    </div>
 
-    <div class="profile-header-container">
-        <h1>@ViewBag.username's photos</h1>
-        <hr class="new1">
-        <div class="table-container">
-            <h2 id="emptyGallery"></h2>
-            @if (Model.Count() == 0)
+    <div id="links">
+        @if (Model.Count() == 0)
+        {
+            <h1>No photos yet.</h1>
+        }
+        else
+        {
+            foreach (var item in Model)
             {
-                <h1>No photos yet.</h1>
+                <a href="../../File/Index/?id=@item" title="Picture">
+                    <img style="width:350px; height:350px;" src="../../File/Index/?id=@item" alt="Picture" />
+                </a>
             }
-            else
-            {
-                foreach (var item in Model)
-                {
-                    <div class="gallery-container" style="width:500px; height:400px"; id=@item>
-                        <img style="width:350px; height:350px; border-radius: 0%" src="../../File/Index/?id=@item" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
-                    </div>
-                    <br />
-                }
-            }
-        </div>
+        }
     </div>
 
 </body>
 </html>
+
+<script src="~/BlueImpGallery/js/blueimp-gallery.min.js"></script>
+
+<script>
+    document.getElementById('links').onclick = function (event) {
+        event = event || window.event
+        var target = event.target || event.srcElement
+        var link = target.src ? target.parentNode : target
+        var options = { index: link, event: event }
+        var links = this.getElementsByTagName('a')
+        blueimp.Gallery(links, options)
+    }
+</script>

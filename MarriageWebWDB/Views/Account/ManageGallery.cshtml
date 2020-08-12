@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<int>
-
 <!DOCTYPE html>
 
 <html>
@@ -13,32 +12,22 @@
 </head>
 
 <body>
-    <br><br>
-
-    <div class="profile-header-container">
-        <h1>Your gallery</h1>
-        <hr class="new1">
-        <div class="table-container">
-            <h2 id="emptyGallery"></h2>
-            @if (Model == null)
-            {
-                <h1>No photos in your gallery yet.</h1>
-            }
-            else
-            {
-                foreach (var item in Model)
-                {
-                    <div class="gallery-container" id=@item>
-                        <img style="width:350px; height:350px; border-radius: 0%" src="../../File/Index/?id=@item" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
-                        <br />
-                        <br />
-                        <button class="button1" id="deleteButton" onclick="myfun(@item)">Delete</button>
-                    </div>
-                    <br />
-                }
-            }
-        </div>
-    </div>
+    @if (Model.Count() == 0)
+    {
+        <h1>No photos yet.</h1>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <div class="gallery-container" style="display: inline-block;  float:left; " id=@item>
+                <img style="width:350px; height:350px;" src="../../File/Index/?id=@item" alt="Avatar" class="image">
+                <div class="middle">
+                    <button style="width:100px" class="button1" id="deleteButton" onclick="myfun(@item)">Delete</button>
+                </div>
+            </div>
+        }
+    }
 
 </body>
 </html>
