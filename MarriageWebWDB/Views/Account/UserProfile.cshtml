@@ -224,9 +224,9 @@
 
     <div class="profile-header-container">
         <div class="profile-container">
-            <h1><i class="fa fa-home">  Update address </i></h1>
+            <h1><i class="fa fa-home">  Your address </i></h1>
             <hr class="new1">
-            @if (!@ViewBag.hasAddress)
+            @if (@Model.Address == null)
             {
                 <div>
                     @using (Html.BeginForm("AddAddress", "Account", FormMethod.Get))
@@ -237,10 +237,10 @@
             }
             else
             {
-                <p>Street name: @ViewBag.AddressStreet</p>
-                <p>Street number: @ViewBag.AddressStreetNo</p>
-                <p>City: @ViewBag.AddressCity</p>
-                <p>Country: @ViewBag.AddressCountry</p>
+                <p>Street name: @Model.Address.AddressStreet</p>
+                <p>Street number: @Model.Address.AddressStreetNo</p>
+                <p>City: @Model.Address.AddressCity</p>
+                <p>Country: @Model.Address.AddressCountry</p>
                 <div>
                     @using (Html.BeginForm("EditAddress", "Account", FormMethod.Get))
                     {

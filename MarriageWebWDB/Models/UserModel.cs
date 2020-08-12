@@ -51,7 +51,7 @@ namespace MarriageWebWDB.Models
 
         public List<PreferenceEntity> DislikesList { get; set; }
 
-        public string LikeInput { get; set; }
+        public AddressEntity Address { get; set; }
 
     }
 }

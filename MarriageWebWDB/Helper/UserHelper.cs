@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
@@ -27,16 +28,41 @@ namespace MarriageWebWDB.Helper
             int id = int.Parse(HttpContext.Current.Session["userId"].ToString());
             var responseUser = new UserHandler().Get(id);
 
-            if (responseUser.CompletedRequest)
+            if (!responseUser.CompletedRequest)
             {
-                var user = responseUser.Entity;
-                var responseUserProfile = new UserProfileHandler().GetByUserId(user.UserId);
+                InvalidInfoMessage = responseUser.ErrorMessage;
+                return null;
+            }
 
-                if (responseUserProfile.CompletedRequest)
+            var user = responseUser.Entity;
+            var responseUserProfile = new UserProfileHandler().GetByUserId(user.UserId);
+
+            if (!responseUserProfile.CompletedRequest)
+            {
+                InvalidInfoMessage = responseUser.ErrorMessage;
+                return null;
+            }
+
+            var address = new AddressHandler().GetForUserProfile(responseUserProfile.Entity.UserProfileId);
+
+            if (!address.CompletedRequest)
+            {
+                if(string.Equals(address.ErrorMessage, ErrorConstants.AddressNotFound))
                 {
-                    PopulateModel(userModel, user, responseUserProfile.Entity);
+                    userModel.Address = null;
+                }
+                else
+                {
+                    InvalidInfoMessage = responseUser.ErrorMessage;
+                    return null;
                 }
             }
+            else
+            {
+                userModel.Address = address.Entity;
+            }
+
+            PopulateModel(userModel, user, responseUserProfile.Entity);
 
             return userModel;
         }
