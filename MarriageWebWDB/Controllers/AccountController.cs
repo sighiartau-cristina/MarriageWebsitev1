@@ -537,5 +537,86 @@ namespace MarriageWebWDB.Controllers
                 RedirectToAction("Index", "Error");
             }
         }
+
+        [HttpGet]
+        public ActionResult AddGalleryPicture()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddGalleryPicture(HttpPostedFileBase upload)
+        {
+            if (upload != null && upload.ContentLength > 0)
+            {
+                var pic = new FileEntity
+                {
+                    FileName = System.IO.Path.GetFileName(upload.FileName),
+                    FileType = FileType.Gallery,
+                    ContentType = upload.ContentType,
+                    UserProfileId = (int)Session["userProfileId"]
+
+                };
+
+                using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                {
+                    pic.Content = reader.ReadBytes(upload.ContentLength);
+                }
+
+                var fileHandler = new FileHandler();
+                var response = fileHandler.Add(pic);
+
+                if (!response.CompletedRequest)
+                {
+                    TempData["error"] = response.ErrorMessage;
+                    return RedirectToAction("Index", "Error");
+                }
+
+                return RedirectToAction("UserProfile", "Account");
+            }
+
+            ViewBag.FileMessage = MessageConstants.NoFileSelected;
+            return View("AddGalleryPicture");
+        }
+
+
+        public void DeleteGalleryPicture(int id)
+        {
+            var fileHandler = new FileHandler();
+            fileHandler.Delete(id);
+        }
+
+        [HttpGet]
+        public ActionResult ManageGallery()
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            int userProfileId = (int)Session["userProfileId"];
+            var list = new FileHandler().GetGalleryForUserProfile(userProfileId);
+
+            if (!list.CompletedRequest)
+            {
+                TempData["error"] = list.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            return View(list.Entity);
+        }
     }
 }

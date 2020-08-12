@@ -16,6 +16,10 @@
 
 $(function () {
     $("#deleteButton").click(function () {
+
+        if (!confirm("Continue?"))
+            return;
+
         DeleteMessage();
 
         var length = $('#table tbody tr').length;

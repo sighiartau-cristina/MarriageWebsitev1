@@ -1,29 +1,34 @@
 ﻿@model IEnumerable<MarriageWebWDB.Models.MessageModel>
 
-
 @foreach (var item in Model)
 {
     if (string.Equals(item.SenderUsername, Session["userToken"]))
     {
-    <div class="chat-container darker">
-        <img style="width:50px; height:50px;" class="right" src="../../File/UserFile/?id=@item.SenderUsername" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
-        <p align="right">@item.MessageText</p>
-        <span class="time-left" style="color:white">@item.SendDate  • </span>
-        <span class="time-left" style="color:white">@Html.ActionLink("Archive", "ArchiveMessage", new { messageId = item.MessageId, username = ViewBag.username })</span>
-    </div>
+        if (string.Equals(item.Status.ToString(), "Sent"))
+        {
+            <div class="chat-container darkest" id=@item.MessageId>
+                <img style="width:50px; height:50px;" class="right" src="../../File/UserFile/?id=@item.SenderUsername" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+                <p align="right"><span title=@item.Status>@item.MessageText</span></p>
+                <span class="time-left" style="color:white">@item.SendDate  • </span>
+                <a href="#"><span class="time-left" style="color:white" onclick="archive(@item.MessageId)">Archive</span></a>
+            </div>
+        }
+        else
+        {
+            <div class="chat-container darker" id=@item.MessageId>
+                <img style="width:50px; height:50px;" class="right" src="../../File/UserFile/?id=@item.SenderUsername" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+                <p align="right"><span title=@item.Status>@item.MessageText</span></p>
+                <span class="time-left" style="color:white">@item.SendDate  • </span>
+                <a href="#"><span class="time-left" style="color:white" onclick="archive(@item.MessageId)">Archive</span></a>
+               </div>
+        }
     }
     else
     {
-        <div class="chat-container">
+        <div class="chat-container" id=@item.MessageId>
             <img style="width:50px; height:50px;" class="left" src="../../File/UserFile/?id=@item.SenderUsername" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
             <p align="left" style="color:black">@item.MessageText</p>
             <span class="time-right" style="color:black">@item.SendDate</span>
         </div>
     }
 }
-
-
-
-
-
-

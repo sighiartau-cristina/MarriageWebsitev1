@@ -199,10 +199,22 @@ hr.new2 {
     margin: 10px 0;
 }
 
-/* Darker chat container */
+.chat-container-darker {
+    border: 2px solid #000000;
+    background-color: #000000;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
 .darker {
     border-color: #6a2e35;
     background-color: #6a2e35;
+}
+
+.darkest {
+    border-color: #000000 !important;
+    background-color: #000000 !important;
 }
 
 /* Clear floats */
@@ -238,4 +250,15 @@ hr.new2 {
 .time-left {
     float: left;
     color: #6a2e35;
+}
+
+.gallery-container {
+    border: 2px solid #FFFFFA;
+    background-color: #6A2E35;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 500px;
+    height: 500px;
+    overflow: auto;
 }

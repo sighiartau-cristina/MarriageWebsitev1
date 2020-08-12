@@ -235,27 +235,10 @@ namespace MarriageWebWDB.Controllers
             return View();
         }
 
-        public ActionResult ArchiveMessage(string messageId, string username)
+        public void ArchiveMessage(string messageId)
         {
-            try
-            {
-                LoginHelper.CheckAccess(Session);
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
             int mId = int.Parse(messageId);
-            var response = new MessageHandler().ArchiveMessage(mId);
-
-            if (!response.CompletedRequest)
-            {
-                TempData["error"] = response.ErrorMessage;
-                RedirectToAction("Index", "Error");
-            }
-
-            return RedirectToAction("Chat", new { id = username });
+            new MessageHandler().ArchiveMessage(mId);
         }
 
         public ActionResult ShowArchivedMessages()
@@ -365,6 +348,37 @@ namespace MarriageWebWDB.Controllers
             }
 
             return RedirectToAction("ShowArchivedMessages");
+        }
+
+        public ActionResult Gallery(string id)
+        {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var userProfile = new UserProfileHandler().GetByUsername(id);
+
+            if (!userProfile.CompletedRequest)
+            {
+                TempData["error"] = userProfile.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            var list = new FileHandler().GetGalleryForUserProfile(userProfile.Entity.UserProfileId);
+
+            if (!list.CompletedRequest)
+            {
+                TempData["error"] = list.ErrorMessage;
+                return RedirectToAction("Index", "Error");
+            }
+
+            ViewBag.username = id;
+            return View("Gallery", list.Entity);
         }
 
     }

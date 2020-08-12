@@ -1,0 +1,49 @@
+﻿@model IEnumerable<int>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Manage Gallery</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
+
+<body>
+    <br><br>
+
+    <div class="profile-header-container">
+        <h1>Your gallery</h1>
+        <hr class="new1">
+        <div class="table-container">
+            <h2 id="emptyGallery"></h2>
+            @if (Model == null)
+            {
+                <h1>No photos in your gallery yet.</h1>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <div class="gallery-container" id=@item>
+                        <img style="width:350px; height:350px; border-radius: 0%" src="../../File/Index/?id=@item" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+                        <br />
+                        <br />
+                        <button class="button1" id="deleteButton" onclick="myfun(@item)">Delete</button>
+                    </div>
+                    <br />
+                }
+            }
+        </div>
+    </div>
+
+</body>
+</html>
+
+@section JavaScript{
+
+    <script type="text/javascript" src="~/Scripts/manageGallery.js"></script>
+}

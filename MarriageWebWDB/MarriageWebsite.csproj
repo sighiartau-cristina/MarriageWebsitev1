@@ -228,6 +228,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\manageGallery.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\userProfile.js" />
     <Content Include="Web.config" />
@@ -256,6 +257,9 @@
     <Content Include="Views\Home\_Chat.cshtml" />
     <Content Include="Views\Home\ShowArchivedMessages.cshtml" />
     <Content Include="Views\Home\Chat.cshtml" />
+    <Content Include="Views\Account\ManageGallery.cshtml" />
+    <Content Include="Views\Account\AddGalleryPicture.cshtml" />
+    <Content Include="Views\Home\Gallery.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

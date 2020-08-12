@@ -41,7 +41,7 @@ namespace MarriageWebWDB.Hubs
 
             if (user != null)
             {
-                Clients.Caller.setOnline();
+                Clients.Caller.setOnline(username);
             }
         }
 
@@ -84,7 +84,7 @@ namespace MarriageWebWDB.Hubs
             // if the other person is online, send message
             if (toUser != null)
             {
-                Clients.Client(toUser.ConnectionId).sendPrivateMessage(fromUser.UserName, msg, handler.Entity.SendDate.ToString());
+                Clients.Client(toUser.ConnectionId).sendPrivateMessage(fromUser.UserName, msg, handler.Entity.SendDate.ToString(), handler.Entity.MessageId);
             }
 
             return true;
@@ -115,6 +115,19 @@ namespace MarriageWebWDB.Hubs
             if (toUser != null && fromUser != null) // if the person we talk to is online
             {
                 Clients.Client(toUser.ConnectionId).changeMessageStatus();
+            }
+        }
+
+        public void ArchiveMessage(string toUserName, int messageId)
+        {
+
+            string fromconnectionid = Context.ConnectionId;
+
+            var toUser = ConnectedUsers.FirstOrDefault(x => x.UserName.Equals(toUserName));
+
+            if (toUser != null) // if the person we talk to is online
+            {
+                Clients.Client(toUser.ConnectionId).archiveMessage(messageId);
             }
         }
 

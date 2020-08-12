@@ -8,6 +8,6 @@ namespace BusinessModel.Contracts
 {
     public enum FileType
     {
-        Avatar = 1, Photo
+        Avatar = 1, Gallery
     }
 }

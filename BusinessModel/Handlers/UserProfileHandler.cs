@@ -176,8 +176,6 @@ namespace BusinessModel.Handlers
             dataEntity.ReligionId = entity.ReligionId;
             dataEntity.Age = entity.UserAge;
             dataEntity.StarSignId = entity.StarsignId;
-            dataEntity.Likes = entity.Likes;
-            dataEntity.Dislikes = entity.Dislikes;
             dataEntity.Motto = entity.Motto;
 
             try
@@ -301,9 +299,7 @@ namespace BusinessModel.Handlers
                 StatusId = entity.StatusId,
                 Age = entity.UserAge,
                 Motto = entity.Motto,
-                StarSignId = entity.StarsignId,
-                Likes = entity.Likes,
-                Dislikes = entity.Dislikes
+                StarSignId = entity.StarsignId
             };
         }
 
@@ -331,9 +327,7 @@ namespace BusinessModel.Handlers
                 StatusId = dataEntity.StatusId,
                 UserAge = dataEntity.Age,
                 StarsignId = dataEntity.StarSignId,
-                Motto = dataEntity.Motto,
-                Likes = dataEntity.Likes,
-                Dislikes = dataEntity.Dislikes
+                Motto = dataEntity.Motto
             };
         }
 
@@ -366,11 +360,11 @@ namespace BusinessModel.Handlers
         public ResponseEntity<UserProfileEntity> GetByUsername(string username)
         {
             DbModel dbModel = new DbModel();
-            UserProfileEntity userProfile;
+            UserProfile userProfile;
 
             try
             {
-                userProfile = dbModel.Database.SqlQuery<UserProfileEntity>("select up.* from UserProfile up join [User] u on up.UserId=u.UserID where u.Username=@username;", new SqlParameter("username", username)).FirstOrDefault();
+                userProfile = dbModel.Database.SqlQuery<UserProfile>("select up.* from UserProfile up join [User] u on up.UserId=u.UserID where u.Username=@username;", new SqlParameter("username", username)).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -393,7 +387,7 @@ namespace BusinessModel.Handlers
             return new ResponseEntity<UserProfileEntity>
             {
                 CompletedRequest = true,
-                Entity = userProfile
+                Entity = ConvertToEntity(userProfile)
             };
         }
 

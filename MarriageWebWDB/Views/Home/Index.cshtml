@@ -28,7 +28,7 @@
         {
             <div class="suggestion-container">
                 <h2>@Html.ActionLink(@item.UserName, "ShowProfile", new { id = @item.UserName })</h2>
-                <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = false })" class="button2" style="color:white"><i class="fa fa-close"></i> Reject</a>
+                <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = false })" class="button2" style="color:white"  onclick="return confirm('Are you sure? You will not be able to interact with this user in the future.')"><i class="fa fa-close"></i> Reject</a>
                 <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = true })" class="button2" style="color:white"><i class="fa fa-check"></i> Match</a>
                 <hr class="new2">
                 <div class="picture-container">

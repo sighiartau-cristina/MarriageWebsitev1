@@ -200,6 +200,30 @@
 
     <div class="profile-header-container">
         <div class="profile-container">
+            <h1><i class="fa fa-camera">  Your gallery </i></h1>
+            <hr class="new1">
+            <div>
+                @using (Html.BeginForm("AddGalleryPicture", "Account", FormMethod.Get))
+                {
+                    <input class="button1" type="submit" value="Add Picture" />
+                }
+            </div>
+            <br />
+            <div>
+                @using (Html.BeginForm("ManageGallery", "Account", FormMethod.Get))
+                {
+                    <input class="button1" type="submit" value="Manage Gallery" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+
+    <div class="profile-header-container">
+        <div class="profile-container">
             <h1><i class="fa fa-home">  Update address </i></h1>
             <hr class="new1">
             @if (!@ViewBag.hasAddress)

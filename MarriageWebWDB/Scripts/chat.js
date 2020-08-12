@@ -1,5 +1,4 @@
 ﻿function fun(msgId) {
-            //console.log(msgId)
              $.ajax({
                  url: '/Home/ArchiveMessage/',
                  contentType: 'application/html ; charset:utf-8',
@@ -9,6 +8,23 @@
                  success: function (response) { getAll(); }
              });
         }
+
+function archive(msgId) {
+
+    var chatHub = $.connection.chatHub;
+
+    $.ajax({
+        url: '/Home/ArchiveMessage/',
+        contentType: 'application/html ; charset:utf-8',
+        type: 'GET',
+        data: { messageId: msgId },
+        dataType: 'html',
+        success: function (result) {
+            document.getElementById(msgId).style.display = "none";
+            chatHub.server.archiveMessage(toUserName, msgId);
+        }
+    });
+}
 
         function getAll() {
              var model = $('#dataModel');
@@ -38,15 +54,14 @@
             chatHub.client.onConnected = function (username) // On connected method
             {
                 console.log(username + " connected!");
-                var toUserName = toUserName;
                 chatHub.server.userStatus(toUserName);
                 getAll();
             };
 
-            chatHub.client.sendPrivateMessage = function (toUserName, msg, sendDate) // After sending message to do
+            chatHub.client.sendPrivateMessage = function (toUserName, msg, sendDate, messageId) // After sending message to do
             {
                 var result = "";
-                result += '<div class="chat-container">' +
+                result += '<div class="chat-container" id=' + messageId + '>' +
                     '<img class="left" style="height:50px; width:50px;" src="../../File/UserFile/?id=' + toUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
                     '<p align="left" style="color:black">' + msg + '</p>' +
                     '<span class="time-right" style="color:black">' + sendDate + '</span></div>';
@@ -58,11 +73,11 @@
             chatHub.client.addMessage = function (myUserName, msg, sendDate, messageId) // add message
             {
                 var result = "";
-                result += '<div class="chat-container darker">' +
+                result += '<div class="chat-container darkest" id=' + messageId + '> ' +
                     '<img class="right" style="height:50px; width:50px;" src="../../File/UserFile/?id=' + myUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
-                    '<p align="right">' + msg + '</p>' +
+                    '<p align="right"><span title=Sent>' + msg + '</span></p >' + 
                     '<span class="time-left" style="color:white">' + sendDate + '  • </span>' +
-                    '<span class="time-left" style="color:white"><a href="../ArchiveMessage?messageId=' + messageId + '&username=' + toUserName + '"> Archive</span></div>';
+                    '<a href="#"><span class="time-left" style="color:white" onclick="archive(' + messageId + ')">Archive</span></a>';
                 $('#dataModel').append(result);
                 $("#lastStatus").text('Sent');
                 var mydiv = $("#dataModel");
@@ -79,7 +94,15 @@
 
             chatHub.client.changeMessageStatus = function ()
             {
-                $("#lastStatus").text('Seen');
+                
+                if ($('#lastStatus').is(':empty')) {
+                }
+                else {
+                    $("#lastStatus").text('Seen');
+                }
+
+                $("div.darkest").removeClass("darkest").addClass("darker");
+                console.log("Should've changed colors!");
             };
 
             $('#messageInput').keypress(function (e) // keypress on message input
@@ -110,7 +133,7 @@
 
             chatHub.client.onUserDisconnected = function (connectionId, userName) // On User Disconnected
             {
-                if (toUsername == userName) {
+                if (toUserName == userName) {
                     $('#status').text("Offline");
                 }
                 console.log(userName + " disconnected!");
@@ -124,9 +147,14 @@
                 console.log(userName + " connected!");
             };
 
-            chatHub.client.setOnline = function (userName) // On User Connected
+            chatHub.client.setOnline = function (userName)
             {
                 $('#status').text("Online");
+                console.log(userName + " is already online!");
+            };
+
+            chatHub.client.archiveMessage = function (msgId) {
+                document.getElementById(msgId).style.display = "none";
             };
 
         });

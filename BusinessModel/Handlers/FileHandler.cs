@@ -156,6 +156,31 @@ namespace BusinessModel.Handlers
             throw new NotImplementedException();
         }
 
+        public ResponseEntity<ICollection<int>> GetGalleryForUserProfile(int userProfileId)
+        {
+            DbModel dbModel = new DbModel();
+            List<int> list;
+
+            try
+            {
+                list = dbModel.Database.SqlQuery<int>("select f.FileId from Files f where f.FileType='Gallery' and f.UserProfileId=@user_profile;", new SqlParameter("user_profile", userProfileId)).ToList();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<ICollection<int>>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.FileGetError
+                };
+            }
+
+            return new ResponseEntity<ICollection<int>>
+            {
+                CompletedRequest = true,
+                Entity = list
+            };
+        }
+
         public ResponseEntity<FileEntity> GetForUserProfileId(int id)
         {
             DbModel dbModel = new DbModel();

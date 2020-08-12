@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Add Picture To Gallery</title>
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
+
+<body>
+    <br><br>
+
+    <div class="profile-header-container">
+        <h1>Add picture</h1>
+        <hr class="new1">
+        <div class="table-container">
+            @using (Html.BeginForm("AddGalleryPicture", "Account", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <table>
+                    <tr>
+                        <td style="color:black">
+                            <div class="form-group">
+                                @Html.Label("Gallery", new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    <input type="file" id="Gallery" name="upload" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:black">
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Add" class="button1" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>@ViewBag.FileMessage</td>
+
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+
+</body>
+</html>
+
+
