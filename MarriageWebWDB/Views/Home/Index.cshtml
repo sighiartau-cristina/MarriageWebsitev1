@@ -26,26 +26,30 @@
         <hr class="new2" />
         foreach (var item in Model)
         {
-            <div class="suggestion-container">
-                <h2>@Html.ActionLink(@item.UserName, "ShowProfile", new { id = @item.UserName })</h2>
-                <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = false })" class="button2" style="color:white"  onclick="return confirm('Are you sure? You will not be able to interact with this user in the future.')"><i class="fa fa-close"></i> Reject</a>
-                <a href="@Url.Action("Match", "Home", new { id = item.UserName, accepted = true })" class="button2" style="color:white"><i class="fa fa-check"></i> Match</a>
-                <hr class="new2">
-                <div class="picture-container">
-                    <img style="width:150px; height:150px; border-radius: 50%;" src="../../File/UserFile/?id=@item.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
-                </div>
-                <div class="details-container">
-                    <h2>@item.FullName</h2>
-                    <p>Gender: @item.Gender</p>
-                    <p>Orientation: @item.Orientation</p>
-                    <p>Status: @item.Status</p>
-                    <p>Religion: @item.Religion</p>
-                    <p>Age: @item.Age</p>
-                </div>
-            </div>
+<div class="suggestion-container">
+    <h2>@Html.ActionLink(@item.UserName, "ShowProfile", new { id = @item.UserName })</h2>
+    <button class="button2" style="color:white" onclick="rejectMatch('@item.UserName')"><i class="fa fa-close"></i> Reject</button>
+    <button class="button2" style="color:white" onclick="acceptMatch('@item.UserName')"><i class="fa fa-check"></i> Match</button>
+    <hr class="new2">
+    <div class="picture-container">
+        <img style="width:150px; height:150px; border-radius: 50%;" src="../../File/Avatar/?id=@item.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+    </div>
+    <div class="details-container">
+        <h2>@item.FullName</h2>
+        <p>Gender: @item.Gender</p>
+        <p>Orientation: @item.Orientation</p>
+        <p>Status: @item.Status</p>
+        <p>Religion: @item.Religion</p>
+        <p>Age: @item.Age</p>
+    </div>
+</div>
             <br />
             <br />
         }
     }
 </body>
 </html>
+
+@section JavaScript{
+    <script type="text/javascript" src="~/Scripts/suggestions.js"></script>
+}

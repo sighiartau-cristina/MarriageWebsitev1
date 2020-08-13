@@ -20,7 +20,7 @@
         <h1>@Model.UserName</h1>
         <hr class="new1">
         <div class="profile-container">
-            <img align="left" style="height:150px;width:150px; border-radius: 50%; float:left;" src="../../File/UserFile/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
+            <img align="left" style="height:150px;width:150px; border-radius: 50%; float:left;" src="../../File/Avatar/?id=@Model.UserName" onerror="this.onerror=null;this.src='../../Images/untitled.jpg';" />
             <h1>@Model.FullName</h1>
             <a href="@Url.Action("Gallery", "Home", new { id = Model.UserName})" style="color:white"><i class="fas fa-camera"></i> Gallery</a>
             <h4><i class="fa fa-home">  @Model.Address </i></h4>

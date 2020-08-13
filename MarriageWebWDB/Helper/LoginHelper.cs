@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using BusinessModel.Constants;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
@@ -11,6 +12,7 @@ namespace MarriageWebWDB.Helper
 {
     public class LoginHelper
     {
+        public string InvalidLoginMessage { get; private set; }
         public static void CheckAccess(HttpSessionStateBase httpSession)
         {
             if (httpSession["userToken"] == null)
@@ -26,32 +28,36 @@ namespace MarriageWebWDB.Helper
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = MessageConstants.InvalidLoginMessage
+                    ErrorMessage = ErrorConstants.NullEntityError
                 };
             }
 
             if (loginModel.UserName.IsNullOrWhiteSpace() || loginModel.UserPassword.IsNullOrWhiteSpace())
             {
+                InvalidLoginMessage = MessageConstants.MissingFieldsMessage;
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = MessageConstants.MissingFieldsMessage
                 };
             }
 
             UserHandler userHandler = new UserHandler();
-            var entity = userHandler.CheckUsernameAndPassword(loginModel.UserName, loginModel.UserPassword);
+            var response = userHandler.CheckUsernameAndPassword(loginModel.UserName, loginModel.UserPassword);
 
-            if (!entity.CompletedRequest)
+            if(!response.CompletedRequest && string.Equals(response.ErrorMessage, ErrorConstants.InvalidCredentials))
             {
+                InvalidLoginMessage = response.ErrorMessage;
                 return new ResponseEntity<UserEntity>
                 {
                     CompletedRequest = false,
-                    ErrorMessage = entity.ErrorMessage
                 };
             }
 
-            return entity;
+            return new ResponseEntity<UserEntity>
+            {
+                CompletedRequest = true,
+                Entity = response.Entity
+            };
         }
     }
 }

@@ -34,25 +34,34 @@ namespace MarriageWebWDB.Controllers
             LoginHelper loginHelper = new LoginHelper();
             var response = loginHelper.CheckLogin(loginModel);
 
-            if (response.CompletedRequest)
+            if (!response.CompletedRequest)
             {
-                //get user profile to store in session
-                var responseProfile = new UserProfileHandler().GetByUserId(response.Entity.UserId);
-                if (!responseProfile.CompletedRequest)
+                if (!string.IsNullOrEmpty(loginHelper.InvalidLoginMessage))
                 {
-                    TempData["error"] = responseProfile.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
+                    //wrong inputs
+                    ViewBag.LoginMessage = loginHelper.InvalidLoginMessage;
+                    return View("Login");
                 }
-
-                Session.Add("userToken", loginModel.UserName);
-                Session.Add("userId", response.Entity.UserId);
-                Session.Add("userProfileId", responseProfile.Entity.UserProfileId);
-
-                return RedirectToAction("Index", "Home");
+                else
+                {
+                    //other errors
+                    return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
+                }
             }
 
-            ViewBag.LoginMessage = response.ErrorMessage;
-            return View("Login");
+           //get user profile to store in session
+            var responseProfile = new UserProfileHandler().GetByUserId(response.Entity.UserId);
+
+            if (!responseProfile.CompletedRequest)
+            {
+                return RedirectToAction("Index", "Error", new { errorMessage = responseProfile.ErrorMessage.Replace(' ', '-') });
+            }
+
+            Session.Add("userToken", loginModel.UserName);
+            Session.Add("userId", response.Entity.UserId);
+            Session.Add("userProfileId", responseProfile.Entity.UserProfileId);
+
+            return RedirectToAction("Index", "Home");
         }
 
         public ActionResult Register()
@@ -80,7 +89,7 @@ namespace MarriageWebWDB.Controllers
 
             if (response)
             {
-                //errors caused by incorrect user input
+                //incorrect user input
                 if (!string.IsNullOrEmpty(registerHelper.InvalidRegisterMessage))
                 {
                     ViewBag.RegisterMessage = registerHelper.InvalidRegisterMessage;
@@ -96,8 +105,7 @@ namespace MarriageWebWDB.Controllers
             }
 
             //errors due to other causes
-            ViewBag.Error = registerHelper.InvalidRegisterMessage;
-            return RedirectToAction("Error", "Index");
+            return RedirectToAction("Index", "Error", new { errorMessage = registerHelper.InvalidRegisterMessage.Replace(' ', '-') });
         }
 
         public ActionResult Logout()

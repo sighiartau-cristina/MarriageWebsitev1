@@ -20,8 +20,7 @@ namespace MarriageWebWDB.Controllers
                 return File(fileToRetrieve.Entity.Content, fileToRetrieve.Entity.ContentType);
             }
 
-            TempData["Error"] = fileToRetrieve.ErrorMessage;
-            return RedirectToAction("Index", "Error");
+            return RedirectToAction("Index", "Error", new { errorMessage = fileToRetrieve.ErrorMessage });
         }
 
         public ActionResult UserFile(string id)
@@ -38,8 +37,24 @@ namespace MarriageWebWDB.Controllers
                 return null;
             }
 
-            TempData["Error"] = fileToRetrieve.ErrorMessage;
-            return RedirectToAction("Index", "Error");
+            return RedirectToAction("Index", "Error", new { errorMessage = fileToRetrieve.ErrorMessage });
+        }
+
+        public ActionResult Avatar(string id)
+        {
+            var fileToRetrieve = new FileHandler().GetAvatarForUserUsername(id);
+
+            if (fileToRetrieve.CompletedRequest)
+            {
+                if (fileToRetrieve.Entity != null)
+                {
+                    return File(fileToRetrieve.Entity.Content, fileToRetrieve.Entity.ContentType);
+                }
+
+                return null;
+            }
+
+            return RedirectToAction("Index", "Error", new { errorMessage = fileToRetrieve.ErrorMessage });
         }
 
     }

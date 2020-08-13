@@ -14,7 +14,11 @@ namespace MarriageWebWDB
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Login", action = "Login", id = UrlParameter.Optional }
             );
-
+            routes.MapRoute(
+                name: "Error",                                           // Route name
+                url : "{controller}/{action}/{errorMessage}",                            // URL with parameters
+                defaults: new { controller = "Error", action = "Index", errorMessage = UrlParameter.Optional }  // Parameter defaults
+            );
         }
     }
 }

@@ -181,14 +181,14 @@ namespace BusinessModel.Handlers
             };
         }
 
-        public ResponseEntity<FileEntity> GetForUserProfileId(int id)
+        public ResponseEntity<FileEntity> GetAvatarForUserProfileId(int id)
         {
             DbModel dbModel = new DbModel();
             File file;
 
             try
             {
-                file = dbModel.Files.Where(f => f.UserProfileId == id).FirstOrDefault();
+                file = dbModel.Files.Where(f => f.UserProfileId == id && f.FileType.Equals(FileType.Avatar.ToString())).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -321,6 +321,50 @@ namespace BusinessModel.Handlers
             try
             {
                 file = dbModel.Database.SqlQuery<File>("select f.* from UserProfile up join [User] u on up.UserId = u.UserID join Files f on f.UserProfileId = up.UserProfileId where @user=u.Username;", new SqlParameter("user", username)).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.FileGetError
+                };
+            }
+
+            if (file == null)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = true
+                };
+            }
+
+            FileEntity fileEntity = ConvertToEntity(file);
+
+            if (fileEntity == null)
+            {
+                return new ResponseEntity<FileEntity>
+                {
+                    CompletedRequest = false,
+                    ErrorMessage = ErrorConstants.NullConvertedEntityError
+                };
+            }
+
+            return new ResponseEntity<FileEntity>
+            {
+                CompletedRequest = true,
+                Entity = fileEntity
+            };
+        }
+
+        public ResponseEntity<FileEntity> GetAvatarForUserUsername(string username)
+        {
+            DbModel dbModel = new DbModel();
+            File file;
+
+            try
+            {
+                file = dbModel.Database.SqlQuery<File>("select f.* from UserProfile up join [User] u on up.UserId = u.UserID join Files f on f.UserProfileId = up.UserProfileId where @user=u.Username and f.FileType='Avatar';", new SqlParameter("user", username)).FirstOrDefault();
             }
             catch (Exception)
             {

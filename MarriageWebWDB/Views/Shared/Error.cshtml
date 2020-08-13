@@ -1,7 +1,5 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
-@{
-    
-}
+
     <div style=" padding: 20px; color:red">
         <h3>
             ERROR
@@ -9,9 +7,20 @@
         <h4>
             An error occured.
         </h4>
-        <h4>
-            Cause: @ViewContext.Controller.ViewBag.Error
-        </h4>
+
+        @if (@ViewContext.Controller.ViewBag.Error != null)
+        {
+            <h4>
+                Cause: @ViewContext.Controller.ViewBag.Error
+            </h4>
+        }
+        else
+        {
+            <h4>
+                Cause: @Model.Exception.Message
+            </h4>
+        }
+
         <h6>@Html.ActionLink("Go Back To Home Page", "Index", "Home")</h6>
         <br />
         <br />

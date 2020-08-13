@@ -4,12 +4,13 @@
         var $this = $(this);
         if ($this.is(":checked")) {
             $.ajax({
+                type: "POST",
                 url: '/Home/DeleteMessage',
                 data: { id: this.id },
                 dataType: 'html',
                 success: function (result) { }
             });
-            $(this).closest("tr").remove();;
+            $(this).closest("tr").remove();
         }
     });
 }

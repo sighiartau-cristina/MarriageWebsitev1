@@ -53,7 +53,6 @@ function archive(msgId) {
 
             chatHub.client.onConnected = function (username) // On connected method
             {
-                console.log(username + " connected!");
                 chatHub.server.userStatus(toUserName);
                 getAll();
             };
@@ -62,7 +61,7 @@ function archive(msgId) {
             {
                 var result = "";
                 result += '<div class="chat-container" id=' + messageId + '>' +
-                    '<img class="left" style="height:50px; width:50px; border-radius: 50%;" src="../../File/UserFile/?id=' + toUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
+                    '<img class="left" style="height:50px; width:50px; border-radius: 50%;" src="../../File/Avatar/?id=' + toUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
                     '<p align="left" style="color:black">' + msg + '</p>' +
                     '<span class="time-right" style="color:black">' + sendDate + '</span></div>';
                 $('#dataModel').append(result);
@@ -74,7 +73,7 @@ function archive(msgId) {
             {
                 var result = "";
                 result += '<div class="chat-container darkest" id=' + messageId + '> ' +
-                    '<img class="right" style="height:50px; width:50px; border-radius: 50%;" src="../../File/UserFile/?id=' + myUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
+                    '<img class="right" style="height:50px; width:50px; border-radius: 50%;" src="../../File/Avatar/?id=' + myUserName + '" onerror="this.onerror=null;this.src=' + "'" + '../../Images/untitled.jpg' + "'" + ';" />' +
                     '<p align="right"><span title=Sent>' + msg + '</span></p >' + 
                     '<span class="time-left" style="color:white">' + sendDate + '  • </span>' +
                     '<a href="#"><span class="time-left" style="color:white" onclick="archive(' + messageId + ')">Archive</span></a>';
@@ -102,7 +101,6 @@ function archive(msgId) {
                 }
 
                 $("div.darkest").removeClass("darkest").addClass("darker");
-                console.log("Should've changed colors!");
             };
 
             $('#messageInput').keypress(function (e) // keypress on message input
@@ -136,7 +134,6 @@ function archive(msgId) {
                 if (toUserName == userName) {
                     $('#status').text("Offline");
                 }
-                console.log(userName + " disconnected!");
             };
 
             chatHub.client.onUserConnected = function (connectionId, userName) // On User Connected
@@ -144,13 +141,11 @@ function archive(msgId) {
                 if (toUserName == userName) {
                     $('#status').text("Online");
                 }
-                console.log(userName + " connected!");
             };
 
             chatHub.client.setOnline = function (userName)
             {
                 $('#status').text("Online");
-                console.log(userName + " is already online!");
             };
 
             chatHub.client.archiveMessage = function (msgId) {

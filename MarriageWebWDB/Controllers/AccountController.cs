@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using BusinessModel.Constants;
 using BusinessModel.Contracts;
 using BusinessModel.Entities;
 using BusinessModel.Handlers;
+using MarriageWebWDB.ActionFilters;
 using MarriageWebWDB.Constants;
 using MarriageWebWDB.Helper;
 using MarriageWebWDB.Models;
@@ -36,8 +35,7 @@ namespace MarriageWebWDB.Controllers
 
             if(userModel == null)
             {
-                TempData["error"] = userHelper.InvalidInfoMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = userHelper.InvalidInfoMessage.Replace(' ', '-') });
             }
 
             return View(userModel);
@@ -59,52 +57,51 @@ namespace MarriageWebWDB.Controllers
             var userProfile = new UserProfileHandler().Get(userProfileId);
             var userHelper = new UserHelper();
 
-            if (userProfile.CompletedRequest)
+            if (!userProfile.CompletedRequest)
             {
-                if (!userHelper.CheckUpdatedUser(userModel, userProfile.Entity))
-                {
-                    ViewBag.UpdateUserMessage = userHelper.InvalidInfoMessage;
-
-                    var newUserModel = userHelper.GetUserModel(userModel);
-
-                    if(newUserModel == null)
-                    {
-                        TempData["error"] = userHelper.InvalidInfoMessage;
-                        return RedirectToAction("Index", "Error");
-                    }
-
-                    return View("UserProfile", newUserModel);
-                }
+                return RedirectToAction("Index", "Error", new { errorMessage = userProfile.ErrorMessage.Replace(' ', '-') });
             }
-            else
+
+            if (!userHelper.CheckUpdatedUser(userModel, userProfile.Entity))
             {
-                return RedirectToAction("Index", "Error", userProfile.ErrorMessage);
+                ViewBag.UpdateUserMessage = userHelper.InvalidInfoMessage;
+                var newUserModel = userHelper.GetUserModel(userModel);
+
+                if(newUserModel == null)
+                {
+                    return RedirectToAction("Index", "Error", new { errorMessage = userHelper.InvalidInfoMessage.Replace(' ', '-') });
+                }
+
+            return View("UserProfile", newUserModel);
             }
 
             var userId = (int)Session["userId"];
-            var user = new UserHandler().Get(userId);
-
             var userHandler = new UserHandler();
-            var userProfileHandler = new UserProfileHandler();
+            var user = userHandler.Get(userId);
 
-            //update user profile table first
-            var userProfileDataEntity = userHelper.ToDataEntity(userModel, userProfile.Entity);
-            var resposeUserProfile = userProfileHandler.Update(userProfileDataEntity);
-
-            if (!resposeUserProfile.CompletedRequest)
+            if (!user.CompletedRequest)
             {
-                TempData["error"] = resposeUserProfile.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = user.ErrorMessage.Replace(' ', '-') });
             }
 
-            //update user table
-            var userDataEntity = userHelper.ToDataEntity(userModel, user.Entity);
-            var resposeUser = userHandler.Update(userDataEntity);
+            var userProfileHandler = new UserProfileHandler();
 
-            if (!resposeUser.CompletedRequest)
+            //update user profile
+            var userProfileDataEntity = userHelper.ToDataEntity(userModel, userProfile.Entity);
+            userProfile = userProfileHandler.Update(userProfileDataEntity);
+
+            if (!userProfile.CompletedRequest)
             {
-                TempData["error"] = resposeUser.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = userProfile.ErrorMessage.Replace(' ', '-') });
+            }
+
+            //update user
+            var userDataEntity = userHelper.ToDataEntity(userModel, user.Entity);
+            user= userHandler.Update(userDataEntity);
+
+            if (!user.CompletedRequest)
+            {
+                return RedirectToAction("Index", "Error", new { errorMessage = user.ErrorMessage.Replace(' ', '-') });
             }
 
             //in case username was changed
@@ -148,8 +145,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!user.CompletedRequest)
             {
-                TempData["error"] = user.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = user.ErrorMessage.Replace(' ', '-') });
             }
 
             if (!passwordHelper.CheckPassword(user.Entity, passwordModel))
@@ -162,8 +158,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!user.CompletedRequest)
             {
-                TempData["error"] = user.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = user.ErrorMessage.Replace(' ', '-') });
             }
 
             return RedirectToAction("UserProfile", "Account");
@@ -211,8 +206,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!addressResponse.CompletedRequest)
             {
-                TempData["error"] = addressResponse.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = addressResponse.ErrorMessage.Replace(' ', '-') });
             }
 
             return RedirectToAction("UserProfile", "Account");
@@ -235,11 +229,15 @@ namespace MarriageWebWDB.Controllers
 
             if (!addressResponse.CompletedRequest)
             {
-                TempData["error"] = addressResponse.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = addressResponse.ErrorMessage.Replace(' ', '-') });
             }
 
             var model = new AddressHelper().GetAddressModel(addressResponse.Entity.AddressId);
+
+            if(model == null)
+            {
+                return RedirectToAction("Index", "Error", new { errorMessage =MessageConstants.ModelError.Replace(' ', '-') });
+            }
 
             return View("EditAddress", model);
         }
@@ -263,8 +261,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!oldAddress.CompletedRequest)
             {
-                TempData["error"] = oldAddress.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = oldAddress.ErrorMessage.Replace(' ', '-') });
             }
 
             if (!addressHelper.CheckAddress(addressModel))
@@ -288,8 +285,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!addressResponse.CompletedRequest)
             {
-                TempData["error"] = addressResponse.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = addressResponse.ErrorMessage.Replace(' ', '-') });
             }
 
             return RedirectToAction("UserProfile", "Account");
@@ -308,20 +304,19 @@ namespace MarriageWebWDB.Controllers
             }
 
             var userProfileId = (int)Session["userProfileId"];
-            var address = new AddressHandler().GetForUserProfile(userProfileId);
+            var addressHandler = new AddressHandler();
+            var address = addressHandler.GetForUserProfile(userProfileId);
 
             if (!address.CompletedRequest)
             {
-                TempData["error"] = address.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = address.ErrorMessage.Replace(' ', '-') });
             }
 
-            var response = new AddressHandler().Delete(address.Entity.AddressId);
+            var response = addressHandler.Delete(address.Entity.AddressId);
 
             if (!response.CompletedRequest)
             {
-                TempData["error"] = response.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
             }
 
             return RedirectToAction("UserProfile", "Account");
@@ -362,12 +357,11 @@ namespace MarriageWebWDB.Controllers
                 }
 
                 var fileHandler = new FileHandler();
-                var response = fileHandler.GetForUserProfileId((int)Session["userProfileId"]);
+                var response = fileHandler.GetAvatarForUserProfileId((int)Session["userProfileId"]);
 
                 if (!response.CompletedRequest)
                 {
-                    TempData["error"] = response.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
+                    return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
                 }
 
                 if (response.Entity == null)
@@ -375,8 +369,7 @@ namespace MarriageWebWDB.Controllers
                     response = fileHandler.Add(avatar);
                     if (!response.CompletedRequest)
                     {
-                        TempData["error"] = response.ErrorMessage;
-                        return RedirectToAction("Index", "Error");
+                        return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
                     }
                     else
                     {
@@ -390,8 +383,7 @@ namespace MarriageWebWDB.Controllers
 
                 if (!response.CompletedRequest)
                 {
-                    TempData["error"] = response.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
+                    return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
                 }
 
                 return RedirectToAction("UserProfile", "Account");
@@ -415,12 +407,11 @@ namespace MarriageWebWDB.Controllers
 
             var fileHandler = new FileHandler();
             var userProfileId = (int)Session["userProfileId"];
-            var response = fileHandler.GetForUserProfileId(userProfileId);
+            var response = fileHandler.GetAvatarForUserProfileId(userProfileId);
 
             if (!response.CompletedRequest)
             {
-                TempData["error"] = response.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
             }
 
             if (response.Entity != null)
@@ -428,16 +419,25 @@ namespace MarriageWebWDB.Controllers
                 response = fileHandler.Delete(response.Entity.FileId);
                 if (!response.CompletedRequest)
                 {
-                    TempData["error"] = response.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
+                    return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
                 }
             }
             
             return RedirectToAction("UserProfile", "Account");
         }
 
-        public string GetAllLikes(string term)
+        [AjaxOnly, AjaxErrorFilter]
+        public ActionResult GetAllLikes(string term)
         {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             ResponseEntity<ICollection<PreferenceEntity>> list;
 
             if (string.IsNullOrEmpty(term))
@@ -451,15 +451,24 @@ namespace MarriageWebWDB.Controllers
 
             if (!list.CompletedRequest)
             {
-                TempData["error"] = list.ErrorMessage;
-                RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = list.ErrorMessage.Replace(' ', '-') });
             }
 
-            return JsonConvert.SerializeObject(list.Entity);
+            return Content(JsonConvert.SerializeObject(list.Entity));
         }
 
-        public int AddPreference(string name, int id, bool like)
+        [AjaxOnly, AjaxErrorFilter]
+        public ActionResult AddPreference(string name, int id, bool like)
         {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             var handler = new PreferenceHandler();
             int prefId = id;
 
@@ -475,8 +484,7 @@ namespace MarriageWebWDB.Controllers
 
                 if (!prefResponse.CompletedRequest)
                 {
-                    TempData["error"] = prefResponse.ErrorMessage;
-                    RedirectToAction("Index", "Error");
+                    return RedirectToAction("Index", "Error", new { errorMessage = prefResponse.ErrorMessage.Replace(' ', '-') });
                 }
 
                 prefId = prefResponse.Entity.Id;
@@ -488,15 +496,24 @@ namespace MarriageWebWDB.Controllers
 
             if (!response.CompletedRequest)
             {
-                TempData["error"] = response.ErrorMessage;
-                RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
             }
 
-            return prefId;
+            return Content(prefId.ToString());
         }
 
-        public void DeletePreference(string id, bool like)
+        [AjaxOnly, AjaxErrorFilter]
+        public ActionResult DeletePreference(string id, bool like)
         {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             var handler = new PreferenceHandler();
             int prefId = int.Parse(id);
 
@@ -505,9 +522,10 @@ namespace MarriageWebWDB.Controllers
 
             if (!response.CompletedRequest)
             {
-                TempData["error"] = response.ErrorMessage;
-                RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
             }
+
+            return new EmptyResult();
         }
 
         [HttpGet]
@@ -528,6 +546,15 @@ namespace MarriageWebWDB.Controllers
         [HttpPost]
         public ActionResult AddGalleryPicture(HttpPostedFileBase upload)
         {
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
             if (upload != null && upload.ContentLength > 0)
             {
                 var pic = new FileEntity
@@ -549,8 +576,7 @@ namespace MarriageWebWDB.Controllers
 
                 if (!response.CompletedRequest)
                 {
-                    TempData["error"] = response.ErrorMessage;
-                    return RedirectToAction("Index", "Error");
+                    return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
                 }
 
                 return RedirectToAction("UserProfile", "Account");
@@ -560,11 +586,26 @@ namespace MarriageWebWDB.Controllers
             return View("AddGalleryPicture");
         }
 
-
-        public void DeleteGalleryPicture(int id)
+        [AjaxOnly, AjaxErrorFilter]
+        public ActionResult DeleteGalleryPicture(int id)
         {
-            var fileHandler = new FileHandler();
-            fileHandler.Delete(id);
+            try
+            {
+                LoginHelper.CheckAccess(Session);
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            var response = new FileHandler().Delete(id);
+
+            if (!response.CompletedRequest)
+            {
+                return RedirectToAction("Index", "Error", new { errorMessage = response.ErrorMessage.Replace(' ', '-') });
+            }
+
+            return new EmptyResult();
         }
 
         [HttpGet]
@@ -584,8 +625,7 @@ namespace MarriageWebWDB.Controllers
 
             if (!list.CompletedRequest)
             {
-                TempData["error"] = list.ErrorMessage;
-                return RedirectToAction("Index", "Error");
+                return RedirectToAction("Index", "Error", new { errorMessage = list.ErrorMessage.Replace(' ', '-') });
             }
 
             return View(list.Entity);

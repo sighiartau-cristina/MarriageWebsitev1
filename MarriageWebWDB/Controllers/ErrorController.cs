@@ -4,11 +4,9 @@ namespace MarriageWebWDB.Controllers
 {
     public class ErrorController: Controller
     {
-        public ActionResult Index()
+        public ActionResult Index(string errorMessage)
         {
-            string error = TempData["error"].ToString();
-            ViewBag.Error = error;
-
+            ViewBag.Error = errorMessage.Replace("-", " ");
             return View();
         }
 
